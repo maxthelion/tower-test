@@ -43,6 +43,30 @@
       }, 1000);
     };
     
+    var TurretManager = function(){
+      var self = this;
+      var id = 0;
+      var turretHash = {};
+      
+      // probably needs optimising
+      this.allTurrets = function(){
+        var myArray = [];
+        for( i in turretHash){
+          if(turretHash[i] != null){
+            myArray.push(turretHash[i]);
+          };
+        }
+        return myArray;
+      };
+      
+      this.createTurret = function(position){
+        var newId = id++;
+        var myTurret = new Turret(position, newId);
+        turretHash[newId] = myTurret;
+        return myTurret;
+      };
+    }
+    
     var startPoint = [3, 0];
     var	endPoint = [5, 19];
     
@@ -70,26 +94,39 @@
 		      ctx.lineTo(gridWidth, i*gridYInterval);
 		    };
 		    ctx.stroke();
-        drawCells()
+		    drawStart();
+        drawTurrets();
         // drawPath();
         drawSoldiers();
 		  }
 		  
-		  var drawCells = function(){
-		    for(var	i = 0, j = grid.length; i < j; i++) {
-  				for(var	k = 0, l = grid[i].length; k < l; k++) {
-  				  // x = k
-  				  // y = i
-  				  if (grid[i][k] !== 0){
-  				    ctx.fillStyle = 'red';
-  				    ctx.fillRect(k* gridXInterval, i*gridYInterval, gridXInterval, gridYInterval);
-  				  }
-  				  if(k == startPoint[0] && i == startPoint[1]){
-  				    ctx.fillStyle = 'yellow';
-  				    ctx.fillRect(k* gridXInterval, i*gridYInterval, gridXInterval, gridYInterval);
-  				  }
-				  };
-			  };
+		  var drawTurrets = function(){
+        for(var i =0; i < myTurretManager.allTurrets().length; i++){
+          var turret = myTurretManager.allTurrets()[i]
+          ctx.fillStyle = 'red';
+          ctx.fillRect(
+            turret.getPosition()[0] * gridXInterval, 
+            turret.getPosition()[1] * gridYInterval, 
+            gridXInterval, 
+            gridYInterval
+          );
+          ctx.beginPath()
+          ctx.moveTo(
+            turret.getPosition()[0] * gridXInterval + gridXInterval/2, 
+            turret.getPosition()[1] * gridYInterval + gridYInterval/2
+          )
+
+          ctx.lineTo(
+            turret.targettedSoldier().getCurrentPoint()[0] * gridXInterval + gridXInterval/2, 
+            turret.targettedSoldier().getCurrentPoint()[1] * gridYInterval + gridYInterval/2
+          )
+          ctx.stroke()
+        }
+		  }
+		  
+		  var drawStart = function(){
+		    ctx.fillStyle = 'yellow';
+        ctx.fillRect(startPoint[0]* gridXInterval, startPoint[1]*gridYInterval, gridXInterval, gridYInterval);
 		  }
 		  
 		  var drawPath = function(){
@@ -100,6 +137,7 @@
 			    ctx.fillRect(x* gridXInterval, y*gridYInterval, gridXInterval, gridYInterval);
 				}
 		  };
+		  
 		  var drawSoldiers = function() {
 		    for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
 		      drawSoldier(mySoldierManager.allSoldiers()[i]);
@@ -121,20 +159,21 @@
 		    grid[yIndex][xIndex] = 1;
 		    // check the global path
 		    result = AStar(grid, startPoint, endPoint, "Manhattan");
-		    if (result.length == 0){
+		    if (result.length == 0){ // fail to connect
 		      grid[yIndex][xIndex] = 0;
   		    result = AStar(grid, startPoint, endPoint, "Manhattan");
-		    } else {
-		      draw();		      
 		    };
 		    //check for all the soldiers
 		    for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
 		      if (!mySoldierManager.allSoldiers()[i].regeneratePath()) {
 		        grid[yIndex][xIndex] = 0;
     		    result = AStar(grid, startPoint, endPoint, "Manhattan");
-		        break;
+		        return false;
 		      }
 		    };
+		    
+		    myTurretManager.createTurret([xIndex, yIndex]);
+	      draw();
 		  });
 		  
       setInterval(function(){
@@ -145,6 +184,19 @@
       }, 500);
 
 	  };
+	  
+	  var Turret = function(position, id){
+	    var position = position;
+	    var id = id;
+	    
+	    this.getPosition = function() {
+	      return position;
+	    };
+	    
+	    this.targettedSoldier = function() {
+	      return mySoldierManager.allSoldiers()[0];
+	    }
+	  }
 	  
 	  var Soldier = function(startPoint, endPoint, grid, id){
 	    var self = this;
@@ -208,8 +260,10 @@
 		var grid;  
 		var lives = 20;
 		var mySoldierManager;
+		var myTurretManager;
 	  $().ready(function(){
 	    mySoldierManager = new SoldierManager();
+	    myTurretManager = new TurretManager();
 	    grid = GridGenerator(20, 20);
 	    var mygrid = new Grid('canvas', grid);
 	  });
