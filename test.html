@@ -23,17 +23,13 @@
         return myArray;
       };
       
-      this.createSoldier = function(){
+      this.createSoldier = function(speed, health){
         var newId = id++;
-        soldier = new Soldier(startPoint, endPoint, grid, newId);
+        soldier = new Soldier(startPoint, endPoint, grid, speed, health, newId);
         soldier.onReachDestination(function(){
           soldierHash[newId] = null;
           lives--;
           $('#lives').text(lives);
-          if (lives == 0){
-            console.log('the end');
-            clearInterval(myInterval);
-          }
         })
         soldier.onDie(function(){
           soldierHash[newId] = null;
@@ -45,9 +41,7 @@
       };
       
       
-      myInterval = setInterval(function(){
-        self.createSoldier();
-      }, 1000);
+
     };
     
     var TurretManager = function(){
@@ -70,9 +64,11 @@
         var newId = id++;
         var myTurret = new Turret(position, newId);
         turretHash[newId] = myTurret;
+        money -= TurretManager.cost;
         return myTurret;
       };
     }
+    TurretManager.cost = 10;
     
     var startPoint = [3, 0];
     var	endPoint = [5, 19];
@@ -106,6 +102,9 @@
         drawTurrets();
         // drawPath();
         drawSoldiers();
+		  }
+		  this.public_draw = function(){
+		    draw();
 		  }
 		  
 		  var drawTurrets = function(){
@@ -170,10 +169,10 @@
 				y = soldier.getCurrentPosition()[1];
 				ctx.fillStyle = 'rgba(50,50,50,'+soldier.getHealthPercentage()+')';
 		    ctx.fillRect(
-		      x, 
-		      y, 
-		      gridXInterval/2, 
-		      gridYInterval/2
+		      x - soldier.getSize()/2, 
+		      y - soldier.getSize()/2, 
+		      soldier.getSize(), 
+		      soldier.getSize()
 		    );
 		  }
 		  
@@ -206,6 +205,11 @@
 		  draw();
 		  
 		  $(canvas).click(function(evt){
+		    // check there is money
+		    if(money < TurretManager.cost){
+		      // no money
+		      return false
+		    }
 		    var xIndex = Math.floor( evt.offsetX/gridXInterval )
 		    var yIndex = Math.floor( evt.offsetY/gridYInterval )
 		    grid[yIndex][xIndex] = 1;
@@ -214,6 +218,7 @@
 		    if (result.length == 0){ // fail to connect
 		      grid[yIndex][xIndex] = 0;
   		    result = AStar(grid, startPoint, endPoint, "Manhattan");
+  		    return false
 		    };
 		    //check for all the soldiers
 		    for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
@@ -227,13 +232,6 @@
 		    myTurretManager.createTurret([xIndex, yIndex]);
 	      draw();
 		  });
-		  
-      setInterval(function(){
-        for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
-          mySoldierManager.allSoldiers()[i].move();
-        };
-        draw();
-      }, 50);
 
 	  };
 	  
@@ -242,6 +240,7 @@
 	    var id = id;
 	    var range = 2;
 	    var damage = 1;
+	    var cost = 1;
 	    
 	    this.getPosition = function() {
 	      return position;
@@ -267,14 +266,14 @@
 	    
 	    this.getDamage = function(){
 	      return damage;
-	    }
+	    };
 	  }
 	  
-	  var Soldier = function(startPoint, endPoint, grid, id){
+	  var Soldier = function(startPoint, endPoint, grid, speed, health, id){
 	    var self = this;
       // this.xPos;
       // this.yPos;
-      var initialHealth = 100;
+      var initialHealth = health;
 	    var health = initialHealth;
 	    var myPath;
 	    var pathIndex = 0;
@@ -285,7 +284,7 @@
 	    var destinationCallback;
 	    var nextPoint;
 	    var nextPointPosition;
-	    var speed = 3;
+	    var speed = speed;
 	    
 	    this.move = function(){
 	      // kludge
@@ -301,7 +300,7 @@
 	      }
 	      var cell = mygrid.cellFromPosition( currentPosition );
         if (nextPoint == undefined){
-          deathCallback();
+          destinationCallback();
           return false
         } else if ( cell[0] == nextPoint[0] && cell[1] == nextPoint[1]) {
 	        pathIndex++
@@ -342,11 +341,16 @@
 	      deathCallback = callback;
 	    }
 	    
+	    this.getSize = function(){
+	      return 10;
+	    };
+	    
 	    this.takeBullet = function(damage) {
 	      health -= damage;
 	      if ( health <= 0 ){
 	        corpses.push(self.getCurrentPoint())
 	        deathCallback();
+	        money++;
 	      }
 	    }
 	    
@@ -372,7 +376,7 @@
 			for(var	j, i = 0; i < height; i++) {
 				result[i] = new Array(width);
 				for(j = 0; j < width; j++)
-					result[i][j] = 0 //(j * i) % 7 ? floor(random() * 200) % 2 : 0;
+					result[i][j] = 0
 			};
 			return result;
 		};
@@ -383,18 +387,68 @@
 		var mySoldierManager;
 		var myTurretManager;
 		var mygrid;
+		var regularity = 50; // the speed that new soldiers appear
+		var waveLength = 10; // the length of a wave - eg how many soldiers per round
+		var soldierCountDown = regularity;
+		var waveCountDown = waveLength;
+		var speed = 1;
+		var health = 100;
+		var round = 1;
+		var money = 20;
+		
 	  $().ready(function(){
 	    mySoldierManager = new SoldierManager();
 	    myTurretManager = new TurretManager();
 	    grid = GridGenerator(20, 20);
 	    mygrid = new Grid('canvas', grid);
+	      
+	    //  global interval
+	    globalInterval = setInterval(function(){
+	      if (lives == 0){
+          console.log('death to you');
+          clearInterval(globalInterval);
+        }
+        
+        if (soldierCountDown > 0){
+          soldierCountDown--;
+        } else {
+          if (waveCountDown > 0){
+            waveCountDown--;
+          } else {
+            round++;
+            // mark the round number
+            $('#round').text(round);
+            waveCountDown = waveLength;
+            if (round % 3 == 0)
+              speed   ++;
+            if (round % 3 == 1)
+              health  += 20;
+            if (round % 3 == 2)
+              if (regularity > 5) // we don't want it too hardcore
+                regularity -= 2;
+          }
+          // add new soldier
+          mySoldierManager.createSoldier(speed, health);
+          soldierCountDown = regularity;
+        }
+        
+	      // move the soldiers
+        for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
+          mySoldierManager.allSoldiers()[i].move();
+        };
+        
+        mygrid.public_draw();
+        
+        $('#money').text(money);
+      }, 50);
 	  });
   </script>
 </head>
 <body>
-  <p id="lives"></p>
-  <p id="soldiers_sent"></p>
-  <p id="towers_made"></p>
+  <p>Lives: <span id="lives"></span></p>
+  <p>Round: <span id="round"></span></p>
+  <p>Kills: <span id="kills"></span></p>
+  <p>Money: <span id="money"></span></p>
 <canvas id="canvas" height="500" width="500"></canvas>
 </body>
 </html>
