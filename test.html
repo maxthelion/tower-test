@@ -24,7 +24,7 @@
       this.createSoldier = function(){
         var newId = id++;
         soldier = new Soldier(startPoint, endPoint, grid, newId);
-        soldier.onDie(function(){
+        soldier.onReachDestination(function(){
           soldierHash[newId] = null;
           lives--;
           $('#lives').text(lives);
@@ -32,6 +32,11 @@
             console.log('the end');
             clearInterval(myInterval);
           }
+        })
+        soldier.onDie(function(){
+          soldierHash[newId] = null;
+          kills++;
+          $('#kills').text(kills);
         })
         soldierHash[newId] = soldier;
         return soldier;
@@ -110,6 +115,14 @@
             gridXInterval, 
             gridYInterval
           );
+          connectTarget(turret);
+        }
+		  }
+		  
+		  var connectTarget =function(turret){
+		    var soldier = turret.targettedSoldier();
+		    if (soldier){
+		      soldier.takeBullet(turret.getDamage());
           ctx.beginPath()
           ctx.moveTo(
             turret.getPosition()[0] * gridXInterval + gridXInterval/2, 
@@ -117,8 +130,8 @@
           )
 
           ctx.lineTo(
-            turret.targettedSoldier().getCurrentPoint()[0] * gridXInterval + gridXInterval/2, 
-            turret.targettedSoldier().getCurrentPoint()[1] * gridYInterval + gridYInterval/2
+            soldier.getCurrentPoint()[0] * gridXInterval + gridXInterval/2, 
+            soldier.getCurrentPoint()[1] * gridYInterval + gridYInterval/2
           )
           ctx.stroke()
         }
@@ -147,7 +160,7 @@
 		  var drawSoldier = function(soldier){
 		    x = soldier.getCurrentPoint()[0];
 				y = soldier.getCurrentPoint()[1];
-				ctx.fillStyle = 'yellow';
+				ctx.fillStyle = 'rgba(50,50,50,'+soldier.getHealthPercentage()+')';
 		    ctx.fillRect(x* gridXInterval, y*gridYInterval, gridXInterval, gridYInterval);
 		  }
 		  
@@ -188,13 +201,33 @@
 	  var Turret = function(position, id){
 	    var position = position;
 	    var id = id;
+	    var range = 2;
+	    var damage = 1;
 	    
 	    this.getPosition = function() {
 	      return position;
 	    };
 	    
 	    this.targettedSoldier = function() {
-	      return mySoldierManager.allSoldiers()[0];
+	      return soldiersInRange()[0];
+	    }
+	    
+	    var soldiersInRange = function(){
+	      myArray = [];
+	      for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
+	        var soldier = mySoldierManager.allSoldiers()[i];
+	        if (soldier.getCurrentPoint()[0] >= position[0]-range && 
+	              soldier.getCurrentPoint()[0] <= position[0]+range &&
+	            soldier.getCurrentPoint()[1] >= position[1]-range && 
+	              soldier.getCurrentPoint()[1] <= position[1]+range ){
+	          myArray.push(soldier);
+	        }
+	      };
+	      return myArray;
+	    };
+	    
+	    this.getDamage = function(){
+	      return damage;
 	    }
 	  }
 	  
@@ -202,12 +235,14 @@
 	    var self = this;
       // this.xPos;
       // this.yPos;
-	    var health;
+      var initialHealth = 5;
+	    var health = initialHealth;
 	    var myPath;
 	    var pathIndex = 0;
 	    var currentPoint;
 	    var id;
 	    var deathCallback;
+	    var destinationCallback;
 	    
 	    this.move = function(){
 	      pathIndex++
@@ -233,8 +268,23 @@
 	      return currentPoint;
 	    }
 	    
+	    this.onReachDestination = function(callback){
+	      destinationCallback = callback;
+	    }
+	    
 	    this.onDie = function(callback){
 	      deathCallback = callback;
+	    }
+	    
+	    this.takeBullet = function(damage) {
+	      health -= damage;
+	      if ( health <= 0 ){
+	        deathCallback();
+	      }
+	    }
+	    
+	    this.getHealthPercentage = function(){
+	      return health / initialHealth;
 	    }
 	    
 	    var initialise = function(){
@@ -257,6 +307,7 @@
 			return result;
 		};
 		
+		var kills = 0;
 		var grid;  
 		var lives = 20;
 		var mySoldierManager;
@@ -273,6 +324,6 @@
   <p id="lives"></p>
   <p id="soldiers_sent"></p>
   <p id="towers_made"></p>
-<canvas id="canvas" height="300" width="300"></canvas>
+<canvas id="canvas" height="500" width="500"></canvas>
 </body>
 </html>
