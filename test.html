@@ -4,6 +4,8 @@
   <script src="AStar_memtronic.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
     
+    var corpses = [];
+    
     var SoldierManager = function(){
       var self = this;
       var id = 0;
@@ -99,7 +101,8 @@
 		      ctx.lineTo(gridWidth, i*gridYInterval);
 		    };
 		    ctx.stroke();
-		    drawStart();
+        drawCorpses();
+		    drawStartAndEnd();
         drawTurrets();
         // drawPath();
         drawSoldiers();
@@ -108,13 +111,17 @@
 		  var drawTurrets = function(){
         for(var i =0; i < myTurretManager.allTurrets().length; i++){
           var turret = myTurretManager.allTurrets()[i]
-          ctx.fillStyle = 'red';
+          ctx.fillStyle = 'cyan';
           ctx.fillRect(
             turret.getPosition()[0] * gridXInterval, 
             turret.getPosition()[1] * gridYInterval, 
             gridXInterval, 
             gridYInterval
           );
+        }
+        // gonna do this in 2 loops for now - wasteful
+        for(var i =0; i < myTurretManager.allTurrets().length; i++){
+          var turret = myTurretManager.allTurrets()[i]
           connectTarget(turret);
         }
 		  }
@@ -130,16 +137,17 @@
           )
 
           ctx.lineTo(
-            soldier.getCurrentPoint()[0] * gridXInterval + gridXInterval/2, 
-            soldier.getCurrentPoint()[1] * gridYInterval + gridYInterval/2
+            soldier.getCurrentPosition()[0], 
+            soldier.getCurrentPosition()[1]
           )
           ctx.stroke()
         }
 		  }
 		  
-		  var drawStart = function(){
+		  var drawStartAndEnd = function(){
 		    ctx.fillStyle = 'yellow';
         ctx.fillRect(startPoint[0]* gridXInterval, startPoint[1]*gridYInterval, gridXInterval, gridYInterval);
+        ctx.fillRect(endPoint[0]* gridXInterval, endPoint[1]*gridYInterval, gridXInterval, gridYInterval);
 		  }
 		  
 		  var drawPath = function(){
@@ -158,17 +166,48 @@
 		  };
 		  
 		  var drawSoldier = function(soldier){
-		    x = soldier.getCurrentPoint()[0];
-				y = soldier.getCurrentPoint()[1];
+		    x = soldier.getCurrentPosition()[0];
+				y = soldier.getCurrentPosition()[1];
 				ctx.fillStyle = 'rgba(50,50,50,'+soldier.getHealthPercentage()+')';
+		    ctx.fillRect(
+		      x, 
+		      y, 
+		      gridXInterval/2, 
+		      gridYInterval/2
+		    );
+		  }
+		  
+		  var drawCorpses = function() {
+		    for (var i=0; i < corpses.length; i++) {
+		      drawCorpse(corpses[i]);
+		    };
+		  };
+		  
+		  var drawCorpse = function(corpse){
+		    x = corpse[0];
+				y = corpse[1];
+				ctx.fillStyle = 'rgb(255,0,0)';
 		    ctx.fillRect(x* gridXInterval, y*gridYInterval, gridXInterval, gridYInterval);
 		  }
+		  
+		  this.pointCenterXY = function(x, y){
+		    return [
+		      x * gridXInterval + (gridXInterval/2), 
+		      y * gridYInterval + (gridXInterval/2)
+		    ]
+		  };
+		  
+		  this.cellFromPosition = function(position){
+		    var xIndex = Math.floor( position[0] / gridXInterval )
+		    var yIndex = Math.floor( position[1] / gridYInterval )
+		    return [xIndex, yIndex];
+		  };
 		  
 		  draw();
 		  
 		  $(canvas).click(function(evt){
-		    xIndex = Math.floor( evt.offsetX/gridXInterval )
-		    yIndex = Math.floor( evt.offsetY/gridYInterval )
+		    var xIndex = Math.floor( evt.offsetX/gridXInterval )
+		    var yIndex = Math.floor( evt.offsetY/gridYInterval )
 		    grid[yIndex][xIndex] = 1;
 		    // check the global path
 		    result = AStar(grid, startPoint, endPoint, "Manhattan");
@@ -194,7 +233,7 @@
           mySoldierManager.allSoldiers()[i].move();
         };
         draw();
-      }, 500);
+      }, 50);
 
 	  };
 	  
@@ -235,22 +274,48 @@
 	    var self = this;
       // this.xPos;
       // this.yPos;
-      var initialHealth = 5;
+      var initialHealth = 100;
 	    var health = initialHealth;
 	    var myPath;
 	    var pathIndex = 0;
 	    var currentPoint;
+	    var currentPosition;
 	    var id;
 	    var deathCallback;
 	    var destinationCallback;
+	    var nextPoint;
+	    var nextPointPosition;
+	    var speed = 3;
 	    
 	    this.move = function(){
-	      pathIndex++
-	      if (pathIndex < myPath.length){
-	        currentPoint = myPath[pathIndex];
+	      // kludge
+	      if (nextPointPosition[0] > currentPosition[0]){
+	        currentPosition[0] += speed;
 	      } else {
-	        deathCallback();
+	        currentPosition[0] -= speed;
 	      }
+	      if (nextPointPosition[1] > currentPosition[1]){
+	        currentPosition[1] += speed;
+	      } else {
+	        currentPosition[1] -= speed;
+	      }
+	      var cell = mygrid.cellFromPosition( currentPosition );
+        if (nextPoint == undefined){
+          deathCallback();
+          return false
+        } else if ( cell[0] == nextPoint[0] && cell[1] == nextPoint[1]) {
+	        pathIndex++
+          if (pathIndex < myPath.length){
+            currentPoint = myPath[pathIndex];
+            nextPoint    = myPath[pathIndex + 1];
+            if (nextPoint)
+    	        nextPointPosition = mygrid.pointCenterXY(nextPoint[0], nextPoint[1]);
+          } 
+	      }
+	    }
+	    
+	    this.getCurrentPosition = function(){
+	      return currentPosition;
 	    }
 	    
 	    this.regeneratePath = function(){
@@ -264,6 +329,7 @@
 		    };
 	    }
 	    
+	    // this is the grid coordinate for the soldier
 	    this.getCurrentPoint = function(){
 	      return currentPoint;
 	    }
@@ -279,6 +345,7 @@
 	    this.takeBullet = function(damage) {
 	      health -= damage;
 	      if ( health <= 0 ){
+	        corpses.push(self.getCurrentPoint())
 	        deathCallback();
 	      }
 	    }
@@ -290,6 +357,9 @@
 	    var initialise = function(){
 	      myPath = AStar(grid, startPoint, endPoint, "Manhattan");
 	      currentPoint = myPath[pathIndex];
+	      nextPoint = myPath[pathIndex + 1];
+	      currentPosition =   mygrid.pointCenterXY(currentPoint[0], currentPoint[1]);
+	      nextPointPosition = mygrid.pointCenterXY(nextPoint[0], nextPoint[1]);
 	    }
 	    
 	    initialise();
@@ -312,11 +382,12 @@
 		var lives = 20;
 		var mySoldierManager;
 		var myTurretManager;
+		var mygrid;
 	  $().ready(function(){
 	    mySoldierManager = new SoldierManager();
 	    myTurretManager = new TurretManager();
 	    grid = GridGenerator(20, 20);
-	    var mygrid = new Grid('canvas', grid);
+	    mygrid = new Grid('canvas', grid);
 	  });
   </script>
 </head>
