@@ -105,6 +105,7 @@
         // drawPath();
         drawSoldiers();
         drawHighLight();
+        drawBits();
 		  };
 		  
 		  // called from the setinterval
@@ -172,35 +173,21 @@
           ctx.beginPath()
           tx = turret.getPosition()[0] * gridXInterval + gridXInterval/2
           ty = turret.getPosition()[1] * gridYInterval + gridYInterval/2
-          ctx.moveTo(
-            tx, 
-            ty
-          )
+          ctx.moveTo(tx, ty )
           sx = soldier.getCurrentPosition()[0]
           sy = soldier.getCurrentPosition()[1]
-          var dx = sx - tx;
-          var dy = sy - ty;
+          var coords = getNewCoords(tx, ty, sx, sy, 15);
           ctx.strokeStyle = 'black';
           ctx.lineWidth = 2;          
-          theta = Math.atan2(dy, dx);
-          
-          radius = 15;
-          
-          px = tx + (Math.cos(theta) * radius)
-          py = ty + (Math.sin(theta) * radius) 
-
-          ctx.lineTo(
-            px, 
-            py
-          )
+          ctx.lineTo(coords[0], coords[1]);
           ctx.stroke()
           ctx.beginPath()
           radius = (soldierCountDown % 2 == 0) ? 1 : 5
           // flame
   		    ctx.fillStyle = 'orange';
           ctx.arc(
-            px, 
-            py,
+            coords[0], 
+            coords[1],
             radius,
             0,
             Math.PI*2,
@@ -208,6 +195,16 @@
           );
           ctx.fill();
         }
+		  }
+		  
+		  var getNewCoords = function(x1, y1, x2, y2, radius){
+		    var dx = x2 - x1;
+        var dy = y2 - y1;
+		    var theta = Math.atan2(dy, dx);
+        return [
+          x1 + (Math.cos(theta) * radius),
+          y1 + (Math.sin(theta) * radius)
+        ]
 		  }
 		  
 		  var drawStartAndEnd = function(){
@@ -234,13 +231,31 @@
 		  var drawSoldier = function(soldier){
 		    x = soldier.getCurrentPosition()[0];
 				y = soldier.getCurrentPosition()[1];
-				ctx.fillStyle = 'rgba(50,50,50,'+soldier.getHealthPercentage()+')';
+				ctx.fillStyle = 'rgb(50,50,50)';
 		    ctx.fillRect(
 		      x - soldier.getSize()/2, 
 		      y - soldier.getSize()/2, 
 		      soldier.getSize(), 
 		      soldier.getSize()
 		    );
+		    // draw the health
+
+		    var barLength = 20
+		    //background
+		    ctx.fillStyle = 'red'
+		    ctx.fillRect(
+		      x - barLength / 2,
+		      y - 15,
+		      barLength,
+		      5
+		    )
+		    ctx.fillStyle = 'rgb(0,255, 0)'
+		    ctx.fillRect(
+		      x - barLength / 2,
+		      y - 15,
+		      barLength * soldier.getHealthPercentage(),
+		      5
+		    )
 		  }
 		  
 		  var drawCorpses = function() {
@@ -248,6 +263,34 @@
 		      drawCorpse(corpses[i]);
 		    };
 		  };
+		  
+		  var drawBits = function(){
+		    for (var i=0; i < bits.length; i++) {
+		      var bit = bits[i]
+		      if (bit == null)
+		        continue
+		        
+		      if (bit.startTime > frameNum - 5) {
+  		      bit.cX += bit.speedX
+  		      bit.cY += bit.speedY
+		      } else if (bit.startTime < frameNum - 100) {
+	          bit = null
+	          continue
+	        }
+		      var opacity =  1 - (frameNum - bit.startTime) / 100;
+		      ctx.beginPath();
+  		    ctx.fillStyle = 'rgba(255, 0, 0, '+ opacity+')';
+          ctx.arc(
+            bit.cX, 
+            bit.cY,
+            2,
+            0,
+            Math.PI*2,
+            true
+          );
+          ctx.fill();
+		    };
+		  }
 		  
 		  var drawCorpse = function(corpse){
 		    drawCircle(
@@ -426,7 +469,9 @@
 	    this.takeBullet = function(damage) {
 	      health -= damage;
 	      if ( health <= 0 ){
-	        corpses.push(self.getCurrentPoint())
+	        corpses.push(
+	          new Corpse(self.getCurrentPosition())
+	        )
 	        deathCallback();
 	        money++;
 	      }
@@ -447,6 +492,23 @@
 	    initialise();
 	  }
 	  
+	  var bits = [];
+		var Corpse = function(position) {
+		  var startPosition = position;
+		  
+	    var i = 5
+      while (i) {
+        bits.push({
+          speedX: 15 - (Math.random() * 30),
+          speedY: 15 - (Math.random() * 30),
+          cX: position[0],
+          cY: position[1],
+          startTime: frameNum
+        })
+        i--;
+      }
+		};
+		
 		function GridGenerator(width, height){
 			var	floor = Math.floor,
 				random = Math.random,
@@ -473,6 +535,7 @@
 		var health = 100;
 		var round = 1;
 		var money = 20;
+		var frameNum = 0
 		
 	  $().ready(function(){
 	    mySoldierManager = new SoldierManager();
@@ -482,6 +545,7 @@
 	      
 	    //  global interval
 	    globalInterval = setInterval(function(){
+	      frameNum ++;
 	      if (lives == 0){
           console.log('death to you');
           clearInterval(globalInterval);
