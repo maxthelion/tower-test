@@ -88,7 +88,8 @@
 	    var draw = function(){
 	      ctx.clearRect(0,0,gridWidth, gridHeight);
 		    ctx.beginPath();
-		    
+		    ctx.strokeStyle = '#aaa';
+		    ctx.lineWidth = 1;
 		    for (var i = 0; i < width; i++) {
 		      ctx.moveTo(i* gridXInterval, 0);
 		      ctx.lineTo(i* gridXInterval, gridHeight)
@@ -115,25 +116,32 @@
 		    if(highLight){
 		      // check there is money
   		    if(money < TurretManager.cost){
-  		      color = 'red';
+  		      color = '255, 0, 0';
   		    } else {
-  		      color = 'green';
+  		      color = '0, 255, 0';
   		    }
           drawCircle(
             highLight[0],
             highLight[1],
             color
           );
+          drawCircle(
+            highLight[0],
+            highLight[1],
+            'rgba('+color+', 0.3)',
+            5
+          );
 		    }
 		  };
 		  
-		  var drawCircle = function(x, y, color){
+		  var drawCircle = function(x, y, color, radius){
+		    radius = radius ? radius : 1
 		    ctx.beginPath();
 		    ctx.fillStyle = color;
         ctx.arc(
           x * gridXInterval + gridXInterval / 2, 
           y * gridYInterval + gridXInterval / 2,
-          gridXInterval / 2,
+          radius * gridXInterval / 2,
           0,
           Math.PI*2,
           true
@@ -162,24 +170,43 @@
 		    if (soldier){
 		      soldier.takeBullet(turret.getDamage());
           ctx.beginPath()
+          tx = turret.getPosition()[0] * gridXInterval + gridXInterval/2
+          ty = turret.getPosition()[1] * gridYInterval + gridYInterval/2
           ctx.moveTo(
-            turret.getPosition()[0] * gridXInterval + gridXInterval/2, 
-            turret.getPosition()[1] * gridYInterval + gridYInterval/2
+            tx, 
+            ty
           )
-          bigX = turret.getPosition()[0] * gridXInterval - soldier.getCurrentPosition()[0];
-          bigY = turret.getPosition()[1] * gridYInterval - soldier.getCurrentPosition()[1];
+          sx = soldier.getCurrentPosition()[0]
+          sy = soldier.getCurrentPosition()[1]
+          var dx = sx - tx;
+          var dy = sy - ty;
+          ctx.strokeStyle = 'black';
+          ctx.lineWidth = 2;          
+          theta = Math.atan2(dy, dx);
           
-          angle = Math.atan( bigY / bigX )
-          console.log(angle)
-          // angle = 0.8;
-          x = (10 * Math.cos(angle)) + (turret.getPosition()[0] * gridXInterval);
-          y = (10 * Math.sin(angle)) + (turret.getPosition()[1] * gridYInterval);
+          radius = 15;
           
+          px = tx + (Math.cos(theta) * radius)
+          py = ty + (Math.sin(theta) * radius) 
+
           ctx.lineTo(
-            x, 
-            y
+            px, 
+            py
           )
           ctx.stroke()
+          ctx.beginPath()
+          radius = (soldierCountDown % 2 == 0) ? 1 : 5
+          // flame
+  		    ctx.fillStyle = 'orange';
+          ctx.arc(
+            px, 
+            py,
+            radius,
+            0,
+            Math.PI*2,
+            true
+          );
+          ctx.fill();
         }
 		  }
 		  
@@ -491,7 +518,10 @@
         mygrid.public_draw();
         
         $('#money').text(money);
-      }, 50);
+      }, 60);
+      $('#canvas').dblclick(function(evt){
+        clearInterval(globalInterval);
+      })
 	  });
   </script>
 </head>
