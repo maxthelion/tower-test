@@ -82,12 +82,13 @@
 	    var gridYInterval = canvas.height / height;
 	    var gridHeight = canvas.height;
 	    var gridWidth = canvas.width;
-      
+      var highLight;
       var result = AStar(grid, startPoint, endPoint, "Manhattan");
 	    
 	    var draw = function(){
 	      ctx.clearRect(0,0,gridWidth, gridHeight);
 		    ctx.beginPath();
+		    
 		    for (var i = 0; i < width; i++) {
 		      ctx.moveTo(i* gridXInterval, 0);
 		      ctx.lineTo(i* gridXInterval, gridHeight)
@@ -102,20 +103,51 @@
         drawTurrets();
         // drawPath();
         drawSoldiers();
-		  }
+        drawHighLight();
+		  };
+		  
+		  // called from the setinterval
 		  this.public_draw = function(){
 		    draw();
+		  }
+		  
+		  var drawHighLight = function(){
+		    if(highLight){
+		      // check there is money
+  		    if(money < TurretManager.cost){
+  		      color = 'red';
+  		    } else {
+  		      color = 'green';
+  		    }
+          drawCircle(
+            highLight[0],
+            highLight[1],
+            color
+          );
+		    }
+		  };
+		  
+		  var drawCircle = function(x, y, color){
+		    ctx.beginPath();
+		    ctx.fillStyle = color;
+        ctx.arc(
+          x * gridXInterval + gridXInterval / 2, 
+          y * gridYInterval + gridXInterval / 2,
+          gridXInterval / 2,
+          0,
+          Math.PI*2,
+          true
+        );
+        ctx.fill();
 		  }
 		  
 		  var drawTurrets = function(){
         for(var i =0; i < myTurretManager.allTurrets().length; i++){
           var turret = myTurretManager.allTurrets()[i]
-          ctx.fillStyle = 'cyan';
-          ctx.fillRect(
-            turret.getPosition()[0] * gridXInterval, 
-            turret.getPosition()[1] * gridYInterval, 
-            gridXInterval, 
-            gridYInterval
+          drawCircle(
+            turret.getPosition()[0],
+            turret.getPosition()[1],
+            'grey'
           );
         }
         // gonna do this in 2 loops for now - wasteful
@@ -134,10 +166,18 @@
             turret.getPosition()[0] * gridXInterval + gridXInterval/2, 
             turret.getPosition()[1] * gridYInterval + gridYInterval/2
           )
-
+          bigX = turret.getPosition()[0] * gridXInterval - soldier.getCurrentPosition()[0];
+          bigY = turret.getPosition()[1] * gridYInterval - soldier.getCurrentPosition()[1];
+          
+          angle = Math.atan( bigY / bigX )
+          console.log(angle)
+          // angle = 0.8;
+          x = (10 * Math.cos(angle)) + (turret.getPosition()[0] * gridXInterval);
+          y = (10 * Math.sin(angle)) + (turret.getPosition()[1] * gridYInterval);
+          
           ctx.lineTo(
-            soldier.getCurrentPosition()[0], 
-            soldier.getCurrentPosition()[1]
+            x, 
+            y
           )
           ctx.stroke()
         }
@@ -183,10 +223,11 @@
 		  };
 		  
 		  var drawCorpse = function(corpse){
-		    x = corpse[0];
-				y = corpse[1];
-				ctx.fillStyle = 'rgb(255,0,0)';
-		    ctx.fillRect(x* gridXInterval, y*gridYInterval, gridXInterval, gridYInterval);
+		    drawCircle(
+          corpse[0],
+          corpse[1],
+          'rgba(255,0,0,0.1)'
+        );
 		  }
 		  
 		  this.pointCenterXY = function(x, y){
@@ -228,10 +269,20 @@
 		        return false;
 		      }
 		    };
-		    
+		    highLight = null;
 		    myTurretManager.createTurret([xIndex, yIndex]);
 	      draw();
 		  });
+		  
+		  $(canvas).mousemove(function(evt){
+		    var xIndex = Math.floor( evt.offsetX/gridXInterval )
+		    var yIndex = Math.floor( evt.offsetY/gridYInterval )
+		    highLight = [xIndex, yIndex];
+	    });
+	    
+	    $(canvas).mouseout(function(evt){
+		    highLight = null;
+	    });
 
 	  };
 	  
@@ -391,7 +442,7 @@
 		var waveLength = 10; // the length of a wave - eg how many soldiers per round
 		var soldierCountDown = regularity;
 		var waveCountDown = waveLength;
-		var speed = 1;
+		var speed = 2;
 		var health = 100;
 		var round = 1;
 		var money = 20;
