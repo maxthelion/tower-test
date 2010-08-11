@@ -11,7 +11,25 @@
       var id = 0;
       var soldiers = [];
       var soldierHash = {};
-      
+      var soldierTypes = [
+				{
+				 name: 'infantry',
+				 speed: 2,
+				 color: '#8ae5f7',
+				 health: 100,
+				 size: 10
+				},
+				{
+				 name: 'heavyInfantry',
+				 speed: 2,
+				 color: 'grey',
+				 health: 200,
+				 size: 16
+				}
+				// 2: 'bike',
+				// 4: 'helicopter'
+			];
+			
       // probably needs optimising
       this.allSoldiers = function(){
         var myArray = [];
@@ -23,9 +41,9 @@
         return myArray;
       };
       
-      this.createSoldier = function(speed, health){
+      this.createSoldier = function(typeIndex){
         var newId = id++;
-        soldier = new Soldier(startPoint, endPoint, grid, speed, health, newId);
+        soldier = new Soldier(startPoint, endPoint, grid, soldierTypes[typeIndex], newId);
         soldier.onReachDestination(function(){
           soldierHash[newId] = null;
           lives--;
@@ -68,10 +86,7 @@
         return myTurret;
       };
     }
-    TurretManager.cost = 10;
-    
-    var startPoint = [3, 0];
-    var	endPoint = [5, 19];
+    TurretManager.cost = 5;
     
     var Grid = function(canvas_id, grid) {
 	    var canvas = document.getElementById(canvas_id)
@@ -231,7 +246,7 @@
 		  var drawSoldier = function(soldier){
 		    x = soldier.getCurrentPosition()[0];
 				y = soldier.getCurrentPosition()[1];
-				ctx.fillStyle = 'rgb(50,50,50)';
+				ctx.fillStyle = soldier.getColor();
 		    ctx.fillRect(
 		      x - soldier.getSize()/2, 
 		      y - soldier.getSize()/2, 
@@ -390,11 +405,11 @@
 	    };
 	  }
 	  
-	  var Soldier = function(startPoint, endPoint, grid, speed, health, id){
+	  var Soldier = function(startPoint, endPoint, grid, template, id){
 	    var self = this;
       // this.xPos;
       // this.yPos;
-      var initialHealth = health;
+      var initialHealth = template['health'];
 	    var health = initialHealth;
 	    var myPath;
 	    var pathIndex = 0;
@@ -405,7 +420,10 @@
 	    var destinationCallback;
 	    var nextPoint;
 	    var nextPointPosition;
-	    var speed = speed;
+	    var speed = template['speed'];
+	    var color = template['color'];
+	    var size = template['size'];
+			var template = template;
 	    
 	    this.move = function(){
 	      // kludge
@@ -448,6 +466,10 @@
 		      return true;      
 		    };
 	    }
+	
+			this.getColor = function(){
+				return color;
+			}
 	    
 	    // this is the grid coordinate for the soldier
 	    this.getCurrentPoint = function(){
@@ -463,7 +485,7 @@
 	    }
 	    
 	    this.getSize = function(){
-	      return 10;
+	      return size;
 	    };
 	    
 	    this.takeBullet = function(damage) {
@@ -527,7 +549,7 @@
 		var mySoldierManager;
 		var myTurretManager;
 		var mygrid;
-		var regularity = 50; // the speed that new soldiers appear
+		var regularity = 20; // the speed that new soldiers appear
 		var waveLength = 10; // the length of a wave - eg how many soldiers per round
 		var soldierCountDown = regularity;
 		var waveCountDown = waveLength;
@@ -535,12 +557,14 @@
 		var health = 100;
 		var round = 1;
 		var money = 20;
-		var frameNum = 0
+		var frameNum = 0;
+		var startPoint = [3, 0];
+    var	endPoint = [5, 14];
 		
 	  $().ready(function(){
 	    mySoldierManager = new SoldierManager();
 	    myTurretManager = new TurretManager();
-	    grid = GridGenerator(20, 20);
+	    grid = GridGenerator(15, 15);
 	    mygrid = new Grid('canvas', grid);
 	      
 	    //  global interval
@@ -570,7 +594,8 @@
                 regularity -= 2;
           }
           // add new soldier
-          mySoldierManager.createSoldier(speed, health);
+					var typeIndex = (round > 2) ? 1 : 0
+          mySoldierManager.createSoldier(typeIndex);
           soldierCountDown = regularity;
         }
         
@@ -590,10 +615,12 @@
   </script>
 </head>
 <body>
-  <p>Lives: <span id="lives"></span></p>
+<div style="float:left; width: 200px">
+	<p>Lives: <span id="lives"></span></p>
   <p>Round: <span id="round"></span></p>
   <p>Kills: <span id="kills"></span></p>
   <p>Money: <span id="money"></span></p>
-<canvas id="canvas" height="500" width="500"></canvas>
+</div>
+<canvas id="canvas" height="400" width="400"></canvas>
 </body>
 </html>
