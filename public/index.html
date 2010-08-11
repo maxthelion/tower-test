@@ -1,7 +1,7 @@
 <html>
 <head>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/javascripts/AStar_memtronic.js" type="text/javascript" charset="utf-8"></script>
+  <script src="javascripts/AStar_memtronic.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
     
     var corpses = [];
@@ -73,6 +73,22 @@
       var self = this;
       var id = 0;
       var turretHash = {};
+      var turretTypes = [
+        {
+          name: 'machine gun',
+          fireRate: 2,
+          range: 2,
+          color: '#555',
+          damage: 1
+        },
+        {
+          name: 'mortar',
+          fireRate: 20,
+          range: 4,
+          color: '#999',
+          damage: 20
+        }
+      ]
       
       // probably needs optimising
       this.allTurrets = function(){
@@ -87,7 +103,7 @@
       
       this.createTurret = function(position){
         var newId = id++;
-        var myTurret = new Turret(position, newId);
+        var myTurret = new Turret(position, turretTypes[currentTurretIndex], newId);
         turretHash[newId] = myTurret;
         money -= TurretManager.cost;
         return myTurret;
@@ -178,7 +194,7 @@
           drawCircle(
             turret.getPosition()[0],
             turret.getPosition()[1],
-            'grey'
+            turret.getColor()
           );
         }
         // gonna do this in 2 loops for now - wasteful
@@ -188,10 +204,9 @@
         }
 		  }
 		  
-		  var connectTarget =function(turret){
+		  var connectTarget = function(turret){
 		    var soldier = turret.targettedSoldier();
 		    if (soldier){
-		      soldier.takeBullet(turret.getDamage());
           ctx.beginPath()
           tx = turret.getPosition()[0] * gridXInterval + gridXInterval/2
           ty = turret.getPosition()[1] * gridYInterval + gridYInterval/2
@@ -203,19 +218,22 @@
           ctx.lineWidth = 2;          
           ctx.lineTo(coords[0], coords[1]);
           ctx.stroke()
-          ctx.beginPath()
-          radius = (soldierCountDown % 2 == 0) ? 1 : 5
-          // flame
-  		    ctx.fillStyle = 'orange';
-          ctx.arc(
-            coords[0], 
-            coords[1],
-            radius,
-            0,
-            Math.PI*2,
-            true
-          );
-          ctx.fill();
+          // draw the fire
+          if(turret.isFiring()){
+            ctx.beginPath()
+            radius = 5
+            // flame
+    		    ctx.fillStyle = 'orange';
+            ctx.arc(
+              coords[0], 
+              coords[1],
+              radius,
+              0,
+              Math.PI*2,
+              true
+            );
+            ctx.fill();
+          };
         }
 		  }
 		  
@@ -378,19 +396,43 @@
 
 	  };
 	  
-	  var Turret = function(position, id){
+	  var Turret = function(position, template, id){
 	    var position = position;
 	    var id = id;
-	    var range = 2;
-	    var damage = 1;
-	    var cost = 1;
+	    var range = template['range'];
+	    var damage = template['damage'];
+	    var fireRate = template['fireRate'];
+	    var color = template['color'];
+	    var tSoldier;
 	    
 	    this.getPosition = function() {
 	      return position;
 	    };
 	    
 	    this.targettedSoldier = function() {
-	      return soldiersInRange()[0];
+	      return tSoldier;
+	    }
+	    
+	    this.getColor = function(){
+				return color;
+			}
+	    
+	    var setTargettedSoldier = function(){
+	      tSoldier = soldiersInRange()[0];
+	    }
+	    
+	    this.aimAndFire = function(){
+	      setTargettedSoldier();
+		    if (tSoldier && (frameNum % fireRate == 0)){
+		      firing = true;
+		      tSoldier.takeBullet(damage);
+	      } else {
+	        firing = false;
+	      }
+	    }
+	    
+	    this.isFiring = function(){
+	      return firing;
 	    }
 	    
 	    var soldiersInRange = function(){
@@ -567,6 +609,7 @@
 		var frameNum = 0;
 		var startPoint = [3, 0];
     var	endPoint = [5, 14];
+    var currentTurretIndex = 0;
 
 		// wave looks like [soldierType, regularity, wavelength]
 		var waves = [
@@ -584,6 +627,15 @@
 		
 		
 	  $().ready(function(){
+	    $('#turret_1').click(function(){
+	      currentTurretIndex = 0;
+	    })
+	    
+	    $('#turret_2').click(function(){
+	      currentTurretIndex = 1;
+	    })
+	    
+	    
 	    mySoldierManager = new SoldierManager();
 	    myTurretManager = new TurretManager();
 	    grid = GridGenerator(15, 15);
@@ -601,6 +653,12 @@
 	      if (lives == 0){
           console.log('death to you');
           clearInterval(globalInterval);
+        }
+        
+        // aim the turrets and fire if possible
+        for(var i =0; i < myTurretManager.allTurrets().length; i++){
+          var turret = myTurretManager.allTurrets()[i]
+          turret.aimAndFire();
         }
         
         if (soldierCountDown > 0){
@@ -663,6 +721,11 @@
   <p>Round: <span id="round"></span></p>
   <p>Kills: <span id="kills"></span></p>
   <p>Money: <span id="money"></span></p>
+  
+  <div>
+    <a href="#" id="turret_1">Turret 1 (fast, not powerful)</a>
+    <a href="#" id="turret_2">Turret 2 (slow, powerful, long range)</a>
+  </div>
 </div>
 <canvas id="canvas" height="400" width="400"></canvas>
 </body>
