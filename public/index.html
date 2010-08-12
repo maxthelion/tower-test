@@ -30,9 +30,9 @@
 				},
 				{
 				 name: 'bike',
-				 speed: 5,
+				 speed: 3,
 				 color: 'blue',
-				 health: 100,
+				 health: 70,
 				 size: 10,
 				 bounty: 1
 				}
@@ -56,8 +56,8 @@
         soldier = new Soldier(startPoint, endPoint, grid, soldierTypes[typeIndex], newId);
         soldier.onReachDestination(function(){
           soldierHash[newId] = null;
-          lives--;
-          $('#lives').text(lives);
+          AttemptToWinGame();
+          loseLife();
         })
         soldier.onDie(function(){
           soldierHash[newId] = null;
@@ -66,7 +66,19 @@
         return soldier;
       };
       
-      
+      this.withinRange = function(x, y, range){
+        myArray = [];
+	      for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
+	        var soldier = mySoldierManager.allSoldiers()[i];
+	        if (soldier.getCurrentPoint()[0] >= x-range && 
+	              soldier.getCurrentPoint()[0] <= x+range &&
+	            soldier.getCurrentPoint()[1] >= y-range && 
+	              soldier.getCurrentPoint()[1] <= y+range ){
+	          myArray.push(soldier);
+	        }
+	      };
+	      return myArray;
+      }
 
     };
     
@@ -89,6 +101,14 @@
           range: 4,
           color: '#999',
           damage: 20,
+					cost: 15
+        },
+        {
+          name: 'heavy cannon',
+          fireRate: 100,
+          range: 4,
+          color: '#999',
+          damage: 100,
 					cost: 15
         }
       ]
@@ -115,6 +135,10 @@
 			this.cost = function(index) {
 				return turretTypes[index]['cost']
 			};
+			
+			this.getTurretTypes = function(){
+			  return turretTypes;
+			}
     }
     
     var Grid = function(canvas_id, grid) {
@@ -150,6 +174,7 @@
         drawSoldiers();
         drawHighLight();
         drawBits();
+        drawTerrain();
 		  };
 		  
 		  // called from the setinterval
@@ -158,31 +183,40 @@
 		  }
 		  
 		  var drawHighLight = function(){
-		    if(highLight){
+		    if(highLight && !nuking){
 		      // check there is money
   		    if(money < myTurretManager.cost(currentTurretIndex)){
-  		      color = '255, 0, 0';
+  		      var color = '255, 0, 0';
   		    } else {
-  		      color = '0, 255, 0';
+  		      var color = '0, 255, 0';
   		    }
           drawCircle(
             highLight[0],
             highLight[1],
-            color
+            'rgb(' + color +')'
           );
+          r = myTurretManager.getTurretTypes()[currentTurretIndex]['range'] * 2 + 1
           drawCircle(
             highLight[0],
             highLight[1],
             'rgba('+color+', 0.3)',
-            5
+            r
+          );
+		    } else if (highLight && nuking){
+		      var color = '255, 255, 0';
+		      drawCircle(
+            highLight[0],
+            highLight[1],
+            'rgba('+color+', 0.3)',
+            nukeRadius * 2 + 1
           );
 		    }
 		  };
 		  
-		  var drawCircle = function(x, y, color, radius){
+		  var drawCircle = function(x, y, mycolor, radius){
 		    radius = radius ? radius : 1
 		    ctx.beginPath();
-		    ctx.fillStyle = color;
+		    ctx.fillStyle = mycolor;
         ctx.arc(
           x * gridXInterval + gridXInterval / 2, 
           y * gridYInterval + gridXInterval / 2,
@@ -344,6 +378,16 @@
           corpse[1],
           'rgba(255,0,0,0.1)'
         );
+		  };
+		  
+		  var drawTerrain = function(){
+		    for (var i=0; i < terrain.length; i++) {
+		      drawCircle(
+            terrain[i][0],
+            terrain[i][1],
+            'brown'
+          );
+		    };
 		  }
 		  
 		  this.pointCenterXY = function(x, y){
@@ -362,14 +406,29 @@
 		  draw();
 		  
 		  $(canvas).click(function(evt){
+		    if (playing == false || paused == true){
+		      return false;
+		    }
+		    var xIndex = Math.floor( evt.offsetX/gridXInterval )
+		    var yIndex = Math.floor( evt.offsetY/gridYInterval )
+		    
+		    if(nuking){
+		      unfortunates = mySoldierManager.withinRange(xIndex, yIndex, nukeRadius)
+		      for (var i=0; i < unfortunates.length; i++) {
+		        unfortunates[i].takeBullet(100);
+		      };
+		      return false;
+		    };
+		    
+		    if (grid[yIndex][xIndex] == 1)
+		      return false // can't put things on top of each other
+		      
 		    // check there is money
 		    if(money < myTurretManager.cost(currentTurretIndex)){
 					$('#notice').text('Not enough money, bozo!')
 		      // no money
 		      return false
 		    }
-		    var xIndex = Math.floor( evt.offsetX/gridXInterval )
-		    var yIndex = Math.floor( evt.offsetY/gridYInterval )
 		    grid[yIndex][xIndex] = 1;
 		    // check the global path
 		    result = AStar(grid, startPoint, endPoint, "Manhattan");
@@ -443,17 +502,7 @@
 	    }
 	    
 	    var soldiersInRange = function(){
-	      myArray = [];
-	      for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
-	        var soldier = mySoldierManager.allSoldiers()[i];
-	        if (soldier.getCurrentPoint()[0] >= position[0]-range && 
-	              soldier.getCurrentPoint()[0] <= position[0]+range &&
-	            soldier.getCurrentPoint()[1] >= position[1]-range && 
-	              soldier.getCurrentPoint()[1] <= position[1]+range ){
-	          myArray.push(soldier);
-	        }
-	      };
-	      return myArray;
+	      return mySoldierManager.withinRange(position[0], position[1], range);
 	    };
 	    
 	    this.getDamage = function(){
@@ -615,20 +664,33 @@
 		var round = 1;
 		var money = 20;
 		var frameNum = 0;
-		var startPoint = [3, 0];
-    var	endPoint = [5, 14];
+		var startPoint =  [3, 0];
+    var	endPoint =    [5, 14];
     var currentTurretIndex = 0;
+		var nuking = false;
+		var paused = false;
+		var playing =  false;
+		var nukeRadius = 5;
 		
-		var incrementKills = function(bounty){
-			if (round == waves.length && waveCountDown == 0 && mySoldierManager.allSoldiers().length == 0){
-				$('#notice').text('YOU WIN!')
-				clearInterval(globalInterval);
-			} else {
-				money += bounty;
-				kills++;
-        $('#kills').text(kills);
-			}
+		var incrementKills = function(bounty){			
+			money += bounty;
+			kills++;
+      $('#kills').text(kills);
+			AttemptToWinGame();
 		};
+		
+		var AttemptToWinGame = function(){
+		  if (round == waves.length && waveCountDown == 0 && mySoldierManager.allSoldiers().length == 0){
+		    $('#notice').text('YOU WIN!')
+  			clearInterval(globalInterval);
+  			playing = false;
+			}
+		}
+		
+		var loseLife = function(){
+		  lives--;
+      $('#lives').text(lives);
+		}
 		
 		// wave looks like [soldierType, regularity, wavelength]
 		var waves = [
@@ -640,15 +702,25 @@
 			[1, 30, 5],
 			[0, 10, 10],
 			[0, 10, 10],
-			[2, 10, 10],
+			[2, 10, 5],
+			[0, 15, 5],
+			[0, 15, 10],
 			[1, 10, 10]
-		]
+		];
+		
+		var k = 10;
+		var terrain = [];
+		while(k > 0){
+		 terrain.push( [Math.floor(Math.random() * 15), Math.floor(Math.random() * 15)] );
+		 k--
+		}
 		
 		var frameFunction = function(){
       frameNum ++;
       if (lives == 0){
         $('#notice').text('death to you, sucker!!! you are teh suck!!!');
         clearInterval(globalInterval);
+        playing = false;
       }
       
       // aim the turrets and fire if possible
@@ -690,21 +762,16 @@
       $('#money').text(money);
     }
 		
-	  $().ready(function(){
-	    $('#turret_1').click(function(){
-	      currentTurretIndex = 0;
-	    })
-	    
-	    $('#turret_2').click(function(){
-	      currentTurretIndex = 1;
-	    })
-	    
-	    
+	  $().ready(function(){	    
 	    mySoldierManager = new SoldierManager();
 	    myTurretManager = new TurretManager();
 	    grid = GridGenerator(15, 15);
+	    for (var i=0; i < terrain.length; i++) {
+	     grid[ terrain[i][1] ][terrain[i][0]] = 1;
+	    };
 	    mygrid = new Grid('canvas', grid);
-	
+	    drawTurretButtons();
+	    
 	    wave = waves[0];
 			waveCountDown = wave[2];
 			regularity = wave[1];
@@ -715,7 +782,7 @@
 	    //  global interval
 	    globalInterval = setInterval(frameFunction, 60);
 			
-			var paused = false;
+			
       $('#pause_button').click(function(evt){
 				if(!paused){
         	clearInterval(globalInterval);
@@ -728,11 +795,38 @@
 				}
       })
 	  });
+	  
+	  var drawTurretButtons = function(){
+	    $('#turret_choices').text('')
+	    for (var i=0; i < myTurretManager.getTurretTypes().length; i++) {
+	      var t = myTurretManager.getTurretTypes()[i];
+	      var tbutton = $('<a href="#">').text(myTurretManager.getTurretTypes()[i]['name'])
+	      tbutton.data('foo', i)
+	      tbutton.click(function(){
+	        currentTurretIndex = $(this).data('foo');
+ 	 	    });
+  	    $('#turret_choices').append(tbutton);
+	    };
+	  }
+	  
+	  $(window).keydown(function(event) {
+      if (event.keyCode == '78') {
+         nuking = true;
+       }
+    });
+    
+    $(window).keyup(function(event) {
+      if (event.keyCode == '78') {
+         nuking = false;
+       }
+    });
   </script>
-</head>
 <style type="text/css" media="screen">
 	* {
 		font-family: arial;
+	}
+	a {
+	  color: black;
 	}
 	#notice {
 		font-size: 2em;
@@ -740,7 +834,20 @@
 		width: 400px;
 		margin-left: 200px;
 	}
+	#turret_choices a {
+    display: block;
+    padding: 5px;
+    float: left;
+	}
+	#turret_choices a:hover {
+    background: yellow;
+	}
+	p {
+	  clear: left;
+	}
 </style>
+</head>
+
 <body>
 	
 <div id="notice">Game starting soon</div>
@@ -752,9 +859,8 @@
   <p>Money: <span id="money"></span></p>
   
   <div>
-    <a href="#" id="turret_1">Turret 1 (fast, not powerful)</a>
-    <a href="#" id="turret_2">Turret 2 (slow, powerful, long range)</a>
-
+    <h3>Choose your weapons!!!</h3>
+    <div id="turret_choices"></div>
 		<p><a href="#" id="pause_button">Pause</a></p>
   </div>
 </div>
