@@ -80,14 +80,16 @@
           fireRate: 2,
           range: 2,
           color: '#555',
-          damage: 1
+          damage: 1,
+					cost: 5
         },
         {
           name: 'mortar',
           fireRate: 20,
           range: 4,
           color: '#999',
-          damage: 20
+          damage: 20,
+					cost: 15
         }
       ]
       
@@ -106,11 +108,14 @@
         var newId = id++;
         var myTurret = new Turret(position, turretTypes[currentTurretIndex], newId);
         turretHash[newId] = myTurret;
-        money -= TurretManager.cost;
+        money -= myTurretManager.cost(currentTurretIndex);
         return myTurret;
       };
+
+			this.cost = function(index) {
+				return turretTypes[index]['cost']
+			};
     }
-    TurretManager.cost = 5;
     
     var Grid = function(canvas_id, grid) {
 	    var canvas = document.getElementById(canvas_id)
@@ -155,7 +160,7 @@
 		  var drawHighLight = function(){
 		    if(highLight){
 		      // check there is money
-  		    if(money < TurretManager.cost){
+  		    if(money < myTurretManager.cost(currentTurretIndex)){
   		      color = '255, 0, 0';
   		    } else {
   		      color = '0, 255, 0';
@@ -358,7 +363,8 @@
 		  
 		  $(canvas).click(function(evt){
 		    // check there is money
-		    if(money < TurretManager.cost){
+		    if(money < myTurretManager.cost(currentTurretIndex)){
+					$('#notice').text('Not enough money, bozo!')
 		      // no money
 		      return false
 		    }
@@ -614,7 +620,7 @@
     var currentTurretIndex = 0;
 		
 		var incrementKills = function(bounty){
-			if (round == waves.length && mySoldierManager.allSoldiers().length == 0){
+			if (round == waves.length && waveCountDown == 0 && mySoldierManager.allSoldiers().length == 0){
 				$('#notice').text('YOU WIN!')
 				clearInterval(globalInterval);
 			} else {
@@ -657,7 +663,7 @@
         if (waveCountDown > 0){
           waveCountDown--;
         } else {
-					if(round < waves.length){
+					if(round <= waves.length){
 						$('#notice').text('Round ' + round + ' completed (of '+waves.length+')');
 						round++;
 						// mark the round number
@@ -668,7 +674,9 @@
 						typeIndex = wave[0];
 					}
         }
-        mySoldierManager.createSoldier(typeIndex);
+				if (round	<= waves.length){
+        	mySoldierManager.createSoldier(typeIndex);
+				}
         soldierCountDown = regularity;
       }
       
