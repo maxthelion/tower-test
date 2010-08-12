@@ -105,11 +105,22 @@
         },
         {
           name: 'heavy cannon',
-          fireRate: 100,
+          fireRate: 50,
           range: 4,
           color: '#999',
           damage: 100,
 					cost: 15
+        },
+        {
+          name: 'glue gun',
+          fireRate: 20,
+          range: 1,
+          color: 'green',
+          damage: 0,
+					cost: 5,
+					hitCallback: function(soldier, myFrameNum){
+					  soldier.slow(myFrameNum + 100);
+					}
         }
       ]
       
@@ -492,6 +503,9 @@
 		    if (tSoldier && (frameNum % fireRate == 0)){
 		      firing = true;
 		      tSoldier.takeBullet(damage);
+		      if (template['hitCallback']){
+		        template['hitCallback'](tSoldier, frameNum)
+		      }
 	      } else {
 	        firing = false;
 	      }
@@ -530,18 +544,25 @@
 	    var size = template['size'];
 			var bounty = template['bounty']
 			var template = template;
+	    var slowedUntil;
+	    currentSpeed = speed;
 	    
 	    this.move = function(){
+	      if(isSlowed()){
+	        currentSpeed = speed / 2;
+	      } else {
+	        currentSpeed = speed;
+	      }
 	      // kludge
 	      if (nextPointPosition[0] > currentPosition[0]){
-	        currentPosition[0] += speed;
+	        currentPosition[0] += currentSpeed;
 	      } else {
-	        currentPosition[0] -= speed;
+	        currentPosition[0] -= currentSpeed;
 	      }
 	      if (nextPointPosition[1] > currentPosition[1]){
-	        currentPosition[1] += speed;
+	        currentPosition[1] += currentSpeed;
 	      } else {
-	        currentPosition[1] -= speed;
+	        currentPosition[1] -= currentSpeed;
 	      }
 	      var cell = mygrid.cellFromPosition( currentPosition );
         if (nextPoint == undefined){
@@ -556,6 +577,14 @@
     	        nextPointPosition = mygrid.pointCenterXY(nextPoint[0], nextPoint[1]);
           } 
 	      }
+	    }
+	    
+	    this.slow = function(myFrameNum){
+	      slowedUntil = myFrameNum;
+	    }
+	    
+	    var isSlowed = function(){
+	      return slowedUntil && slowedUntil > frameNum
 	    }
 	    
 	    this.getCurrentPosition = function(){
@@ -574,7 +603,7 @@
 	    }
 	
 			this.getColor = function(){
-				return color;
+				return isSlowed() ? 'green' : color;
 			}
 	    
 	    // this is the grid coordinate for the soldier
