@@ -61,6 +61,7 @@
         })
         soldier.onDie(function(){
           soldierHash[newId] = null;
+          playSound();
         })
         soldierHash[newId] = soldier;
         return soldier;
@@ -850,6 +851,11 @@
          nuking = false;
        }
     });
+    
+    playSound = function(id) {
+      x = $('#'+ id).clone();
+      x[0].play();
+    }
   </script>
 <style type="text/css" media="screen">
 	* {
@@ -895,5 +901,12 @@
   </div>
 </div>
 <canvas id="canvas" height="400" width="400"></canvas>
+
+<audio class='hidden' id="sweet"> 
+  <source src='audio/K.mp3' /> 
+</audio>
+<audio class='hidden' id="shot"> 
+  <source src='audio/gun_shotgun2.mp3' /> 
+</audio>
 </body>
 </html>
