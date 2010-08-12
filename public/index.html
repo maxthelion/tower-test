@@ -17,21 +17,24 @@
 				 speed: 2,
 				 color: '#8ae5f7',
 				 health: 100,
-				 size: 10
+				 size: 10,
+				 bounty: 1 
 				},
 				{
 				 name: 'heavyInfantry',
 				 speed: 2,
 				 color: 'grey',
 				 health: 200,
-				 size: 16
+				 size: 16,
+				 bounty: 2
 				},
 				{
 				 name: 'bike',
 				 speed: 5,
 				 color: 'blue',
 				 health: 100,
-				 size: 10
+				 size: 10,
+				 bounty: 1
 				}
 				// 2: 'bike',
 				// 4: 'helicopter'
@@ -58,8 +61,6 @@
         })
         soldier.onDie(function(){
           soldierHash[newId] = null;
-          kills++;
-          $('#kills').text(kills);
         })
         soldierHash[newId] = soldier;
         return soldier;
@@ -472,6 +473,7 @@
 	    var speed = template['speed'];
 	    var color = template['color'];
 	    var size = template['size'];
+			var bounty = template['bounty']
 			var template = template;
 	    
 	    this.move = function(){
@@ -544,7 +546,7 @@
 	          new Corpse(self.getCurrentPosition())
 	        )
 	        deathCallback();
-	        money++;
+					incrementKills(bounty);
 	      }
 	    }
 	    
@@ -610,7 +612,18 @@
 		var startPoint = [3, 0];
     var	endPoint = [5, 14];
     var currentTurretIndex = 0;
-
+		
+		var incrementKills = function(bounty){
+			if (round == waves.length && mySoldierManager.allSoldiers().length == 0){
+				$('#notice').text('YOU WIN!')
+				clearInterval(globalInterval);
+			} else {
+				money += bounty;
+				kills++;
+        $('#kills').text(kills);
+			}
+		};
+		
 		// wave looks like [soldierType, regularity, wavelength]
 		var waves = [
 			[0, 30, 10],
@@ -625,6 +638,49 @@
 			[1, 10, 10]
 		]
 		
+		var frameFunction = function(){
+      frameNum ++;
+      if (lives == 0){
+        console.log('death to you');
+        clearInterval(globalInterval);
+      }
+      
+      // aim the turrets and fire if possible
+      for(var i =0; i < myTurretManager.allTurrets().length; i++){
+        var turret = myTurretManager.allTurrets()[i]
+        turret.aimAndFire();
+      }
+      
+      if (soldierCountDown > 0){
+        soldierCountDown--;
+      } else {
+        if (waveCountDown > 0){
+          waveCountDown--;
+        } else {
+					if(round < waves.length){
+						$('#notice').text('Round ' + round + ' completed (of '+waves.length+')');
+						round++;
+						// mark the round number
+            $('#round').text(round);
+						wave = waves[round - 1];
+						waveCountDown = wave[2];
+						regularity = wave[1];
+						typeIndex = wave[0];
+					}
+        }
+        mySoldierManager.createSoldier(typeIndex);
+        soldierCountDown = regularity;
+      }
+      
+      // move the soldiers
+      for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
+        mySoldierManager.allSoldiers()[i].move();
+      };
+      
+      mygrid.public_draw();
+      
+      $('#money').text(money);
+    }
 		
 	  $().ready(function(){
 	    $('#turret_1').click(function(){
@@ -646,57 +702,22 @@
 			regularity = wave[1];
 			typeIndex = wave[0];
 			
-			$('#notice').text('RELEASE THE HORDES!!!!')
+			$('#notice').text('RELEASE THE HORDES!!!!');
+			playing = true;
 	    //  global interval
-	    globalInterval = setInterval(function(){
-	      frameNum ++;
-	      if (lives == 0){
-          console.log('death to you');
-          clearInterval(globalInterval);
-        }
-        
-        // aim the turrets and fire if possible
-        for(var i =0; i < myTurretManager.allTurrets().length; i++){
-          var turret = myTurretManager.allTurrets()[i]
-          turret.aimAndFire();
-        }
-        
-        if (soldierCountDown > 0){
-          soldierCountDown--;
-        } else {
-          if (waveCountDown > 0){
-            waveCountDown--;
-          } else {
-						if(round == waves.length){
-							$('#notice').text('YOU WIN!')
-							clearInterval(globalInterval);
-							return true;
-						} else {
-							$('#notice').text('Round ' + round + ' completed (of '+waves.length+')');
-							round++;
-							// mark the round number
-	            $('#round').text(round);
-							wave = waves[round - 1];
-							waveCountDown = wave[2];
-							regularity = wave[1];
-							typeIndex = wave[0];
-						}
-          }
-          mySoldierManager.createSoldier(typeIndex);
-          soldierCountDown = regularity;
-        }
-        
-	      // move the soldiers
-        for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
-          mySoldierManager.allSoldiers()[i].move();
-        };
-        
-        mygrid.public_draw();
-        
-        $('#money').text(money);
-      }, 60);
-      $('#canvas').dblclick(function(evt){
-        clearInterval(globalInterval);
+	    globalInterval = setInterval(frameFunction, 60);
+			
+			var paused = false;
+      $('#pause_button').click(function(evt){
+				if(!paused){
+        	clearInterval(globalInterval);
+					paused = true;
+					$('#pause_button').text('Play');
+				} else {
+					globalInterval = setInterval(frameFunction, 60);
+					paused = false;
+					$('#pause_button').text('Pause');
+				}
       })
 	  });
   </script>
@@ -725,6 +746,8 @@
   <div>
     <a href="#" id="turret_1">Turret 1 (fast, not powerful)</a>
     <a href="#" id="turret_2">Turret 2 (slow, powerful, long range)</a>
+
+		<p><a href="#" id="pause_button">Pause</a></p>
   </div>
 </div>
 <canvas id="canvas" height="400" width="400"></canvas>
