@@ -60,7 +60,7 @@ var SoldierManager = function(){
   	 name: 'helicopter',
   	 speed: 2,
   	 color: '#bbb',
-  	 health: 30,
+  	 health: 100,
   	 size: 10,
   	 bounty: 1,
   	 type: Helicopter
