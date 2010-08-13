@@ -67,17 +67,23 @@ var SoldierManager = function(){
   	}
 	];
 	
-  // probably needs optimising
   this.allSoldiers = function(){
     return allSoldiersArrays['s'];
+  };
+
+  this.allUnits = function(){
+	  var soldiers = []
+    soldiers = soldiers.concat(allSoldiersArrays['a'])
+    soldiers = soldiers.concat(allSoldiersArrays['s'])
+    return soldiers;
   };
   
   var addSoldier = function(a){
     var key = keyFromSoldier(a)
     allSoldiersHash[key][a.getId()] = a;
     soldier.onReachDestination(function(){
-	    loseLife();
       removeSoldier(a);
+	    loseLife();
     })
     soldier.onDie(function(){
       removeSoldier(a);
@@ -139,7 +145,7 @@ var SoldierManager = function(){
   }
 };
 
-var Soldier = function(startPoint, endPoint, grid, template, id){
+var Soldier = function(startPoint, endPoint, grid, template, id){	
   var self = this;
   // this.xPos;
   // this.yPos;
@@ -289,7 +295,7 @@ var Helicopter = function(startPoint, endPoint, grid, template, id){
   var initialHealth = template['health'];
   var health = initialHealth;
   var bounty = template['bounty'];
-  var id = id
+  var id
   
   this.move = function(){
     // kludge
@@ -312,9 +318,11 @@ var Helicopter = function(startPoint, endPoint, grid, template, id){
   this.getCurrentPosition = function(){
     return currentPosition;
   }
+
   this.getColor = function(){
     return 'blue'
   }
+
   this.getSize = function(){
     return 1
   }
