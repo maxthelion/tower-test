@@ -75,7 +75,7 @@ var Grid = function(canvas_id, grid) {
   var drawHighLight = function(){
     if(highLight){
       // check there is money
-	    if(money < myTurretManager.cost(currentTurretIndex)){
+	    if(money < currentUnit()['cost']){
 	      var color = '255, 0, 0';
 	    } else {
 	      var color = '0, 255, 0';
@@ -85,7 +85,7 @@ var Grid = function(canvas_id, grid) {
         highLight[1],
         'rgb(' + color +')'
       );
-      r = radiusFromRange(myTurretManager.getTurretTypes()[currentTurretIndex]['range'])
+      r = radiusFromRange(currentUnit()['range'])
       drawCircle(
         highLight[0],
         highLight[1],
@@ -114,22 +114,23 @@ var Grid = function(canvas_id, grid) {
   }
   
   var drawTurrets = function(){
-    for(var i =0; i < myTurretManager.allTurrets().length; i++){
-      var turret = myTurretManager.allTurrets()[i]
+    for(var i =0; i < units.length; i++){
+      var unit = units[i]
       drawCircle(
-        turret.getPosition()[0],
-        turret.getPosition()[1],
-        turret.getColor()
+        unit.getPosition()[0],
+        unit.getPosition()[1],
+        unit.getColor(),
+        unit.getSize()
       );
     }
     // gonna do this in 2 loops for now - wasteful
-    for(var i =0; i < myTurretManager.allTurrets().length; i++){
-      var turret = myTurretManager.allTurrets()[i]
-      connectTarget(turret);
+    for(var i =0; i < turrets.length; i++){
+      var turret = turrets[i]
+      drawBarrel(turret);
     }
   }
   
-  var connectTarget = function(turret){
+  var drawBarrel = function(turret){
     var soldier = turret.targettedSoldier();
     if (soldier){
       ctx.beginPath()
@@ -297,40 +298,12 @@ var Grid = function(canvas_id, grid) {
     var xIndex = Math.floor( evt.offsetX/gridXInterval )
     var yIndex = Math.floor( evt.offsetY/gridYInterval )
     u = currentUnit();
-      
-    // check there is money
-    if(money < u['cost']){
-			$('#notice').text('Not enough money, bozo!')
-      // no money
-      return false
-    }
     
-    if(u['type'] == Explosion){
-      explosions.push( new Explosion(xIndex, yIndex, u['range'], frameNum) );
-      return false;
-    };
     
-    if (grid[yIndex][xIndex] == 1)
-      return false // can't put things on top of each other
-      
-    grid[yIndex][xIndex] = 1;
-    // check the global path
-    result = AStar(grid, startPoint, endPoint, "Manhattan");
-    if (result.length == 0){ // fail to connect
-      grid[yIndex][xIndex] = 0;
-	    result = AStar(grid, startPoint, endPoint, "Manhattan");
-	    return false
-    };
-    //check for all the soldiers
-    for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
-      if (!mySoldierManager.allSoldiers()[i].regeneratePath()) {
-        grid[yIndex][xIndex] = 0;
-		    result = AStar(grid, startPoint, endPoint, "Manhattan");
-        return false;
-      }
-    };
+    addUnit(u, xIndex, yIndex);
+    
     highLight = null;
-    myTurretManager.createTurret([xIndex, yIndex]);
+    
     draw();
   });
   
@@ -345,3 +318,34 @@ var Grid = function(canvas_id, grid) {
   });
 
 };
+
+var addUnit = function(u, x, y){
+  // check there is money
+  if(money < u['cost']){
+		$('#notice').text('Not enough money, bozo!')
+    // no money
+    return false
+  }
+  
+  if (grid[y][x] == 1)
+    return false // can't put things on top of each other
+    
+  grid[y][x] = 1;
+  // check the global path
+  result = AStar(grid, startPoint, endPoint, "Manhattan");
+  if (result.length == 0){ // fail to connect
+    grid[y][x] = 0;
+    result = AStar(grid, startPoint, endPoint, "Manhattan");
+    return false
+  };
+  //check for all the soldiers
+  for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
+    if (!mySoldierManager.allSoldiers()[i].regeneratePath()) {
+      grid[y][x] = 0;
+	    result = AStar(grid, startPoint, endPoint, "Manhattan");
+      return false;
+    }
+  };
+  
+  myUnitMangager.createUnit(u, [x, y]);
+}

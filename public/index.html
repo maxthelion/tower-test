@@ -168,8 +168,8 @@
 	  
 	  var drawTurretButtons = function(){
 	    $('#turret_choices').text('')
-	    for (var i=0; i < myTurretManager.getTurretTypes().length; i++) {
-	      var t = myTurretManager.getTurretTypes()[i];
+	    for (var i=0; i < unitTypes.length; i++) {
+	      var t = unitTypes[i];
 	      var tbutton = $('<a href="#">').text(t['name'])
 	      tbutton.attr('id', 'button_'+i);
 				if (i == currentTurretIndex)
@@ -195,9 +195,8 @@
 		}
 		var aimAndFireTurrets = function(){
 			// aim the turrets and fire if possible
-      for(var i =0; i < myTurretManager.allTurrets().length; i++){
-        var turret = myTurretManager.allTurrets()[i]
-        turret.aimAndFire();
+      for(var i =0; i < turrets.length; i++){
+        turrets[i].aimAndFire();
       }
 		}
     

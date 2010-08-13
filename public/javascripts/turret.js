@@ -1,34 +1,7 @@
 var TurretManager = function(){
-  var self = this;
-  var id = 0;
-  var turretHash = {};
-  
-  // probably needs optimising
-  this.allTurrets = function(){
-    var myArray = [];
-    for( i in turretHash){
-      if(turretHash[i] != null){
-        myArray.push(turretHash[i]);
-      };
-    }
-    return myArray;
-  };
-  
-  this.createTurret = function(position){
-    var newId = id++;
-    var myTurret = new Turret(position, unitTypes[currentTurretIndex], newId);
-    turretHash[newId] = myTurret;
-    changeMoney( myTurretManager.cost(currentTurretIndex) * -1 );
-    return myTurret;
-  };
-
 	this.cost = function(index) {
 		return unitTypes[index]['cost']
 	};
-	
-	this.getTurretTypes = function(){
-	  return unitTypes;
-	}
 }
 
 var Turret = function(position, template, id){
@@ -81,4 +54,8 @@ var Turret = function(position, template, id){
   this.getDamage = function(){
     return damage;
   };
+  
+  this.getSize = function() {
+    return template['size']
+  }
 }
