@@ -81,6 +81,19 @@ var unitTypes = [
     type: Obstacle,
     size: 0.6
   },
+  {
+    name: 'flamer',
+    fireRate: 10,
+    range: 1,
+    color: 'orange',
+    damage: 2,
+		cost: 3,
+		size: 0.5,
+		hitCallback: function(soldier, myFrameNum){
+		  soldier.setAlight(frameNum + 30);
+		},
+		type: Turret
+  },
 ]
 
 var currentUnit = function(){

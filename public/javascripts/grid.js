@@ -197,15 +197,28 @@ var Grid = function(canvas_id, grid) {
   var drawSoldier = function(soldier){
     x = soldier.getCurrentPosition()[0];
 		y = soldier.getCurrentPosition()[1];
-		ctx.fillStyle = soldier.getColor();
+		w = soldier.getSize();
+    
+    if (soldier.isOnFire()){
+      ctx.fillStyle = 'orange';
+  		w2 = w * 1.5
+      ctx.fillRect(
+        x - w2 /2, 
+        y - w2 /2, 
+        w2, 
+        w2
+      )
+    }
+    
+    ctx.fillStyle = soldier.getColor();
     ctx.fillRect(
-      x - soldier.getSize()/2, 
-      y - soldier.getSize()/2, 
+      x - w/2, 
+      y - w/2, 
       soldier.getSize(), 
       soldier.getSize()
     );
+    
     // draw the health
-
     var barLength = 20
     //background
     ctx.fillStyle = 'red'

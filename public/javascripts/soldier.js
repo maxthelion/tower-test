@@ -7,7 +7,7 @@ var SoldierManager = function(){
 		{
 		 name: 'lightInfantry',
 		 speed: 2,
-		 color: '#8ae5f7',
+		 color: '#bbb',
 		 health: 30,
 		 size: 10,
 		 bounty: 1
@@ -111,10 +111,14 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 	var bounty = template['bounty']
 	var template = template;
   var slowedUntil;
+  var startFlameNum;
   currentSpeed = speed;
   
   this.move = function(){
-    if(isSlowed()){
+    if(self.isOnFire()){
+      health -= 0.5;
+      currentSpeed = speed * 2
+    } else if(isSlowed()){
       currentSpeed = speed / 2;
     } else {
       currentSpeed = speed;
@@ -151,6 +155,10 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
   
   var isSlowed = function(){
     return slowedUntil && slowedUntil > frameNum
+  }
+  
+  this.isOnFire = function(){
+    return startFlameNum && startFlameNum > frameNum
   }
   
   this.getCurrentPosition = function(){
@@ -202,6 +210,10 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
   
   this.getHealthPercentage = function(){
     return health / initialHealth;
+  }
+  
+  this.setAlight = function(sfn){
+    startFlameNum = sfn
   }
   
   var initialise = function(){
