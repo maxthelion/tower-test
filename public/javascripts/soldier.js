@@ -89,6 +89,7 @@ var SoldierManager = function(){
     return myArray;
   }
 };
+
 var Soldier = function(startPoint, endPoint, grid, template, id){
   var self = this;
   // this.xPos;

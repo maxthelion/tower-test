@@ -24,11 +24,38 @@ var Grid = function(canvas_id, grid) {
     drawHighLight();
     drawBits();
     drawTerrain();
+    drawExplosions();
   };
   
   // called from the setinterval
   this.public_draw = function(){
     draw();
+  }
+  
+  var drawExplosions = function(){
+    for (var i=0; i < explosions.length; i++) {
+      var bit = explosions[i]
+      if (bit == null)
+        continue
+      decay = 10
+      if (frameNum - bit.getStartFrame() < decay){
+        var scale =  (frameNum - bit.getStartFrame()) / decay;
+        var opacity = 1 - (scale * .5)
+        radius = radiusFromRange( bit.getRadius() ) * gridXInterval / 2
+        ctx.beginPath();
+  	    ctx.fillStyle = 'rgba(255, 100, 0, '+ opacity+')';
+        ctx.arc(
+          bit.getX() * gridXInterval, 
+          bit.getY() * gridYInterval,
+          radius + (radius * scale),
+          0,
+          Math.PI*2,
+          true
+        );
+        ctx.fill();
+        ctx.beginPath();
+      }
+    };
   }
   
   var drawLines = function() {
@@ -46,7 +73,7 @@ var Grid = function(canvas_id, grid) {
   }
   
   var drawHighLight = function(){
-    if(highLight && !nuking){
+    if(highLight){
       // check there is money
 	    if(money < myTurretManager.cost(currentTurretIndex)){
 	      var color = '255, 0, 0';
@@ -58,23 +85,18 @@ var Grid = function(canvas_id, grid) {
         highLight[1],
         'rgb(' + color +')'
       );
-      r = myTurretManager.getTurretTypes()[currentTurretIndex]['range'] * 2 + 1
+      r = radiusFromRange(myTurretManager.getTurretTypes()[currentTurretIndex]['range'])
       drawCircle(
         highLight[0],
         highLight[1],
         'rgba('+color+', 0.3)',
         r
       );
-    } else if (highLight && nuking){
-      var color = '255, 255, 0';
-      drawCircle(
-        highLight[0],
-        highLight[1],
-        'rgba('+color+', 0.3)',
-        nukeRadius * 2 + 1
-      );
-    }
+    } 
   };
+  var radiusFromRange = function(range){
+    return range * 2 + 1
+  }
   
   var drawCircle = function(x, y, mycolor, radius){
     radius = radius ? radius : 1
@@ -274,24 +296,23 @@ var Grid = function(canvas_id, grid) {
     }
     var xIndex = Math.floor( evt.offsetX/gridXInterval )
     var yIndex = Math.floor( evt.offsetY/gridYInterval )
+    u = currentUnit();
+      
+    // check there is money
+    if(money < u['cost']){
+			$('#notice').text('Not enough money, bozo!')
+      // no money
+      return false
+    }
     
-    if(nuking){
-      unfortunates = mySoldierManager.withinRange(xIndex, yIndex, nukeRadius)
-      for (var i=0; i < unfortunates.length; i++) {
-        unfortunates[i].takeBullet(100);
-      };
+    if(u['type'] == Explosion){
+      explosions.push( new Explosion(xIndex, yIndex, u['range'], frameNum) );
       return false;
     };
     
     if (grid[yIndex][xIndex] == 1)
       return false // can't put things on top of each other
       
-    // check there is money
-    if(money < myTurretManager.cost(currentTurretIndex)){
-			$('#notice').text('Not enough money, bozo!')
-      // no money
-      return false
-    }
     grid[yIndex][xIndex] = 1;
     // check the global path
     result = AStar(grid, startPoint, endPoint, "Manhattan");

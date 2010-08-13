@@ -6,6 +6,7 @@
   <script src="javascripts/grid.js"></script>
   <script src="javascripts/explosive.js"></script>
   <script src="javascripts/turret.js"></script>
+  <script src="javascripts/units.js"></script>
   <script type="text/javascript" charset="utf-8">
     
     var corpses = [];
@@ -57,11 +58,9 @@
 		var startPoint =  [3, 0];
     var	endPoint =    [5, 14];
     var currentTurretIndex = 0;
-		var nuking = false;
 		var paused = false;
 		var playing =  false;
-		var nukeRadius = 5;
-		
+		var explosions = [];
 		var incrementKills = function(bounty){			
 			changeMoney(bounty);
 			kills++;
@@ -230,18 +229,6 @@
         turret.aimAndFire();
       }
 		}
-	  
-	  $(window).keydown(function(event) {
-      if (event.keyCode == '78') {
-         nuking = true;
-       }
-    });
-    
-    $(window).keyup(function(event) {
-      if (event.keyCode == '78') {
-         nuking = false;
-       }
-    });
     
     playSound = function(id) {
       x = $('#'+ id).clone();
@@ -276,11 +263,12 @@
 	.allowed {
 		background: rgb(0, 255, 0);
 	}
-	.not_allowed {
-		background: silver;
-	}
 	.selected {
 		color: yellow;
+	}
+	.not_allowed {
+		background: silver;
+		color: gray;
 	}
 </style>
 </head>
