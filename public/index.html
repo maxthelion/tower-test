@@ -21,6 +21,14 @@
 				 bounty: 1 
 				},
 				{
+				 name: 'Infantry',
+				 speed: 2,
+				 color: 'cyan',
+				 health: 100,
+				 size: 10,
+				 bounty: 1
+				},
+				{
 				 name: 'heavyInfantry',
 				 speed: 2,
 				 color: 'grey',
@@ -66,8 +74,6 @@
         return soldier;
       };
       
-      
-
     };
     
     var TurretManager = function(){
@@ -78,7 +84,7 @@
         {
           name: 'machine gun',
           fireRate: 2,
-          range: 2,
+          range: 1,
           color: '#555',
           damage: 1,
 					cost: 5
@@ -411,6 +417,7 @@
 	    var fireRate = template['fireRate'];
 	    var color = template['color'];
 	    var tSoldier;
+			var firing = false;
 	    
 	    this.getPosition = function() {
 	      return position;
@@ -634,9 +641,9 @@
 		var waves = [
 			[0, 30, 10],
 			[0, 30, 10],
+			[1, 15, 10],
+			[1, 15, 10],
 			[1, 50, 5],
-			[0, 15, 10],
-			[0, 15, 10],
 			[1, 30, 5],
 			[0, 10, 10],
 			[0, 10, 10],
