@@ -15,14 +15,13 @@ var Grid = function(canvas_id, grid) {
     ctx.fillStyle = '#e3d19b'
     ctx.fillRect(0,0,gridWidth, gridHeight);
     // drawLines()
-    ctx.stroke();
+    drawBits();
     drawCorpses();
     drawStartAndEnd();
     drawTurrets();
     // drawPath();
     drawSoldiers();
     drawHighLight();
-    drawBits();
     drawTerrain();
     drawExplosions();
   };
@@ -252,17 +251,17 @@ var Grid = function(canvas_id, grid) {
       if (bit.startTime > frameNum - 5) {
 	      bit.cX += bit.speedX
 	      bit.cY += bit.speedY
-      } else if (bit.startTime < frameNum - 100) {
+      } else if (bit.startTime < frameNum - 200) {
         bit = null
         continue
       }
-      var opacity =  1 - (frameNum - bit.startTime) / 100;
+      var opacity =  1 - (frameNum - bit.startTime) / 200;
       ctx.beginPath();
 	    ctx.fillStyle = 'rgba(255, 0, 0, '+ opacity+')';
       ctx.arc(
         bit.cX, 
         bit.cY,
-        2,
+        bloodSpatterSize,
         0,
         Math.PI*2,
         true

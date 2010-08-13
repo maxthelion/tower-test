@@ -226,3 +226,7 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
   
   initialise();
 }
+
+var HeliCopter = function(){
+  
+}

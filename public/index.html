@@ -15,7 +15,7 @@
 	  var bits = [];
 		var Corpse = function(position) {
 		  var startPosition = position;
-	    var i = 5
+	    var i = bloodSpatterSize
       while (i) {
         bits.push({
           speedX: 15 - (Math.random() * 30),
@@ -63,6 +63,8 @@
 		var explosions = [];
 		var sounds;
 		var muted = true;
+		var bloodSpatterSize = 10
+		var bloodSpatterNum = 10
 		
 		var incrementKills = function(bounty){			
 			changeMoney(bounty);
