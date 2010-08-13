@@ -20,11 +20,11 @@ var Grid = function(canvas_id, grid) {
     drawStartAndEnd();
     drawTurrets();
     // drawPath();
+    drawTerrain();
     drawSoldiers();
+    drawExplosions();
     drawHelis();
     drawHighLight();
-    drawTerrain();
-    drawExplosions();
   };
   
   // called from the setinterval
