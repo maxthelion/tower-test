@@ -12,17 +12,9 @@ var Grid = function(canvas_id, grid) {
   
   var draw = function(){
     ctx.clearRect(0,0,gridWidth, gridHeight);
-    ctx.beginPath();
-    ctx.strokeStyle = '#aaa';
-    ctx.lineWidth = 1;
-    for (var i = 0; i < width; i++) {
-      ctx.moveTo(i* gridXInterval, 0);
-      ctx.lineTo(i* gridXInterval, gridHeight)
-    };
-    for (var i = 0; i < height; i++) {
-      ctx.moveTo(0, i*gridYInterval);
-      ctx.lineTo(gridWidth, i*gridYInterval);
-    };
+    ctx.fillStyle = '#e3d19b'
+    ctx.fillRect(0,0,gridWidth, gridHeight);
+    // drawLines()
     ctx.stroke();
     drawCorpses();
     drawStartAndEnd();
@@ -37,6 +29,20 @@ var Grid = function(canvas_id, grid) {
   // called from the setinterval
   this.public_draw = function(){
     draw();
+  }
+  
+  var drawLines = function() {
+    ctx.beginPath();
+    ctx.strokeStyle = '#aaa';
+    ctx.lineWidth = 1;
+    for (var i = 0; i < width; i++) {
+      ctx.moveTo(i* gridXInterval, 0);
+      ctx.lineTo(i* gridXInterval, gridHeight)
+    };
+    for (var i = 0; i < height; i++) {
+      ctx.moveTo(0, i*gridYInterval);
+      ctx.lineTo(gridWidth, i*gridYInterval);
+    };
   }
   
   var drawHighLight = function(){

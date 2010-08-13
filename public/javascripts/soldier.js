@@ -26,7 +26,7 @@ var SoldierManager = function(){
 		 color: 'grey',
 		 health: 200,
 		 size: 16,
-		 bounty: 3
+		 bounty: 4
 		},
 		{
 		 name: 'bike',
@@ -34,7 +34,15 @@ var SoldierManager = function(){
 		 color: 'blue',
 		 health: 70,
 		 size: 10,
-		 bounty: 1
+		 bounty: 2
+		},
+		{
+		 name: 'megatron',
+		 speed: 2,
+		 color: 'red',
+		 health: 1000,
+		 size: 22,
+		 bounty: 100
 		}
 		// 2: 'bike',
 		// 4: 'helicopter'

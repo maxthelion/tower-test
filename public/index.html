@@ -12,7 +12,6 @@
 	  var bits = [];
 		var Corpse = function(position) {
 		  var startPosition = position;
-		  
 	    var i = 5
       while (i) {
         bits.push({
@@ -38,6 +37,11 @@
 			return result;
 		};
 		
+		function changeMoney(amount){
+			money += amount;
+			$('#money').text(money);
+		}
+		
 		var kills = 0;
 		var grid;  
 		var lives = 20;
@@ -62,7 +66,7 @@
 		var nukeRadius = 5;
 		
 		var incrementKills = function(bounty){			
-			money += bounty;
+			changeMoney(bounty);
 			kills++;
       $('#kills').text(kills);
 			AttemptToWinGame();
@@ -93,8 +97,17 @@
 			[0, 5, 10],
 			[2, 10, 5],
 			[0, 15, 5],
+			[4, 200, 1],
 			[0, 15, 10],
-			[1, 10, 10]
+			[1, 10, 10],
+			[1, 30, 5],
+			[0, 5, 10],
+			[1, 50, 5],
+			[1, 5, 10],
+			[2, 10, 5],
+			[1, 15, 5],
+			[3, 15, 20],
+			[4, 1000, 1]
 		];
 		
 		var k = 10;
@@ -147,8 +160,6 @@
       };
       
       mygrid.public_draw();
-      
-      $('#money').text(money);
     }
 		
 	  $().ready(function(){	    

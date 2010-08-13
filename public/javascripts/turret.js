@@ -55,7 +55,7 @@ var TurretManager = function(){
     var newId = id++;
     var myTurret = new Turret(position, turretTypes[currentTurretIndex], newId);
     turretHash[newId] = myTurret;
-    money -= myTurretManager.cost(currentTurretIndex);
+    changeMoney( myTurretManager.cost(currentTurretIndex) * -1 );
     return myTurret;
   };
 
