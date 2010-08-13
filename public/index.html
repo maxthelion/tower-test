@@ -16,9 +16,9 @@
 				 name: 'lightInfantry',
 				 speed: 2,
 				 color: '#8ae5f7',
-				 health: 50,
+				 health: 30,
 				 size: 10,
-				 bounty: 1 
+				 bounty: 1
 				},
 				{
 				 name: 'Infantry',
@@ -34,7 +34,7 @@
 				 color: 'grey',
 				 health: 200,
 				 size: 16,
-				 bounty: 2
+				 bounty: 3
 				},
 				{
 				 name: 'bike',
@@ -69,7 +69,6 @@
         })
         soldier.onDie(function(){
           soldierHash[newId] = null;
-          playSound();
         })
         soldierHash[newId] = soldier;
         return soldier;
@@ -101,13 +100,13 @@
           fireRate: 2,
           range: 1,
           color: '#555',
-          damage: 1,
+          damage: 2,
 					cost: 5
         },
         {
           name: 'mortar',
           fireRate: 20,
-          range: 4,
+          range: 2,
           color: '#999',
           damage: 20,
 					cost: 15
@@ -123,12 +122,12 @@
         {
           name: 'glue gun',
           fireRate: 20,
-          range: 1,
+          range: 2,
           color: 'green',
           damage: 0,
 					cost: 5,
 					hitCallback: function(soldier, myFrameNum){
-					  soldier.slow(myFrameNum + 100);
+					  soldier.slow(myFrameNum + 30);
 					}
         }
       ]
@@ -737,10 +736,10 @@
 			[0, 30, 10],
 			[1, 15, 10],
 			[1, 15, 10],
-			[1, 50, 5],
 			[1, 30, 5],
-			[0, 10, 10],
-			[0, 10, 10],
+			[0, 5, 10],
+			[1, 50, 5],
+			[0, 5, 10],
 			[2, 10, 5],
 			[0, 15, 5],
 			[0, 15, 10],
