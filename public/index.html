@@ -1,21 +1,21 @@
 <html>
 <head>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="javascripts/AStar_memtronic.js"></script>
-  <script src="javascripts/soldier.js"></script>
-  <script src="javascripts/grid.js"></script>
-  <script src="javascripts/explosive.js"></script>
-  <script src="javascripts/turret.js"></script>
-  <script src="javascripts/units.js"></script>
-  <script src="javascripts/levels.js"></script>
-  <script src="javascripts/game.js"></script>
-  
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="javascripts/AStar_memtronic.js"></script>
+	<script src="javascripts/soldier.js"></script>
+	<script src="javascripts/grid.js"></script>
+	<script src="javascripts/explosive.js"></script>
+	<script src="javascripts/turret.js"></script>
+	<script src="javascripts/units.js"></script>
+	<script src="javascripts/levels.js"></script>
+	<script src="javascripts/game.js"></script>
+	
 <style type="text/css" media="screen">
 	* {
 		font-family: arial;
 	}
 	a {
-	  color: black;
+		color: black;
 		text-decoration: none;
 	}
 	#notice {
@@ -25,15 +25,15 @@
 		margin-left: 200px;
 	}
 	#turret_choices a {
-    display: block;
-    padding: 5px;
-    float: left;
+		display: block;
+		padding: 5px;
+		float: left;
 	}
 	#turret_choices a:hover {
-    background: yellow;
+		background: yellow;
 	}
 	p {
-	  clear: left;
+		clear: left;
 	}
 	.allowed {
 		background: rgb(0, 255, 0);
@@ -54,24 +54,24 @@
 
 <div style="float:left; width: 200px">
 	<p>Lives: <span id="lives"></span></p>
-  <p>Round: <span id="round"></span></p>
-  <p>Kills: <span id="kills"></span></p>
-  <p>Money: <span id="money"></span></p>
-  
-  <div>
-    <h3>Choose your weapons!!!</h3>
-    <div id="turret_choices"></div>
+	<p>Round: <span id="round"></span></p>
+	<p>Kills: <span id="kills"></span></p>
+	<p>Money: <span id="money"></span></p>
+	
+	<div>
+		<h3>Choose your weapons!!!</h3>
+		<div id="turret_choices"></div>
 		<p><a href="#" id="pause_button">Pause</a></p>
 		<p><a href="#" id="mute_button">turn on sound fx</a></p>
-  </div>
+	</div>
 </div>
 <canvas id="canvas" height="400" width="400"></canvas>
 
 <audio class='hidden' id="sweet"> 
-  <source src='audio/K.mp3' /> 
+	<source src='audio/K.mp3' /> 
 </audio>
 <audio class='hidden' id="shot"> 
-  <source src='audio/gun_shotgun2.mp3' /> 
+	<source src='audio/gun_shotgun2.mp3' /> 
 </audio>
 </body>
 </html>
