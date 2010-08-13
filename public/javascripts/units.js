@@ -22,7 +22,8 @@ var unitTypes = [
     damage: 2,
 		cost: 5,
 		size: 0.5,
-		type: Turret
+		type: Turret,
+		attacks_air: true
   },
   {
     name: 'mortar',

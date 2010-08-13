@@ -21,6 +21,7 @@ var Grid = function(canvas_id, grid) {
     drawTurrets();
     // drawPath();
     drawSoldiers();
+    drawHelis();
     drawHighLight();
     drawTerrain();
     drawExplosions();
@@ -99,12 +100,23 @@ var Grid = function(canvas_id, grid) {
   
   var drawCircle = function(x, y, mycolor, radius){
     radius = radius ? radius : 1
+    drawCircleFromPosition(
+      [
+        x * gridXInterval + gridXInterval / 2,
+        y * gridYInterval + gridXInterval / 2
+      ],
+      mycolor,
+      radius * gridXInterval / 2
+    );
+  }
+  
+  var drawCircleFromPosition = function(position, mycolor, radius){
     ctx.beginPath();
     ctx.fillStyle = mycolor;
-    ctx.arc(
-      x * gridXInterval + gridXInterval / 2, 
-      y * gridYInterval + gridXInterval / 2,
-      radius * gridXInterval / 2,
+    ctx.arc(    
+      position[0],
+      position[1],
+      radius,
       0,
       Math.PI*2,
       true
@@ -126,6 +138,21 @@ var Grid = function(canvas_id, grid) {
     for(var i =0; i < turrets.length; i++){
       var turret = turrets[i]
       drawBarrel(turret);
+    }
+  }
+  
+  
+  var drawHelis = function(){
+    helis = mySoldierManager.getAircraft();
+    for(var i =0; i < helis.length; i++){
+      var unit = helis[i]
+      drawCircleFromPosition(
+        unit.getCurrentPosition(),
+        unit.getColor(),
+        gridXInterval * unit.getSize() / 2
+      );
+      
+      drawHealth(unit)
     }
   }
   
@@ -217,6 +244,13 @@ var Grid = function(canvas_id, grid) {
       soldier.getSize()
     );
     
+    drawHealth(soldier);
+  }
+  
+  var drawHealth = function(soldier){
+    x = soldier.getCurrentPosition()[0];
+		y = soldier.getCurrentPosition()[1];
+		w = soldier.getSize();
     // draw the health
     var barLength = 20
     //background
@@ -235,7 +269,6 @@ var Grid = function(canvas_id, grid) {
       5
     )
   }
-  
   var drawCorpses = function() {
     for (var i=0; i < corpses.length; i++) {
       drawCorpse(corpses[i]);

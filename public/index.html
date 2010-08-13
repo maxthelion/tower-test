@@ -15,7 +15,7 @@
 	  var bits = [];
 		var Corpse = function(position) {
 		  var startPosition = position;
-	    var i = bloodSpatterSize
+	    var i = bloodSpatterNum
       while (i) {
         bits.push({
           speedX: 15 - (Math.random() * 30),
@@ -63,8 +63,9 @@
 		var explosions = [];
 		var sounds;
 		var muted = true;
-		var bloodSpatterSize = 10
-		var bloodSpatterNum = 10
+		var bloodSpatterSize = 2
+		var bloodSpatterNum = 3
+		var helis = [];
 		
 		var incrementKills = function(bounty){			
 			changeMoney(bounty);
@@ -92,14 +93,17 @@
       $('#lives').text(lives);
 		}
 		
-
 		
 		var frameFunction = function(){
 			sounds = {}
       frameNum ++;
       checkDeath();
 			aimAndFireTurrets()
-      
+			
+      for (var i=0; i < mySoldierManager.getAircraft().length; i++) {
+      	mySoldierManager.getAircraft()[i].move();
+      };
+
 			if(soldierCountDown == 0) {
 				if (waveCountDown == 0) {
 					if (!anySoldiers() && round <= waves.length){
@@ -169,7 +173,6 @@
 			playing = true;
 	    //  global interval
 	    globalInterval = setInterval(frameFunction, 60);
-			
 			
       $('#pause_button').click(function(evt){
 				if(!paused){

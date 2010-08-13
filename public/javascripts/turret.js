@@ -43,7 +43,7 @@ var Turret = function(position, template, id){
   }
   
   var soldiersInRange = function(){
-    return mySoldierManager.withinRange(position[0], position[1], range);
+    return mySoldierManager.withinRange(position[0], position[1], range, true, template['attacks_air']);
   };
   
   this.getDamage = function(){

@@ -1,8 +1,15 @@
 var SoldierManager = function(){
   var self = this;
   var id = 0;
-  var soldiers = [];
-  var soldierHash = {};
+  var allSoldiersHash = {
+    s: {},
+    a: {}
+  };
+  var allSoldiersArrays = {
+    s: [],
+    a: []
+  };
+  
   var soldierTypes = [
 		{
 		 name: 'lightInfantry',
@@ -10,7 +17,8 @@ var SoldierManager = function(){
 		 color: '#bbb',
 		 health: 30,
 		 size: 10,
-		 bounty: 1
+		 bounty: 1,
+		 type: Soldier
 		},
 		{
 		 name: 'Infantry',
@@ -18,7 +26,8 @@ var SoldierManager = function(){
 		 color: 'cyan',
 		 health: 100,
 		 size: 10,
-		 bounty: 1
+		 bounty: 1,
+ 		 type: Soldier
 		},
 		{
 		 name: 'heavyInfantry',
@@ -26,7 +35,8 @@ var SoldierManager = function(){
 		 color: 'grey',
 		 health: 200,
 		 size: 16,
-		 bounty: 4
+		 bounty: 4,
+ 		 type: Soldier
 		},
 		{
 		 name: 'bike',
@@ -34,7 +44,8 @@ var SoldierManager = function(){
 		 color: 'blue',
 		 health: 70,
 		 size: 10,
-		 bounty: 2
+		 bounty: 2,
+ 		 type: Soldier
 		},
 		{
 		 name: 'megatron',
@@ -42,43 +53,81 @@ var SoldierManager = function(){
 		 color: 'red',
 		 health: 1000,
 		 size: 22,
-		 bounty: 100
-		}
-		// 2: 'bike',
-		// 4: 'helicopter'
+		 bounty: 50,
+ 		 type: Soldier
+		},
+		{
+  	 name: 'helicopter',
+  	 speed: 2,
+  	 color: '#bbb',
+  	 health: 30,
+  	 size: 10,
+  	 bounty: 1,
+  	 type: Helicopter
+  	}
 	];
 	
   // probably needs optimising
   this.allSoldiers = function(){
-    var myArray = [];
-    for( i in soldierHash){
-      if(soldierHash[i] != null){
-        myArray.push(soldierHash[i]);
+    return allSoldiersArrays['s'];
+  };
+  
+  var addSoldier = function(a){
+    var key = keyFromSoldier(a)
+    allSoldiersHash[key][a.getId()] = a;
+    soldier.onReachDestination(function(){
+      removeSoldier(a);
+    })
+    soldier.onDie(function(){
+      removeSoldier(a);
+    })
+    redoHash(key)
+  }
+  
+  redoHash = function(key){
+    allSoldiersArrays[key] = [];
+    for( i in allSoldiersHash[key]){
+      if(allSoldiersHash[key][i] != null){
+        allSoldiersArrays[key].push(allSoldiersHash[key][i]);
       };
     }
-    return myArray;
-  };
+  }
+  
+  var removeSoldier = function(s){
+    AttemptToWinGame();
+    loseLife();
+    allSoldiersHash[keyFromSoldier(s)][s.getId()] = null;
+    redoHash(keyFromSoldier(s))
+  }
   
   this.createSoldier = function(typeIndex){
     var newId = id++;
-    soldier = new Soldier(startPoint, endPoint, grid, soldierTypes[typeIndex], newId);
-    soldier.onReachDestination(function(){
-      soldierHash[newId] = null;
-      AttemptToWinGame();
-      loseLife();
-    })
-    soldier.onDie(function(){
-      soldierHash[newId] = null;
-    })
-    soldierHash[newId] = soldier;
+    var template = soldierTypes[typeIndex]
+    object = template['type'] // soldier or heli
+    soldier = new object(startPoint, endPoint, grid, template, newId);
+    addSoldier(soldier);
     return soldier;
   };
   
+  var keyFromSoldier = function(soldier){
+     return (object == Soldier) ? 's' : 'a'
+  }
+  
+  this.getAircraft = function(){
+    return allSoldiersArrays['a'];
+  }
+  
 
-  this.withinRange = function(x, y, range){
-    myArray = [];
-    for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
-      var soldier = mySoldierManager.allSoldiers()[i];
+  this.withinRange = function(x, y, range, ground, air){
+    var myArray = []
+    var soldiers = []
+    if (air) 
+      soldiers = soldiers.concat(allSoldiersArrays['a'])
+    if (ground) 
+      soldiers = soldiers.concat(allSoldiersArrays['s'])
+      
+    for (var i=0; i < soldiers.length; i++) {
+      var soldier = soldiers[i];
       if (soldier.getCurrentPoint()[0] >= x-range && 
             soldier.getCurrentPoint()[0] <= x+range &&
           soldier.getCurrentPoint()[1] >= y-range && 
@@ -216,6 +265,10 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
     startFlameNum = sfn
   }
   
+  this.getId = function(){
+    return id;
+  };
+  
   var initialise = function(){
     myPath = AStar(grid, startPoint, endPoint, "Manhattan");
     currentPoint = myPath[pathIndex];
@@ -227,6 +280,73 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
   initialise();
 }
 
-var HeliCopter = function(){
+var Helicopter = function(startPoint, endPoint, grid, template, id){
+  var currentPosition = mygrid.pointCenterXY(startPoint[0], startPoint[1])
+  var endPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
+  var currentSpeed = template['speed'];
+  var deathCallback;
+  var destinationCallback;
+  var initialHealth = template['health'];
+  var health = initialHealth;
+  var bounty = template['bounty'];
+  var id = id
   
+  this.move = function(){
+    // kludge
+    if (endPosition[0] > currentPosition[0]){
+      currentPosition[0] += currentSpeed;
+    } else {
+      currentPosition[0] -= currentSpeed;
+    }
+    if (endPosition[1] > currentPosition[1]){
+      currentPosition[1] += currentSpeed;
+    } else {
+      currentPosition[1] -= currentSpeed;
+    }
+    var cell = mygrid.cellFromPosition( currentPosition );
+    if ( cell[0] == endPoint[0] && cell[1] == endPoint[1]) {
+      destinationCallback()
+    }
+  }
+  
+  this.getCurrentPosition = function(){
+    return currentPosition;
+  }
+  this.getColor = function(){
+    return 'blue'
+  }
+  this.getSize = function(){
+    return 1
+  }
+  
+  this.getCurrentPoint = function(){
+    return mygrid.cellFromPosition( currentPosition );
+  }
+  
+  this.onReachDestination = function(callback){
+    destinationCallback = callback;
+  }
+  
+  this.onDie = function(callback){
+    deathCallback = callback;
+  }
+  
+  this.getId = function(){
+    return id;
+  };
+  
+  this.getHealthPercentage = function(){
+    return health / initialHealth;
+  }
+  
+  this.takeBullet = function(damage) {
+    health -= damage;
+    if ( health <= 0 ){
+      // corpses.push(
+      //   new Corpse(self.getCurrentPosition())
+      // )
+      deathCallback();
+			incrementKills(bounty);
+    }
+  }
 }
