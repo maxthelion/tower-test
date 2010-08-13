@@ -76,6 +76,7 @@ var SoldierManager = function(){
     var key = keyFromSoldier(a)
     allSoldiersHash[key][a.getId()] = a;
     soldier.onReachDestination(function(){
+	    loseLife();
       removeSoldier(a);
     })
     soldier.onDie(function(){
@@ -95,7 +96,6 @@ var SoldierManager = function(){
   
   var removeSoldier = function(s){
     AttemptToWinGame();
-    loseLife();
     allSoldiersHash[keyFromSoldier(s)][s.getId()] = null;
     redoHash(keyFromSoldier(s))
   }
