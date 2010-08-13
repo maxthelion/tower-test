@@ -298,12 +298,8 @@ var Grid = function(canvas_id, grid) {
     var xIndex = Math.floor( evt.offsetX/gridXInterval )
     var yIndex = Math.floor( evt.offsetY/gridYInterval )
     u = currentUnit();
-    
-    
     addUnit(u, xIndex, yIndex);
-    
     highLight = null;
-    
     draw();
   });
   

@@ -40,16 +40,16 @@ var unitTypes = [
     range: 4,
     color: '#999',
     damage: 80,
-		cost: 15,
+		cost: 20,
 		size: 1,
 		hitCallback: function(soldier, myFrameNum){
 		  explosions.push(
 		    new Explosion(
 		      soldier.getCurrentPoint()[0], 
 		      soldier.getCurrentPoint()[1], 
-		      0.5, 
+		      1, 
 		      myFrameNum,
-		      20
+		      5
 		    ) 
 		  );
 		},

@@ -1,9 +1,3 @@
-var TurretManager = function(){
-	this.cost = function(index) {
-		return unitTypes[index]['cost']
-	};
-}
-
 var Turret = function(position, template, id){
   var position = position;
   var id = id;
