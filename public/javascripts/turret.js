@@ -34,6 +34,7 @@ var Turret = function(position, template, id){
     setTargettedSoldier();
     if (tSoldier && (frameNum % fireRate == 0)){
       firing = true;
+      sounds['shot'] = true
       tSoldier.takeBullet(damage);
       if (template['hitCallback']){
         template['hitCallback'](tSoldier, frameNum)

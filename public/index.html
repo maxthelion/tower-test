@@ -62,6 +62,9 @@
 		var paused = false;
 		var playing =  false;
 		var explosions = [];
+		var sounds;
+		var muted = true;
+		
 		var incrementKills = function(bounty){			
 			changeMoney(bounty);
 			kills++;
@@ -91,6 +94,7 @@
 
 		
 		var frameFunction = function(){
+			sounds = {}
       frameNum ++;
       if (lives == 0){
         $('#notice').text('death to you, sucker!!! you are teh suck!!!');
@@ -127,7 +131,9 @@
       for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
         mySoldierManager.allSoldiers()[i].move();
       };
-      
+      for(s in sounds){
+				playSound(s);
+			}
       mygrid.public_draw();
     }
 		
@@ -162,6 +168,14 @@
 					globalInterval = setInterval(frameFunction, 60);
 					paused = false;
 					$('#pause_button').text('Pause');
+				}
+      })
+
+      $('#mute_button').click(function(evt){
+				if(!muted){
+					muted = true;
+				} else {
+					muted = false;
 				}
       })
 	  });
@@ -201,8 +215,10 @@
 		}
     
     playSound = function(id) {
-      x = $('#'+ id).clone();
-      x[0].play();
+			if(!muted){
+      	x = $('#'+ id).clone();
+      	x[0].play();
+			}
     }
   </script>
 <style type="text/css" media="screen">
@@ -257,6 +273,7 @@
     <h3>Choose your weapons!!!</h3>
     <div id="turret_choices"></div>
 		<p><a href="#" id="pause_button">Pause</a></p>
+		<p><a href="#" id="mute_button">turn on sound fx</a></p>
   </div>
 </div>
 <canvas id="canvas" height="400" width="400"></canvas>

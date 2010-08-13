@@ -27,10 +27,10 @@ var unitTypes = [
   {
     name: 'mortar',
     fireRate: 20,
-    range: 2,
+    range: 3,
     color: '#999',
     damage: 20,
-		cost: 15,
+		cost: 10,
 		size: 0.8,
 		type: Turret
   },
