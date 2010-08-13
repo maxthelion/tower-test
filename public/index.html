@@ -170,20 +170,20 @@
 	    $('#turret_choices').text('')
 	    for (var i=0; i < unitTypes.length; i++) {
 	      var t = unitTypes[i];
-	      var tbutton = $('<a href="#">').text(t['name'])
+	      var tbutton = $('<a href="#">').text(t['name'] + ' ($'+ t['cost']+')' )
 	      tbutton.attr('id', 'button_'+i);
 				if (i == currentTurretIndex)
 					tbutton.addClass('selected');
 				if (money >= t['cost']){
 					tbutton.addClass('allowed');
-					(function(i){
-						tbutton.click(function(){
-							setCurrentUnit(i)
-		 	 	    });
-					})(i);
 				} else {
 					tbutton.addClass('not_allowed')
 				}
+				(function(i){
+					tbutton.click(function(){
+						setCurrentUnit(i)
+	 	 	    });
+				})(i);
   	    $('#turret_choices').append(tbutton);
 	    };
 	  }
@@ -233,12 +233,12 @@
 	.allowed {
 		background: rgb(0, 255, 0);
 	}
-	.selected {
-		color: yellow;
-	}
 	.not_allowed {
 		background: silver;
 		color: gray;
+	}
+	.selected {
+		color: yellow;
 	}
 </style>
 </head>
