@@ -4,6 +4,7 @@
   <script src="javascripts/AStar_memtronic.js"></script>
   <script src="javascripts/soldier.js"></script>
   <script src="javascripts/grid.js"></script>
+  <script src="javascripts/explosive.js"></script>
   <script src="javascripts/turret.js"></script>
   <script type="text/javascript" charset="utf-8">
     
@@ -37,10 +38,6 @@
 			return result;
 		};
 		
-		function changeMoney(amount){
-			money += amount;
-			$('#money').text(money);
-		}
 		
 		var kills = 0;
 		var grid;  
@@ -71,6 +68,12 @@
       $('#kills').text(kills);
 			AttemptToWinGame();
 		};
+		
+		function changeMoney(amount){
+			money += amount;
+			$('#money').text(money);
+			drawTurretButtons();
+		}
 		
 		var AttemptToWinGame = function(){
 		  if (round == waves.length && waveCountDown == 0 && mySoldierManager.allSoldiers().length == 0){
@@ -125,11 +128,7 @@
         playing = false;
       }
       
-      // aim the turrets and fire if possible
-      for(var i =0; i < myTurretManager.allTurrets().length; i++){
-        var turret = myTurretManager.allTurrets()[i]
-        turret.aimAndFire();
-      }
+			aimAndFireTurrets()
       
       if (soldierCountDown > 0){
         soldierCountDown--;
@@ -166,7 +165,8 @@
 	    mySoldierManager = new SoldierManager();
 	    myTurretManager = new TurretManager();
 	    grid = GridGenerator(15, 15);
-	    for (var i=0; i < terrain.length; i++) {
+			//add terrain to grid
+			for (var i=0; i < terrain.length; i++) {
 	     grid[ terrain[i][1] ][terrain[i][0]] = 1;
 	    };
 	    mygrid = new Grid('canvas', grid);
@@ -200,14 +200,36 @@
 	    $('#turret_choices').text('')
 	    for (var i=0; i < myTurretManager.getTurretTypes().length; i++) {
 	      var t = myTurretManager.getTurretTypes()[i];
-	      var tbutton = $('<a href="#">').text(myTurretManager.getTurretTypes()[i]['name'])
-	      tbutton.data('foo', i)
-	      tbutton.click(function(){
-	        currentTurretIndex = $(this).data('foo');
- 	 	    });
+	      var tbutton = $('<a href="#">').text(t['name'])
+	      tbutton.attr('id', 'button_'+i);
+				if (i == currentTurretIndex)
+					tbutton.addClass('selected');
+				if (money >= t['cost']){
+					tbutton.addClass('allowed');
+					(function(i){
+						tbutton.click(function(){
+							setCurrentUnit(i)
+		 	 	    });
+					})(i);
+				} else {
+					tbutton.addClass('not_allowed')
+				}
   	    $('#turret_choices').append(tbutton);
 	    };
 	  }
+	
+		var setCurrentUnit = function(i){
+			currentTurretIndex = i;
+			$('.selected').removeClass('selected');
+			$('#button_'+ i).addClass('selected');
+		}
+		var aimAndFireTurrets = function(){
+			// aim the turrets and fire if possible
+      for(var i =0; i < myTurretManager.allTurrets().length; i++){
+        var turret = myTurretManager.allTurrets()[i]
+        turret.aimAndFire();
+      }
+		}
 	  
 	  $(window).keydown(function(event) {
       if (event.keyCode == '78') {
@@ -232,6 +254,7 @@
 	}
 	a {
 	  color: black;
+		text-decoration: none;
 	}
 	#notice {
 		font-size: 2em;
@@ -249,6 +272,15 @@
 	}
 	p {
 	  clear: left;
+	}
+	.allowed {
+		background: rgb(0, 255, 0);
+	}
+	.not_allowed {
+		background: silver;
+	}
+	.selected {
+		color: yellow;
 	}
 </style>
 </head>

@@ -1,44 +1,57 @@
+var unitTypes = [
+  {
+    name: 'machine gun',
+    fireRate: 2,
+    range: 1,
+    color: '#555',
+    damage: 2,
+		cost: 5,
+		type: Turret
+  },
+  {
+    name: 'mortar',
+    fireRate: 20,
+    range: 2,
+    color: '#999',
+    damage: 20,
+		cost: 15,
+		type: Turret
+  },
+  {
+    name: 'heavy cannon',
+    fireRate: 50,
+    range: 4,
+    color: '#999',
+    damage: 100,
+		cost: 15,
+		type: Turret
+  },
+  {
+    name: 'glue gun',
+    fireRate: 20,
+    range: 2,
+    color: 'green',
+    damage: 0,
+		cost: 5,
+		hitCallback: function(soldier, myFrameNum){
+		  soldier.slow(myFrameNum + 30);
+		},
+		type: Turret
+  },
+  // {
+  //   name: 'nuke',
+  //   damage: 100,
+  //    cost: 15,
+  //    type: Explosive
+  // },
+]
+
+var currentUnit;
+
 var TurretManager = function(){
   var self = this;
   var id = 0;
   var turretHash = {};
-  var turretTypes = [
-    {
-      name: 'machine gun',
-      fireRate: 2,
-      range: 1,
-      color: '#555',
-      damage: 2,
-			cost: 5
-    },
-    {
-      name: 'mortar',
-      fireRate: 20,
-      range: 2,
-      color: '#999',
-      damage: 20,
-			cost: 15
-    },
-    {
-      name: 'heavy cannon',
-      fireRate: 50,
-      range: 4,
-      color: '#999',
-      damage: 100,
-			cost: 15
-    },
-    {
-      name: 'glue gun',
-      fireRate: 20,
-      range: 2,
-      color: 'green',
-      damage: 0,
-			cost: 5,
-			hitCallback: function(soldier, myFrameNum){
-			  soldier.slow(myFrameNum + 30);
-			}
-    }
-  ]
   
   // probably needs optimising
   this.allTurrets = function(){
@@ -53,18 +66,18 @@ var TurretManager = function(){
   
   this.createTurret = function(position){
     var newId = id++;
-    var myTurret = new Turret(position, turretTypes[currentTurretIndex], newId);
+    var myTurret = new Turret(position, unitTypes[currentTurretIndex], newId);
     turretHash[newId] = myTurret;
     changeMoney( myTurretManager.cost(currentTurretIndex) * -1 );
     return myTurret;
   };
 
 	this.cost = function(index) {
-		return turretTypes[index]['cost']
+		return unitTypes[index]['cost']
 	};
 	
 	this.getTurretTypes = function(){
-	  return turretTypes;
+	  return unitTypes;
 	}
 }
 
