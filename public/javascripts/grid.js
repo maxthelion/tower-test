@@ -14,12 +14,9 @@ var Grid = function(canvas_id, grid) {
     ctx.clearRect(0,0,gridWidth, gridHeight);
     ctx.fillStyle = '#e3d19b'
     ctx.fillRect(0,0,gridWidth, gridHeight);
-    // drawLines()
     drawBits();
-    drawCorpses();
     drawStartAndEnd();
     drawTurrets();
-    // drawPath();
     drawTerrain();
     drawSoldiers();
     drawExplosions();
@@ -199,17 +196,38 @@ var Grid = function(canvas_id, grid) {
     ]
   }
   
-  var drawStartAndEnd = function(){
-    ctx.fillStyle = 'yellow';
-    ctx.fillRect(startPoint[0]* gridXInterval, startPoint[1]*gridYInterval, gridXInterval, gridYInterval);
-    ctx.fillRect(endPoint[0]* gridXInterval, endPoint[1]*gridYInterval, gridXInterval, gridYInterval);
-  }
+  var drawStartAndEnd = function(){		
+		drawPointSquare(startPoint, 'gray')
+		drawPointSquare(endPoint, 'gray')
+		drawHealth(pixel(endPoint[0]),pixel(endPoint[1]),20,lives/startLives)
+  };
+
+	var pixel = function(p){
+		return p * gridXInterval;
+	}
   
+	// takes point values
+ 	var drawPointSquare = function(p, c){
+		ctx.fillStyle = 'gray';
+		ctx.fillRect(
+			p[0]* gridXInterval, 
+			p[1]* gridYInterval, 
+			gridXInterval, 
+			gridYInterval
+		);
+	};
+	
+	// takes pixels
+	var drawSquare = function(x, y, w, c){
+		ctx.fillStyle=c;
+    ctx.fillRect(x,y,w,w);
+	}
+	
   var drawPath = function(){
     for(var x, y, i = 0, j = result.length; i < j; i++) {
 			x = result[i][0];
 			y = result[i][1];
-			ctx.fillStyle = 'blue';
+			ctx.fillStyle = 'white';
 	    ctx.fillRect(x* gridXInterval, y*gridYInterval, gridXInterval, gridYInterval);
 		}
   };
@@ -220,60 +238,25 @@ var Grid = function(canvas_id, grid) {
     };
   };
   
-  var drawSoldier = function(soldier){
-    x = soldier.getCurrentPosition()[0];
-		y = soldier.getCurrentPosition()[1];
-		w = soldier.getSize();
-    
-    if (soldier.isOnFire()){
-      ctx.fillStyle = 'orange';
-  		w2 = w * 1.5
-      ctx.fillRect(
-        x - w2 /2, 
-        y - w2 /2, 
-        w2, 
-        w2
-      )
+  var drawSoldier = function(s){
+    x = s.getCurrentPosition()[0];
+		y = s.getCurrentPosition()[1];
+		w = s.getSize();
+    if (s.isOnFire()){
+			w2 = w * 1.5
+			drawSquare(x-w2/2,y-w2/2,w2,'orange')
     }
-    
-    ctx.fillStyle = soldier.getColor();
-    ctx.fillRect(
-      x - w/2, 
-      y - w/2, 
-      soldier.getSize(), 
-      soldier.getSize()
-    );
-    
-    drawHealth(soldier);
+    drawSquare(x-w/2,y-w/2,s.getSize(),s.getColor())
+    drawHealth(x-w/2,y-w/2-15,20,s.getHealthPercentage());
   }
   
-  var drawHealth = function(soldier){
-    x = soldier.getCurrentPosition()[0];
-		y = soldier.getCurrentPosition()[1];
-		w = soldier.getSize();
-    // draw the health
-    var barLength = 20
+  var drawHealth = function(x,y,max,health){
     //background
     ctx.fillStyle = 'red'
-    ctx.fillRect(
-      x - barLength / 2,
-      y - 15,
-      barLength,
-      5
-    )
+    ctx.fillRect(x, y, max, 5)
     ctx.fillStyle = 'rgb(0,255, 0)'
-    ctx.fillRect(
-      x - barLength / 2,
-      y - 15,
-      barLength * soldier.getHealthPercentage(),
-      5
-    )
+    ctx.fillRect(x, y, max*health, 5)
   }
-  var drawCorpses = function() {
-    for (var i=0; i < corpses.length; i++) {
-      drawCorpse(corpses[i]);
-    };
-  };
   
   var drawBits = function(){
     for (var i=0; i < bits.length; i++) {
@@ -289,27 +272,9 @@ var Grid = function(canvas_id, grid) {
         continue
       }
       var opacity =  1 - (frameNum - bit.startTime) / 200;
-      ctx.beginPath();
-	    ctx.fillStyle = 'rgba(255, 0, 0, '+ opacity+')';
-      ctx.arc(
-        bit.cX, 
-        bit.cY,
-        bloodSpatterSize,
-        0,
-        Math.PI*2,
-        true
-      );
-      ctx.fill();
+      drawCircleFromPosition([bit.cX, bit.cY], 'rgba(255, 0, 0, '+ opacity+')',bloodSpatterSize);
     };
   }
-  
-  var drawCorpse = function(corpse){
-    drawCircle(
-      corpse[0],
-      corpse[1],
-      'rgba(255,0,0,0.1)'
-    );
-  };
   
   var drawTerrain = function(){
     for (var i=0; i < terrain.length; i++) {
