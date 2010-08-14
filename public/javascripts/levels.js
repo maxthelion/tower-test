@@ -54,3 +54,9 @@ while(k > 0){
 	}
 	k--
 }
+
+grid = GridGenerator(15, 15);
+//add terrain to grid
+for (var i=0; i < terrain.length; i++) {
+ grid[ terrain[i][1] ][terrain[i][0]] = 1;
+};

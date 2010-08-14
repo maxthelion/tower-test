@@ -40,7 +40,7 @@ var regularity = 20; // the speed that new soldiers appear
 var waveLength = 10; // the length of a wave - eg how many soldiers per round
 var soldierCountDown = regularity;
 var waveCountDown = waveLength;
-var round = 1;
+var round = 0;
 var money = 20;
 var frameNum = 0;
 var currentTurretIndex = 0;
@@ -79,9 +79,7 @@ var attemptToWinGame = function(){
 
 var loseLife = function(){
 	lives--;
-	$('#lives').text(lives);
 }
-
 
 var frameFunction = function(){
 	sounds = {}
@@ -127,7 +125,7 @@ var anySoldiers = function(){
 
 var progressRound = function(){
 	round++;
-	$('#notice').text('Round ' + round );
+	$('#notice').text('Round ' + round + ' of ' + waves.length );
 	// mark the round number
 	$('#round').text(round);
 	wave = waves[round - 1];
@@ -138,34 +136,27 @@ var progressRound = function(){
 
 $().ready(function(){			
 	mySoldierManager = new SoldierManager();
-	grid = GridGenerator(15, 15);
-	//add terrain to grid
-	for (var i=0; i < terrain.length; i++) {
-	 grid[ terrain[i][1] ][terrain[i][0]] = 1;
-	};
 	mygrid = new Grid('canvas', grid);
 	drawTurretButtons();
 	
-	wave = waves[0];
-	waveCountDown = wave[2];
-	regularity = wave[1];
-	typeIndex = wave[0];
-	
-	$('#notice').text('RELEASE THE HORDES!!!!');
-	playing = true;
-	//	global interval
-	globalInterval = setInterval(frameFunction, 60);
+	$('#start').click(function(){
+		$('#big_notice').hide()
+		progressRound()	
+		playing = true;
+		//	global interval
+		globalInterval = setInterval(frameFunction, 60);
+	});
 	
 	$('#pause_button').click(function(evt){
-		if(!paused){
-			clearInterval(globalInterval);
-			paused = true;
-			$('#pause_button').text('Play');
-		} else {
+		clearInterval(globalInterval);
+		paused = true;
+		$('#big_notice').show().html('<h2>Game paused</h2><p>click to resume</p>').click(function(){
 			globalInterval = setInterval(frameFunction, 60);
 			paused = false;
-			$('#pause_button').text('Pause');
-		}
+			$('#pause_button').show();
+			$('#big_notice').hide()
+		});
+		$('#pause_button').hide();
 	})
 
 	$('#mute_button').click(function(evt){

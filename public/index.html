@@ -1,6 +1,6 @@
 <html>
 <head>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 	<script src="javascripts/AStar_memtronic.js"></script>
 	<script src="javascripts/soldier_manager.js"></script>
 	<script src="javascripts/soldier.js"></script>
@@ -9,8 +9,8 @@
 	<script src="javascripts/explosive.js"></script>
 	<script src="javascripts/turret.js"></script>
 	<script src="javascripts/units.js"></script>
-	<script src="javascripts/levels.js"></script>
 	<script src="javascripts/game.js"></script>
+	<script src="javascripts/levels.js"></script>
 	
 <style type="text/css" media="screen">
 	* {
@@ -24,12 +24,11 @@
 		font-size: 2em;
 		text-align: center;
 		width: 400px;
-		margin-left: 200px;
+		margin-left: 150px;
 	}
 	#turret_choices a {
 		display: block;
 		padding: 5px;
-		float: left;
 	}
 	#turret_choices a:hover {
 		background: yellow;
@@ -47,21 +46,44 @@
 	.selected {
 		color: yellow;
 	}
+	#side {
+	  float:left; 
+	  width: 150px
+	}
+	#big_notice {
+	  position: absolute;
+	  background: #333;
+	  opacity: 0.6;
+	  color: white;
+	  padding: 20px;
+	  left: 190px;
+	  top: 100px;
+	  height: 200px;
+	  width: 300px;
+	  text-align: center;
+	  font-size: 1.2em;
+	}
+	#big_notice a#start{
+	  display: block;
+	  background: white;
+	}
 </style>
 </head>
 
 <body>
 	
 <div id="notice">Game starting soon</div>
+<div id="big_notice">
+  <h2>Stop the suicide bombers from pwning your base</h2>
+  <p><a href="#" id="start">Release the hordes!!!</a></p>
+</div>
 
-<div style="float:left; width: 200px">
-	<p>Lives: <span id="lives"></span></p>
-	<p>Round: <span id="round"></span></p>
+<div id="side">
 	<p>Kills: <span id="kills"></span></p>
 	<p>Money: <span id="money"></span></p>
 	
 	<div>
-		<h3>Choose your weapons!!!</h3>
+		<h3>Weapons!!!</h3>
 		<div id="turret_choices"></div>
 		<p><a href="#" id="pause_button">Pause</a></p>
 		<p><a href="#" id="mute_button">turn on sound fx</a></p>
