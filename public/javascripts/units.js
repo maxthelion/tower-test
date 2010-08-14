@@ -110,10 +110,12 @@ var currentUnit = function(){
 };
 
 var units = [];
-var turrets = [];
+// var turrets = [];
 var UnitManager = function(){
 	var self = this;
 	var positionHash = {};
+	var id = 0;
+	var turretHash = {}
 	
 	var addUnitAtPosition = function(p, u){
 		if (!positionHash[ p[0] ]){
@@ -134,18 +136,37 @@ var UnitManager = function(){
 			changeMoney( template['cost'] * -1 );
 			return false;
 		};
-		
-		var unit = new template['type'](position, template);
-		units.push( unit );
+		newId = id++;
+		var unit = new template['type'](position, template, newId);
+		turretHash[newId] = unit;
+		createUnitArray()
 		addUnitAtPosition(position, unit);
 		changeMoney( template['cost'] * -1 );
-		if (template['type'] == Turret) {
-			turrets.push(unit)
-		};
+		// if (template['type'] == Turret) {
+		// 	turrets.push(unit)
+		// };
 	};
 	
-	this.sell = function(unit){
-		changeMoney( template['cost'] * -1 );
+	var createUnitArray = function(){
+		units = []
+		for (i in turretHash){
+			var u = turretHash[i]
+			if (u != null){
+				units.push( u );
+			}
+		}
+	}
+	
+	var removeUnit = function(u){
+		turretHash[u.id] = null;
+		createUnitArray();
+	};
+	
+	this.sell = function(u){
+		changeMoney( Math.floor(u.sellCost()) );
+		removeUnit(u);
+		// back to front x and y again
+		grid[u.getPosition()[1]][u.getPosition()[0]] = 0
 	}
 }
 myUnitMangager = new UnitManager();

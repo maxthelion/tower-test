@@ -139,13 +139,13 @@ $().ready(function(){
 	mygrid = new Grid('canvas', grid);
 	drawTurretButtons();
 	
-	$('#start').click(function(){
+	//$('#start').click(function(){
 		$('#big_notice').hide()
 		progressRound()	
 		playing = true;
 		//	global interval
 		globalInterval = setInterval(frameFunction, 60);
-	});
+	//});
 	
 	$('#pause_button').click(function(evt){
 		clearInterval(globalInterval);
@@ -197,8 +197,10 @@ var setCurrentUnit = function(i){
 }
 var aimAndFireTurrets = function(){
 	// aim the turrets and fire if possible
-	for(var i =0; i < turrets.length; i++){
-		turrets[i].aimAndFire();
+	for(var i =0; i < units.length; i++){
+		if (units[i].aimAndFire){ // if it quacks like a turret
+			units[i].aimAndFire();
+		}
 	}
 }
 

@@ -1,3 +1,4 @@
+var selectedUnit;
 var Grid = function(canvas_id, grid) {
 	var canvas = document.getElementById(canvas_id)
 	var ctx = canvas.getContext('2d'); 
@@ -9,6 +10,7 @@ var Grid = function(canvas_id, grid) {
 	var gridWidth = canvas.width;
 	var highLight;
 	var result = AStar(grid, startPoint, endPoint, "Manhattan");
+
 	
 	var draw = function(){
 		ctx.clearRect(0,0,gridWidth, gridHeight);
@@ -48,6 +50,10 @@ var Grid = function(canvas_id, grid) {
 	}
 	
 	var drawHighLight = function(){
+		if(selectedUnit){
+			drawCircle( selectedUnit.getPosition()[0], selectedUnit.getPosition()[1], 'rgba(255, 255, 255, 0.5)', 5);
+		}
+		
 		if(highLight && squareAvaliable(highLight[0], highLight[1] )){
 			// check there is money
 			var color = (money < currentUnit()['cost']) ? '255, 0, 0' : '0, 255, 0';
@@ -252,26 +258,67 @@ var Grid = function(canvas_id, grid) {
 		var xIndex = Math.floor( evt.offsetX/gridXInterval )
 		var yIndex = Math.floor( evt.offsetY/gridYInterval )
 		u = currentUnit();
-		if (squareAvaliable(xIndex, yIndex)){
+		if (selectedUnit){
+			$('#floatControl').remove()
+			selectedUnit = undefined;
+		} else if (squareAvaliable(xIndex, yIndex) && !selectedUnit){
 			addUnit(u, xIndex, yIndex);
 		} else if (myUnitMangager.unitAt([xIndex, yIndex])){
 			t = myUnitMangager.unitAt([xIndex, yIndex])
-			// t.sell();
+			highLight = null;
+			showTurretControl(t);
+			selectedUnit = t;
 		}
 		draw();
 	});
 	
 	$(canvas).mousemove(function(evt){
-		var xIndex = Math.floor( evt.offsetX/gridXInterval )
-		var yIndex = Math.floor( evt.offsetY/gridYInterval )
-		highLight = [xIndex, yIndex];
+		if (!selectedUnit) {
+			var xIndex = Math.floor( evt.offsetX/gridXInterval )
+			var yIndex = Math.floor( evt.offsetY/gridYInterval )
+			highLight = [xIndex, yIndex];
+		}
 	});
 	
 	$(canvas).mouseout(function(evt){
 		highLight = null;
 	});
 
+	var showTurretControl = function(t){
+		$('#floatControl').remove()
+		var elem = $('<div id="floatControl"></div>')
+		$('#canvas_wrapper').append(elem)
+		
+		w = elem.width()
+		h = elem.height()
+		coords = [
+			t.getPosition()[0] * gridXInterval - (w/2) + (gridXInterval /2),
+			t.getPosition()[1] * gridYInterval - (h/2) + (gridYInterval /2)
+		]
+		elem.css('left', coords[0])
+		elem.css('top', coords[1])
+		// sellAmount = 2
+		// upgradeBtn = $('<a>').attr({
+		// 	href: '#',
+		// 	id: 'upgradeBtn'
+		// }).html('<span>^</span><span class="amount">'+sellAmount+'</span>')
+		
+		sellBtn = $('<a>').attr({
+			href: '#',
+			id: 'sellBtn'
+		}).html('<span>$</span><span class="amount">'+t.sellCost()+'</span>').
+		click(function(){
+			myUnitMangager.sell(t);
+			elem.remove();
+			selectedUnit = undefined;
+			return false;
+		})
+		
+		//elem.append(upgradeBtn)
+		elem.append(sellBtn)
+	}
 };
+
 
 var addUnit = function(u, x, y){
 	// check there is money
