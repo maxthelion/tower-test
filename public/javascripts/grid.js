@@ -188,8 +188,7 @@ var Grid = function(canvas_id, grid) {
 		y = s.getCurrentPosition()[1];
 		w = s.size * gridXInterval;
 		if (s.isOnFire()){
-			w2 = w * 1.5
-			drawSquare(x-w2/2,y-w2/2,w2,'orange')
+			drawCircleFromPosition(s.getCurrentPosition(),'orange',w/(1 + Math.random()))
 		}
 		drawCircleFromPosition( s.getCurrentPosition(), s.getColor(), w/2);
 		drawHealth(x,y-20,20,5,s.healthpercent);
