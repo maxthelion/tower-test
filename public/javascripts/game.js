@@ -89,7 +89,7 @@ var frameFunction = function(){
 	checkDeath();
 	aimAndFireTurrets()
 	attemptToWinGame();
-	if( !gameWon() ){
+	if( !gameWon() && !isDead()){
 		if(soldierCountDown == 0) {
 			if (waveCountDown == 0) {
 				if (!anySoldiers() && round <= waves.length){
@@ -111,10 +111,12 @@ var frameFunction = function(){
 	mygrid.public_draw();
 }
 
+var isDead = function(){
+	return lives == 0;
+}
 var checkDeath = function(){
-	if (lives == 0){
+	if (isDead()){
 		$('#notice').text('death to you, sucker!!! you are teh suck!!!');
-		clearInterval(globalInterval);
 		playing = false;
 	}
 }
