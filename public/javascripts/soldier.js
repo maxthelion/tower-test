@@ -104,7 +104,6 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 		self.health -= damage;
 		this.healthpercent = self.health / initialHealth;
 		if ( self.health <= 0 ){
-			corpses.push( new Corpse( self.getCurrentPosition()) )
 			deathCallback();
 			incrementKills(bounty);
 		}

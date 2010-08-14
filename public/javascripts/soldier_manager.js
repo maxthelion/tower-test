@@ -97,11 +97,14 @@ var SoldierManager = function(){
 		var key = keyFromSoldier(a)
 		allSoldiersHash[key][a.getId()] = a;
 		soldier.onReachDestination(function(){
+			explosions.push( new Explosion(a.getCurrentPoint(), 1, frameNum, 0) );
+			corpses.push( new Corpse( a.getCurrentPosition()) )
 			removeSoldier(a);
 			loseLife();
 		})
 		soldier.onDie(function(){
 			removeSoldier(a);
+			corpses.push( new Corpse( a.getCurrentPosition()) )
 		})
 		redoHash(key)
 	}
