@@ -46,8 +46,7 @@ var unitTypes = [
 		hitCallback: function(soldier, myFrameNum){
 			explosions.push(
 				new Explosion(
-					soldier.getCurrentPoint()[0], 
-					soldier.getCurrentPoint()[1], 
+					soldier.getCurrentPoint(),
 					1, 
 					myFrameNum,
 					5
@@ -72,7 +71,7 @@ var unitTypes = [
 	{
 		name: 'nuke',
 		damage: 100,
-		cost: 30,
+		cost: 1,
 		range: 3,
 		type: Explosion
 	},
@@ -107,15 +106,17 @@ var UnitManager = function(){
 	var self = this;
 	
 	this.createUnit = function(template, position){
+		if(template['type'] == Explosion){
+			explosions.push( new Explosion(position, template['range'], frameNum, template['damage']) );
+			changeMoney( template['cost'] * -1 );
+			return false;
+		};
+		
 		var unit = new template['type'](position, template);
 		units.push( unit );
 		changeMoney( template['cost'] * -1 );
 		if (template['type'] == Turret) {
 			turrets.push(unit)
-		};
-		if(template['type'] == Explosion){
-			explosions.push( new Explosion(xIndex, yIndex, u['range'], frameNum, template['damage']) );
-			return false;
 		};
 	};
 }

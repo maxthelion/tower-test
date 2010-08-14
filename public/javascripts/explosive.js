@@ -1,4 +1,4 @@
-var Explosion = function(x, y, radius, start, damage){
+var Explosion = function(position, radius, start, damage){
 	var range;
 	var damage;
 	var impactPosition;
@@ -9,7 +9,7 @@ var Explosion = function(x, y, radius, start, damage){
 	}
 	
 	var detonate = function(){
-		unfortunates = mySoldierManager.withinRange(x, y, radius)
+		unfortunates = mySoldierManager.withinRange(position[0], position[1], radius, true, true)
 		for (var i=0; i < unfortunates.length; i++) {
 			unfortunates[i].takeBullet(damage);
 		};
@@ -24,11 +24,11 @@ var Explosion = function(x, y, radius, start, damage){
 	}
 
 	this.getX = function(){
-		return x
+		return position[0]
 	}
 	
 	this.getY = function(){
-		return y
+		return position[1]
 	}
 	initialise();
 }

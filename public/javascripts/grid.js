@@ -63,20 +63,11 @@ var Grid = function(canvas_id, grid) {
 			} else {
 				var color = '0, 255, 0';
 			}
-			drawCircle(
-				highLight[0],
-				highLight[1],
-				'rgb(' + color +')'
-			);
-			r = radiusFromRange(currentUnit()['range'])
-			drawCircle(
-				highLight[0],
-				highLight[1],
-				'rgba('+color+', 0.3)',
-				r
-			);
+			drawCircle( highLight[0], highLight[1], 'rgb(' + color +')');
+			drawCircle( highLight[0], highLight[1], 'rgba('+ color +', 0.3)', radiusFromRange(currentUnit()['range']));
 		} 
 	};
+
 	var radiusFromRange = function(range){
 		return range * 2 + 1
 	}
@@ -116,11 +107,7 @@ var Grid = function(canvas_id, grid) {
 				unit.getColor(),
 				unit.getSize()
 			);
-		}
-		// gonna do this in 2 loops for now - wasteful
-		for(var i =0; i < turrets.length; i++){
-			var turret = turrets[i]
-			drawBarrel(turret);
+			drawBarrel(unit);
 		}
 	}
 	
@@ -134,7 +121,6 @@ var Grid = function(canvas_id, grid) {
 				unit.getColor(),
 				gridXInterval * unit.getSize() / 2
 			);
-			
 			drawHealth(unit)
 		}
 	}
@@ -143,31 +129,19 @@ var Grid = function(canvas_id, grid) {
 		var soldier = turret.targettedSoldier();
 		if (soldier){
 			ctx.beginPath()
-			tx = turret.getPosition()[0] * gridXInterval + gridXInterval/2
-			ty = turret.getPosition()[1] * gridYInterval + gridYInterval/2
+			tx = pixel(turret.getPosition()[0]) + gridXInterval/2
+			ty = pixel(turret.getPosition()[1]) + gridYInterval/2
 			ctx.moveTo(tx, ty )
 			sx = soldier.getCurrentPosition()[0]
 			sy = soldier.getCurrentPosition()[1]
 			var coords = getNewCoords(tx, ty, sx, sy, 15);
 			ctx.strokeStyle = 'black';
-			ctx.lineWidth = 2;					
+			ctx.lineWidth = 2;
 			ctx.lineTo(coords[0], coords[1]);
 			ctx.stroke()
 			// draw the fire
 			if(turret.isFiring()){
-				ctx.beginPath()
-				radius = 5
-				// flame
-				ctx.fillStyle = 'orange';
-				ctx.arc(
-					coords[0], 
-					coords[1],
-					radius,
-					0,
-					Math.PI*2,
-					true
-				);
-				ctx.fill();
+				drawCircleFromPosition(coords, 'orange', 5);
 			};
 		}
 	}
@@ -295,7 +269,6 @@ var Grid = function(canvas_id, grid) {
 		var yIndex = Math.floor( evt.offsetY/gridYInterval )
 		u = currentUnit();
 		addUnit(u, xIndex, yIndex);
-		highLight = null;
 		draw();
 	});
 	
