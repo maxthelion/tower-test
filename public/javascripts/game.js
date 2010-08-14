@@ -43,8 +43,6 @@ var waveCountDown = waveLength;
 var round = 1;
 var money = 20;
 var frameNum = 0;
-var startPoint =	[3, 0];
-var	endPoint =		[5, 14];
 var currentTurretIndex = 0;
 var paused = false;
 var playing =	false;
@@ -59,7 +57,7 @@ var incrementKills = function(bounty){
 	changeMoney(bounty);
 	kills++;
 	$('#kills').text(kills);
-	AttemptToWinGame();
+	attemptToWinGame();
 };
 
 function changeMoney(amount){
@@ -68,10 +66,13 @@ function changeMoney(amount){
 	drawTurretButtons();
 }
 
-var AttemptToWinGame = function(){
-	if (round == waves.length && waveCountDown == 0 && mySoldierManager.allSoldiers().length == 0){
+var gameWon = function(){
+	return round == waves.length && waveCountDown == 0 && !anySoldiers()
+}
+
+var attemptToWinGame = function(){
+	if ( gameWon() ){
 		$('#notice').text('YOU WIN!')
-		clearInterval(globalInterval);
 		playing = false;
 	}
 }
@@ -87,20 +88,23 @@ var frameFunction = function(){
 	frameNum ++;
 	checkDeath();
 	aimAndFireTurrets()
-	if(soldierCountDown == 0) {
-		if (waveCountDown == 0) {
-			if (!anySoldiers() && round <= waves.length){
-				progressRound()
+	attemptToWinGame();
+	if( !gameWon() ){
+		if(soldierCountDown == 0) {
+			if (waveCountDown == 0) {
+				if (!anySoldiers() && round <= waves.length){
+					progressRound()
+				}
+			} else {
+				waveCountDown--;
+				mySoldierManager.createSoldier(typeIndex);
+				soldierCountDown = regularity;
 			}
 		} else {
-			waveCountDown--;
-			mySoldierManager.createSoldier(typeIndex);
-			soldierCountDown = regularity;
+			soldierCountDown--;
 		}
-	} else {
-		soldierCountDown--;
+		mySoldierManager.moveUnits();
 	}
-	mySoldierManager.moveUnits();
 	for(s in sounds){
 		playSound(s);
 	}

@@ -122,7 +122,7 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 		myPath = AStar(grid, startPoint, endPoint, "Manhattan");
 		currentPoint = myPath[pathIndex];
 		nextPoint = myPath[pathIndex + 1];
-		currentPosition =	 mygrid.pointCenterXY(currentPoint[0], currentPoint[1]);
+		currentPosition = mygrid.pointCenterXY(currentPoint[0], currentPoint[1]);
 		nextPointPosition = mygrid.pointCenterXY(nextPoint[0], nextPoint[1]);
 	}
 	

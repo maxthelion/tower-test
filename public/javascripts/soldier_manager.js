@@ -33,7 +33,7 @@ var SoldierManager = function(){
 		 name: 'heavyInfantry',
 		 speed: 2,
 		 color: 'grey',
-		 health: 200,
+		 health: 300,
 		 size: 1,
 		 bounty: 4,
  		 type: Soldier
@@ -42,7 +42,7 @@ var SoldierManager = function(){
 		 name: 'bike',
 		 speed: 3,
 		 color: 'blue',
-		 health: 70,
+		 health: 100,
 		 size: 0.8,
 		 bounty: 2,
  		 type: Soldier
@@ -64,7 +64,16 @@ var SoldierManager = function(){
 		 size: 1.2,
 		 bounty: 1,
 		 type: Helicopter
-		}
+		},
+		{
+		 name: 'MediumInfantry',
+		 speed: 2,
+		 color: 'cyan',
+		 health: 200,
+		 size: 0.8,
+		 bounty: 1,
+ 		 type: Soldier
+		},
 	];
 	
 	this.allSoldiers = function(){
@@ -107,7 +116,6 @@ var SoldierManager = function(){
 	}
 	
 	var removeSoldier = function(s){
-		AttemptToWinGame();
 		allSoldiersHash[keyFromSoldier(s)][s.getId()] = null;
 		redoHash(keyFromSoldier(s))
 	}
