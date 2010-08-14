@@ -53,7 +53,7 @@ var SoldierManager = function(){
 		 color: 'red',
 		 health: 1000,
 		 size: 1.2,
-		 bounty: 50,
+		 bounty: 10,
  		 type: Soldier
 		},
 		{

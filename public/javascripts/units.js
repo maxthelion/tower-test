@@ -39,7 +39,7 @@ var unitTypes = [
 		fireRate: 50,
 		range: 4,
 		color: '#999',
-		damage: 80,
+		damage: 30,
 		cost: 20,
 		size: 1,
 		hitCallback: function(soldier, myFrameNum){
