@@ -54,6 +54,10 @@ var Helicopter = function(startPoint, endPoint, grid, template, id){
 		return id;
 	};
 	
+	this.isOnFire = function(){
+		return false;
+	}
+	
 	this.takeBullet = function(damage) {
 		self.health -= damage;
 		self.healthpercent = self.health / initialHealth; 

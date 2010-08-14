@@ -139,7 +139,7 @@ var Grid = function(canvas_id, grid) {
 	var drawStartAndEnd = function(){		
 		drawPointSquare(startPoint, 'gray')
 		drawPointSquare(endPoint, 'gray')
-		drawHealth(pixel(endPoint[0]),pixel(endPoint[1]),20,lives/startLives)
+		drawHealth(pixel(endPoint[0])+gridXInterval/2,pixel(endPoint[1])-15,50,10,lives/startLives)
 	};
 
 	var pixel = function(p){
@@ -187,15 +187,15 @@ var Grid = function(canvas_id, grid) {
 			drawSquare(x-w2/2,y-w2/2,w2,'orange')
 		}
 		drawCircleFromPosition( s.getCurrentPosition(), s.getColor(), w/2);
-		drawHealth(x,y-20,20,s.healthpercent);
+		drawHealth(x,y-20,20,5,s.healthpercent);
 	}
 	
-	var drawHealth = function(x,y,max,health){
+	var drawHealth = function(x,y,w,h,health){
 		//background
 		ctx.fillStyle = 'red'
-		ctx.fillRect(x-max/2, y, max, 5)
+		ctx.fillRect(x-w/2, y, w, h)
 		ctx.fillStyle = 'rgb(0,255, 0)'
-		ctx.fillRect(x-max/2, y, max*health, 5)
+		ctx.fillRect(x-w/2, y, w*health, h)
 	}
 	
 	var drawBits = function(){

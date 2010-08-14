@@ -70,7 +70,7 @@ var unitTypes = [
 	{
 		name: 'nuke',
 		damage: 100,
-		cost: 1,
+		cost: 30,
 		range: 3,
 		type: Explosion
 	},
