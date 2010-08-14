@@ -48,18 +48,23 @@ var Grid = function(canvas_id, grid) {
 	}
 	
 	var drawHighLight = function(){
-		if(highLight){
+		if(highLight && squareAvaliable(highLight[0], highLight[1] )){
 			// check there is money
-			if(money < currentUnit()['cost']){
-				var color = '255, 0, 0';
-			} else {
-				var color = '0, 255, 0';
-			}
+			var color = (money < currentUnit()['cost']) ? '255, 0, 0' : '0, 255, 0';
 			drawCircle( highLight[0], highLight[1], 'rgb(' + color +')');
 			drawCircle( highLight[0], highLight[1], 'rgba('+ color +', 0.3)', radiusFromRange(currentUnit()['range']));
-		} 
+		} else if(highLight){
+			if (myUnitMangager.unitAt(highLight)){
+				var u = myUnitMangager.unitAt(highLight);
+				drawCircle( highLight[0], highLight[1], 'rgba(255, 200, 0, 0.5)');
+			}
+		}
 	};
 
+	var squareAvaliable = function(x, y){
+		return grid[y][x] != 1;
+	}
+	
 	var radiusFromRange = function(range){
 		return range * 2 + 1
 	}
@@ -248,7 +253,12 @@ var Grid = function(canvas_id, grid) {
 		var xIndex = Math.floor( evt.offsetX/gridXInterval )
 		var yIndex = Math.floor( evt.offsetY/gridYInterval )
 		u = currentUnit();
-		addUnit(u, xIndex, yIndex);
+		if (squareAvaliable(xIndex, yIndex)){
+			addUnit(u, xIndex, yIndex);
+		} else if (myUnitMangager.unitAt([xIndex, yIndex])){
+			t = myUnitMangager.unitAt([xIndex, yIndex])
+			// t.sell();
+		}
 		draw();
 	});
 	
@@ -273,9 +283,6 @@ var addUnit = function(u, x, y){
 	if (u['type'] == Explosion){
 		return myUnitMangager.createUnit(u, [x, y]);
 	}
-	
-	if (grid[y][x] == 1)
-		return false // can't put things on top of each other
 	
 	grid[y][x] = 1;
 	// check the global path

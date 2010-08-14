@@ -103,6 +103,20 @@ var units = [];
 var turrets = [];
 var UnitManager = function(){
 	var self = this;
+	var positionHash = {};
+	
+	var addUnitAtPosition = function(p, u){
+		if (!positionHash[ p[0] ]){
+			positionHash[ p[0] ] = {}
+		}
+		positionHash[ p[0] ][ p[1] ] = u
+	};
+	
+	this.unitAt = function(p){
+		if (!positionHash[p[0]])
+			return null
+		return positionHash[p[0]][p[1]]
+	};
 	
 	this.createUnit = function(template, position){
 		if(template['type'] == Explosion){
@@ -113,10 +127,15 @@ var UnitManager = function(){
 		
 		var unit = new template['type'](position, template);
 		units.push( unit );
+		addUnitAtPosition(position, unit);
 		changeMoney( template['cost'] * -1 );
 		if (template['type'] == Turret) {
 			turrets.push(unit)
 		};
 	};
+	
+	this.sell = function(unit){
+		changeMoney( template['cost'] * -1 );
+	}
 }
 myUnitMangager = new UnitManager();
