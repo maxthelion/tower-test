@@ -35,6 +35,16 @@ var unitTypes = [
 		type: Turret
 	},
 	{
+		name: 'sniper',
+		fireRate: 100,
+		range: 5,
+		color: '#000',
+		damage: 100,
+		cost: 20,
+		size: 0.2,
+		type: Turret
+	},
+	{
 		name: 'heavy cannon',
 		fireRate: 50,
 		range: 4,
