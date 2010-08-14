@@ -72,7 +72,7 @@ var gameWon = function(){
 
 var attemptToWinGame = function(){
 	if ( gameWon() ){
-		$('#notice').text('YOU WIN!')
+		$('#big_notice').show().text('<h2>YOU WIN!</h2>')
 		playing = false;
 	}
 }
@@ -114,7 +114,7 @@ var isDead = function(){
 }
 var checkDeath = function(){
 	if (isDead()){
-		$('#notice').text('death to you, sucker!!! you are teh suck!!!');
+		$('#big_notice').show().html('<h2>death to you, sucker!!! you are teh suck!!!</h2>');
 		playing = false;
 	}
 }

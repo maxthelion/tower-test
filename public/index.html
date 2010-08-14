@@ -16,6 +16,9 @@
 	* {
 		font-family: arial;
 	}
+	body {
+	  background:#637F99;
+	}
 	a {
 		color: black;
 		text-decoration: none;
@@ -44,11 +47,13 @@
 		color: gray;
 	}
 	.selected {
-		color: yellow;
+		color: black;
+		background:#38EC00;
 	}
 	#side {
 	  float:left; 
-	  width: 150px
+	  width: 150px;
+	  margin-right: 10px
 	}
 	#big_notice {
 	  position: absolute;
@@ -56,8 +61,8 @@
 	  opacity: 0.6;
 	  color: white;
 	  padding: 20px;
-	  left: 190px;
-	  top: 100px;
+	  left: 30px;
+	  top: 70px;
 	  height: 200px;
 	  width: 300px;
 	  text-align: center;
@@ -67,16 +72,26 @@
 	  display: block;
 	  background: white;
 	}
+	#wrapper {
+	  width: 560px;
+	  position: relative;
+	  margin-top: 30px;
+	  background: #91B6CF;
+	  margin-left: auto;
+	  margin-right: auto;
+	  padding: 20px;
+	}
+	#canvas_wrapper {
+	  background: yellow;
+	  margin-left: 160px;
+	  position: relative;
+	}
 </style>
 </head>
 
 <body>
-	
+<div id="wrapper">
 <div id="notice">Game starting soon</div>
-<div id="big_notice">
-  <h2>Stop the suicide bombers from pwning your base</h2>
-  <p><a href="#" id="start">Release the hordes!!!</a></p>
-</div>
 
 <div id="side">
 	<p>Kills: <span id="kills"></span></p>
@@ -86,10 +101,17 @@
 		<h3>Weapons!!!</h3>
 		<div id="turret_choices"></div>
 		<p><a href="#" id="pause_button">Pause</a></p>
-		<p><a href="#" id="mute_button">turn on sound fx</a></p>
+    <!-- <p><a href="#" id="mute_button">turn on sound fx</a></p> -->
 	</div>
 </div>
-<canvas id="canvas" height="400" width="400"></canvas>
+<div id="canvas_wrapper">
+  <div id="big_notice">
+    <h2>Stop the suicide bombers from pwning your base</h2>
+    <p><a href="#" id="start">Release the hordes!!!</a></p>
+  </div>
+  <canvas id="canvas" height="400" width="400"></canvas>
+</div>
+</div>
 
 <audio class='hidden' id="sweet"> 
 	<source src='audio/K.mp3' /> 
@@ -97,5 +119,6 @@
 <audio class='hidden' id="shot"> 
 	<source src='audio/gun_shotgun2.mp3' /> 
 </audio>
+
 </body>
 </html>
