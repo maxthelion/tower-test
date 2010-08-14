@@ -87,11 +87,6 @@ var frameFunction = function(){
 	frameNum ++;
 	checkDeath();
 	aimAndFireTurrets()
-	
-	for (var i=0; i < mySoldierManager.getAircraft().length; i++) {
-		mySoldierManager.getAircraft()[i].move();
-	};
-
 	if(soldierCountDown == 0) {
 		if (waveCountDown == 0) {
 			if (!anySoldiers() && round <= waves.length){
@@ -105,18 +100,11 @@ var frameFunction = function(){
 	} else {
 		soldierCountDown--;
 	}
-	moveSoldiers();
+	mySoldierManager.moveUnits();
 	for(s in sounds){
 		playSound(s);
 	}
 	mygrid.public_draw();
-}
-
-var moveSoldiers = function(){
-	// move the soldiers
-	for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
-		mySoldierManager.allSoldiers()[i].move();
-	};
 }
 
 var checkDeath = function(){

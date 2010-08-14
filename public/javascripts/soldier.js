@@ -1,156 +1,8 @@
-var SoldierManager = function(){
-	var self = this;
-	var id = 0;
-	var allSoldiersHash = {
-		s: {},
-		a: {}
-	};
-	var allSoldiersArrays = {
-		s: [],
-		a: []
-	};
-	
-	var soldierTypes = [
-		{
-		 name: 'lightInfantry',
-		 speed: 2,
-		 color: '#bbb',
-		 health: 30,
-		 size: 10,
-		 bounty: 1,
-		 type: Soldier
-		},
-		{
-		 name: 'Infantry',
-		 speed: 2,
-		 color: 'cyan',
-		 health: 100,
-		 size: 10,
-		 bounty: 1,
- 		 type: Soldier
-		},
-		{
-		 name: 'heavyInfantry',
-		 speed: 2,
-		 color: 'grey',
-		 health: 200,
-		 size: 16,
-		 bounty: 4,
- 		 type: Soldier
-		},
-		{
-		 name: 'bike',
-		 speed: 3,
-		 color: 'blue',
-		 health: 70,
-		 size: 10,
-		 bounty: 2,
- 		 type: Soldier
-		},
-		{
-		 name: 'megatron',
-		 speed: 2,
-		 color: 'red',
-		 health: 1000,
-		 size: 22,
-		 bounty: 50,
- 		 type: Soldier
-		},
-		{
-		 name: 'helicopter',
-		 speed: 2,
-		 color: '#bbb',
-		 health: 100,
-		 size: 10,
-		 bounty: 1,
-		 type: Helicopter
-		}
-	];
-	
-	this.allSoldiers = function(){
-		return allSoldiersArrays['s'];
-	};
-
-	this.allUnits = function(){
-		var soldiers = []
-		soldiers = soldiers.concat(allSoldiersArrays['a'])
-		soldiers = soldiers.concat(allSoldiersArrays['s'])
-		return soldiers;
-	};
-	
-	var addSoldier = function(a){
-		var key = keyFromSoldier(a)
-		allSoldiersHash[key][a.getId()] = a;
-		soldier.onReachDestination(function(){
-			removeSoldier(a);
-			loseLife();
-		})
-		soldier.onDie(function(){
-			removeSoldier(a);
-		})
-		redoHash(key)
-	}
-	
-	redoHash = function(key){
-		allSoldiersArrays[key] = [];
-		for( i in allSoldiersHash[key]){
-			if(allSoldiersHash[key][i] != null){
-				allSoldiersArrays[key].push(allSoldiersHash[key][i]);
-			};
-		}
-	}
-	
-	var removeSoldier = function(s){
-		AttemptToWinGame();
-		allSoldiersHash[keyFromSoldier(s)][s.getId()] = null;
-		redoHash(keyFromSoldier(s))
-	}
-	
-	this.createSoldier = function(typeIndex){
-		var newId = id++;
-		var template = soldierTypes[typeIndex]
-		object = template['type'] // soldier or heli
-		soldier = new object(startPoint, endPoint, grid, template, newId);
-		addSoldier(soldier);
-		return soldier;
-	};
-	
-	var keyFromSoldier = function(soldier){
-		 return (object == Soldier) ? 's' : 'a'
-	}
-	
-	this.getAircraft = function(){
-		return allSoldiersArrays['a'];
-	}
-	
-
-	this.withinRange = function(x, y, range, ground, air){
-		var myArray = []
-		var soldiers = []
-		if (air) 
-			soldiers = soldiers.concat(allSoldiersArrays['a'])
-		if (ground) 
-			soldiers = soldiers.concat(allSoldiersArrays['s'])
-			
-		for (var i=0; i < soldiers.length; i++) {
-			var soldier = soldiers[i];
-			if (soldier.getCurrentPoint()[0] >= x-range && 
-						soldier.getCurrentPoint()[0] <= x+range &&
-					soldier.getCurrentPoint()[1] >= y-range && 
-						soldier.getCurrentPoint()[1] <= y+range ){
-				myArray.push(soldier);
-			}
-		};
-		return myArray;
-	}
-};
-
 var Soldier = function(startPoint, endPoint, grid, template, id){	
 	var self = this;
-	// this.xPos;
-	// this.yPos;
 	var initialHealth = template['health'];
-	var health = initialHealth;
+	this.health = initialHealth;
+	this.healthpercent = 1;
 	var myPath;
 	var pathIndex = 0;
 	var currentPoint;
@@ -162,7 +14,7 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 	var nextPointPosition;
 	var speed = template['speed'];
 	var color = template['color'];
-	var size = template['size'];
+	this.size = template['size'];
 	var bounty = template['bounty']
 	var template = template;
 	var slowedUntil;
@@ -171,7 +23,7 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 	
 	this.move = function(){
 		if(self.isOnFire()){
-			health -= 0.5;
+			self.health -= 0.5;
 			currentSpeed = speed * 2
 		} else if(isSlowed()){
 			currentSpeed = speed / 2;
@@ -248,23 +100,14 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 		deathCallback = callback;
 	}
 	
-	this.getSize = function(){
-		return size;
-	};
-	
 	this.takeBullet = function(damage) {
-		health -= damage;
-		if ( health <= 0 ){
-			corpses.push(
-				new Corpse(self.getCurrentPosition())
-			)
+		self.health -= damage;
+		this.healthpercent = self.health / initialHealth;
+		if ( self.health <= 0 ){
+			corpses.push( new Corpse( self.getCurrentPosition()) )
 			deathCallback();
 			incrementKills(bounty);
 		}
-	}
-	
-	this.getHealthPercentage = function(){
-		return health / initialHealth;
 	}
 	
 	this.setAlight = function(sfn){
@@ -284,77 +127,4 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 	}
 	
 	initialise();
-}
-
-var Helicopter = function(startPoint, endPoint, grid, template, id){
-	var currentPosition = mygrid.pointCenterXY(startPoint[0], startPoint[1])
-	var endPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
-	var currentSpeed = template['speed'];
-	var deathCallback;
-	var destinationCallback;
-	var initialHealth = template['health'];
-	var health = initialHealth;
-	var bounty = template['bounty'];
-	var id
-	
-	this.move = function(){
-		// kludge
-		if (endPosition[0] > currentPosition[0]){
-			currentPosition[0] += currentSpeed;
-		} else {
-			currentPosition[0] -= currentSpeed;
-		}
-		if (endPosition[1] > currentPosition[1]){
-			currentPosition[1] += currentSpeed;
-		} else {
-			currentPosition[1] -= currentSpeed;
-		}
-		var cell = mygrid.cellFromPosition( currentPosition );
-		if ( cell[0] == endPoint[0] && cell[1] == endPoint[1]) {
-			destinationCallback()
-		}
-	}
-	
-	this.getCurrentPosition = function(){
-		return currentPosition;
-	}
-
-	this.getColor = function(){
-		return 'blue'
-	}
-
-	this.getSize = function(){
-		return 1
-	}
-	
-	this.getCurrentPoint = function(){
-		return mygrid.cellFromPosition( currentPosition );
-	}
-	
-	this.onReachDestination = function(callback){
-		destinationCallback = callback;
-	}
-	
-	this.onDie = function(callback){
-		deathCallback = callback;
-	}
-	
-	this.getId = function(){
-		return id;
-	};
-	
-	this.getHealthPercentage = function(){
-		return health / initialHealth;
-	}
-	
-	this.takeBullet = function(damage) {
-		health -= damage;
-		if ( health <= 0 ){
-			// corpses.push(
-			//	 new Corpse(self.getCurrentPosition())
-			// )
-			deathCallback();
-			incrementKills(bounty);
-		}
-	}
 }

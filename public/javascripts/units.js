@@ -1,5 +1,4 @@
 var Obstacle = function(position, template){
-
 	this.getColor = function(){
 		return 'silver';
 	};

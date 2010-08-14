@@ -20,7 +20,6 @@ var Grid = function(canvas_id, grid) {
 		drawTerrain();
 		drawSoldiers();
 		drawExplosions();
-		drawHelis();
 		drawHighLight();
 	};
 	
@@ -39,18 +38,11 @@ var Grid = function(canvas_id, grid) {
 				var scale =	(frameNum - bit.getStartFrame()) / decay;
 				var opacity = 1 - (scale * .5)
 				radius = radiusFromRange( bit.getRadius() ) * gridXInterval / 2
-				ctx.beginPath();
-				ctx.fillStyle = 'rgba(255, 100, 0, '+ opacity+')';
-				ctx.arc(
-					bit.getX() * gridXInterval, 
-					bit.getY() * gridYInterval,
-					radius + (radius * scale),
-					0,
-					Math.PI*2,
-					true
-				);
-				ctx.fill();
-				ctx.beginPath();
+				drawCircleFromPosition(
+					[ bit.getX() * gridXInterval +(gridXInterval /2 ), bit.getY() * gridYInterval+(gridXInterval /2 ) ],
+					'rgba(255, 100, 0, '+ opacity+')',
+					radius +(radius * scale)
+				)
 			}
 		};
 	}
@@ -107,21 +99,9 @@ var Grid = function(canvas_id, grid) {
 				unit.getColor(),
 				unit.getSize()
 			);
-			drawBarrel(unit);
-		}
-	}
-	
-	
-	var drawHelis = function(){
-		helis = mySoldierManager.getAircraft();
-		for(var i =0; i < helis.length; i++){
-			var unit = helis[i]
-			drawCircleFromPosition(
-				unit.getCurrentPosition(),
-				unit.getColor(),
-				gridXInterval * unit.getSize() / 2
-			);
-			drawHealth(unit)
+			// see if they are a turret
+			if (unit.targettedSoldier)
+				drawBarrel(unit);
 		}
 	}
 	
@@ -193,29 +173,29 @@ var Grid = function(canvas_id, grid) {
 	};
 	
 	var drawSoldiers = function() {
-		for (var i=0; i < mySoldierManager.allSoldiers().length; i++) {
-			drawSoldier(mySoldierManager.allSoldiers()[i]);
+		for (var i=0; i < mySoldierManager.allUnits().length; i++) {
+			drawSoldier(mySoldierManager.allUnits()[i]);
 		};
 	};
 	
 	var drawSoldier = function(s){
 		x = s.getCurrentPosition()[0];
 		y = s.getCurrentPosition()[1];
-		w = s.getSize();
+		w = s.size * gridXInterval;
 		if (s.isOnFire()){
 			w2 = w * 1.5
 			drawSquare(x-w2/2,y-w2/2,w2,'orange')
 		}
-		drawSquare(x-w/2,y-w/2,s.getSize(),s.getColor())
-		drawHealth(x-w/2,y-w/2-15,20,s.getHealthPercentage());
+		drawCircleFromPosition( s.getCurrentPosition(), s.getColor(), w/2);
+		drawHealth(x,y-20,20,s.healthpercent);
 	}
 	
 	var drawHealth = function(x,y,max,health){
 		//background
 		ctx.fillStyle = 'red'
-		ctx.fillRect(x, y, max, 5)
+		ctx.fillRect(x-max/2, y, max, 5)
 		ctx.fillStyle = 'rgb(0,255, 0)'
-		ctx.fillRect(x, y, max*health, 5)
+		ctx.fillRect(x-max/2, y, max*health, 5)
 	}
 	
 	var drawBits = function(){
@@ -289,6 +269,9 @@ var addUnit = function(u, x, y){
 	if(money < u['cost']){
 		$('#notice').text('Not enough money, bozo!')
 		return false
+	}
+	if (u['type'] == Explosion){
+		return myUnitMangager.createUnit(u, [x, y]);
 	}
 	
 	if (grid[y][x] == 1)
