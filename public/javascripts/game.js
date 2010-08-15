@@ -72,7 +72,7 @@ var gameWon = function(){
 
 var attemptToWinGame = function(){
 	if ( gameWon() ){
-		$('#big_notice').show().text('<h2>YOU WIN!</h2>')
+		$('#big_notice').show().html('<h2>YOU WIN!</h2>')
 		playing = false;
 	}
 }

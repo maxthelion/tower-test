@@ -17,11 +17,13 @@ var Grid = function(canvas_id, grid) {
 		ctx.fillStyle = '#e3d19b'
 		ctx.fillRect(0,0,gridWidth, gridHeight);
 		drawBits();
-		drawStartAndEnd();
+		drawPointSquare(startPoint, 'gray')
+		drawPointSquare(endPoint, 'gray')
 		drawTurrets();
 		drawTerrain();
 		drawSoldiers();
 		drawExplosions();
+		drawHealth(	pixel(endPoint[0])+gridXInterval/2, pixel(endPoint[1])-15,50,10,lives/startLives)
 		drawHighLight();
 	};
 	
@@ -147,12 +149,6 @@ var Grid = function(canvas_id, grid) {
 		]
 	}
 	
-	var drawStartAndEnd = function(){		
-		drawPointSquare(startPoint, 'gray')
-		drawPointSquare(endPoint, 'gray')
-		drawHealth(pixel(endPoint[0])+gridXInterval/2,pixel(endPoint[1])-15,50,10,lives/startLives)
-	};
-
 	var pixel = function(p){
 		return p * gridXInterval;
 	}
@@ -184,8 +180,15 @@ var Grid = function(canvas_id, grid) {
 	};
 	
 	var drawSoldiers = function() {
-		for (var i=0; i < mySoldierManager.allUnits().length; i++) {
-			drawSoldier(mySoldierManager.allUnits()[i]);
+		us = mySoldierManager.allUnits();
+		for (var i=0; i < us.length; i++) {
+			drawSoldier(us[i]);
+		};
+		for (var i=0; i < us.length; i++) {
+			s= us[i]
+			x = s.getCurrentPosition()[0];
+			y = s.getCurrentPosition()[1];
+			drawHealth(x,y-20,20,5,s.healthpercent);
 		};
 	};
 	
@@ -197,7 +200,6 @@ var Grid = function(canvas_id, grid) {
 			drawCircleFromPosition(s.getCurrentPosition(),'orange',w/(1 + Math.random()))
 		}
 		drawCircleFromPosition( s.getCurrentPosition(), s.getColor(), w/2);
-		drawHealth(x,y-20,20,5,s.healthpercent);
 	}
 	
 	var drawHealth = function(x,y,w,h,health){
