@@ -10,7 +10,6 @@ var Grid = function(canvas_id, grid) {
 	var gridWidth = canvas.width;
 	var highLight;
 	var result = AStar(grid, startPoint, endPoint, "Manhattan");
-
 	
 	var draw = function(){
 		ctx.clearRect(0,0,gridWidth, gridHeight);
@@ -321,6 +320,10 @@ var Grid = function(canvas_id, grid) {
 	}
 };
 
+var revertGridPoint = function(x, y){
+	grid[y][x] = 0;
+	result = AStar(grid, startPoint, endPoint, "Manhattan");
+}
 
 var addUnit = function(u, x, y){
 	// check there is money
@@ -344,10 +347,6 @@ var addUnit = function(u, x, y){
 			return revertGridPoint(x, y);
 		}
 	};
-	
-	var revertGridPoint = function(x, y){
-		grid[y][x] = 0;
-		result = AStar(grid, startPoint, endPoint, "Manhattan");
-	}
 	myUnitMangager.createUnit(u, [x, y]);
 }
+
