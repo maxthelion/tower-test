@@ -8,6 +8,8 @@ var Turret = function(position, template, id){
 	this.cost = template['cost']
 	var tSoldier;
 	var firing = false;
+	this.cX = mygrid.pointCenterXY( position[0], position[1] )[0]
+	this.cY = mygrid.pointCenterXY( position[0], position[1] )[1]
 	
 	this.getPosition = function() {
 		return position;

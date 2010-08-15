@@ -10,19 +10,22 @@ var Grid = function(canvas_id, grid) {
 	var gridWidth = canvas.width;
 	var highLight;
 	var result = AStar(grid, startPoint, endPoint, "Manhattan");
+	sprites_img = new Image(); 
+	sprites_img.src = 'soldier.png';
 	
 	var draw = function(){
 		ctx.clearRect(0,0,gridWidth, gridHeight);
 		ctx.fillStyle = '#e3d19b'
 		ctx.fillRect(0,0,gridWidth, gridHeight);
 		drawBits();
-		drawPointSquare(startPoint, 'gray')
-		drawPointSquare(endPoint, 'gray')
+		drawSprite(160, pixelC(endPoint[0]), pixelC(endPoint[1]))
+		drawSprite(180, pixelC(startPoint[0]), pixelC(startPoint[1]))
 		drawTurrets();
 		drawTerrain();
 		drawSoldiers();
 		drawExplosions();
-		drawHealth(	pixel(endPoint[0])+gridXInterval/2, pixel(endPoint[1])-15,50,10,lives/startLives)
+		// would normally do pixelC on the y as welll
+		drawHealth(	pixelC(endPoint[0]), pixel(endPoint[1])-15,50,10,lives/startLives)
 		drawHighLight();
 	};
 	
@@ -38,11 +41,12 @@ var Grid = function(canvas_id, grid) {
 				continue
 			decay = 10
 			if (frameNum - bit.getStartFrame() < decay){
-				var scale =	(frameNum - bit.getStartFrame()) / decay;
+				var scale = (frameNum - bit.getStartFrame()) / decay;
 				var opacity = 1 - (scale * .5)
-				radius = radiusFromRange( bit.getRadius() ) * gridXInterval / 2
+				radius = radiusFromRange( bit.getRadius() )
 				drawCircleFromPosition(
-					[ bit.getX() * gridXInterval +(gridXInterval /2 ), bit.getY() * gridYInterval+(gridXInterval /2 ) ],
+					[ 
+						pixelC( bit.getX() ), pixelC( bit.getY() ) ],
 					'rgba(255, 100, 0, '+ opacity+')',
 					radius +(radius * scale)
 				)
@@ -52,18 +56,18 @@ var Grid = function(canvas_id, grid) {
 	
 	var drawHighLight = function(){
 		if(selectedUnit){
-			drawCircle( selectedUnit.getPosition()[0], selectedUnit.getPosition()[1], 'rgba(255, 255, 255, 0.5)', 5);
+			drawCircleFromPosition( [selectedUnit.cX, selectedUnit.cY], 'rgba(255, 255, 255, 0.5)', 50);
 		}
 		
 		if(highLight && squareAvaliable(highLight[0], highLight[1] )){
 			// check there is money
 			var color = (money < currentUnit()['cost']) ? '255, 0, 0' : '0, 255, 0';
-			drawCircle( highLight[0], highLight[1], 'rgb(' + color +')');
-			drawCircle( highLight[0], highLight[1], 'rgba('+ color +', 0.3)', radiusFromRange(currentUnit()['range']));
+			drawCircleFromPosition( [pixelC(highLight[0]), pixelC(highLight[1])], 'rgb(' + color +')', gridXInterval/2);
+			drawCircleFromPosition( [pixelC(highLight[0]), pixelC(highLight[1])], 'rgba('+ color +', 0.3)', radiusFromRange(currentUnit()['range']));
 		} else if(highLight){
 			if (myUnitMangager.unitAt(highLight)){
 				var u = myUnitMangager.unitAt(highLight);
-				drawCircle( highLight[0], highLight[1], 'rgba(255, 200, 0, 0.5)');
+				drawCircleFromPosition( [pixelC(highLight[0]), pixelC(highLight[1])], 'rgba(255, 200, 0, 0.5)', gridXInterval/2);
 			}
 		}
 	};
@@ -73,19 +77,7 @@ var Grid = function(canvas_id, grid) {
 	}
 	
 	var radiusFromRange = function(range){
-		return range * 2 + 1
-	}
-	
-	var drawCircle = function(x, y, mycolor, radius){
-		radius = radius ? radius : 1
-		drawCircleFromPosition(
-			[
-				x * gridXInterval + gridXInterval / 2,
-				y * gridYInterval + gridXInterval / 2
-			],
-			mycolor,
-			radius * gridXInterval / 2
-		);
+		return ((range * 2 + 1 ) / 2) * gridXInterval;
 	}
 	
 	var drawCircleFromPosition = function(position, mycolor, radius){
@@ -105,11 +97,13 @@ var Grid = function(canvas_id, grid) {
 	var drawTurrets = function(){
 		for(var i =0; i < units.length; i++){
 			var unit = units[i]
-			drawCircle(
-				unit.getPosition()[0],
-				unit.getPosition()[1],
+			drawCircleFromPosition(
+				[
+					unit.cX,
+					unit.cY
+				],
 				unit.getColor(),
-				unit.getSize()
+				unit.getSize() * gridXInterval / 2
 			);
 			// see if they are a turret
 			if (unit.targettedSoldier)
@@ -121,11 +115,11 @@ var Grid = function(canvas_id, grid) {
 		var soldier = turret.targettedSoldier();
 		if (soldier){
 			ctx.beginPath()
-			tx = pixel(turret.getPosition()[0]) + gridXInterval/2
-			ty = pixel(turret.getPosition()[1]) + gridYInterval/2
+			tx = turret.cX
+			ty = turret.cY
 			ctx.moveTo(tx, ty )
-			sx = soldier.getCurrentPosition()[0]
-			sy = soldier.getCurrentPosition()[1]
+			sx = soldier.cX
+			sy = soldier.cY
 			var coords = getNewCoords(tx, ty, sx, sy, 15);
 			ctx.strokeStyle = 'black';
 			ctx.lineWidth = 2;
@@ -152,53 +146,27 @@ var Grid = function(canvas_id, grid) {
 		return p * gridXInterval;
 	}
 	
-	// takes point values
- 	var drawPointSquare = function(p, c){
-		ctx.fillStyle = 'gray';
-		ctx.fillRect(
-			p[0]* gridXInterval, 
-			p[1]* gridYInterval, 
-			gridXInterval, 
-			gridYInterval
-		);
-	};
-	
-	// takes pixels
-	var drawSquare = function(x, y, w, c){
-		ctx.fillStyle=c;
-		ctx.fillRect(x,y,w,w);
+	var pixelC = function(p){
+		return p * gridXInterval + (gridXInterval / 2);
 	}
-	
-	var drawPath = function(){
-		for(var x, y, i = 0, j = result.length; i < j; i++) {
-			x = result[i][0];
-			y = result[i][1];
-			ctx.fillStyle = 'white';
-			ctx.fillRect(x* gridXInterval, y*gridYInterval, gridXInterval, gridYInterval);
-		}
-	};
-	
+		
 	var drawSoldiers = function() {
 		us = mySoldierManager.allUnits();
 		for (var i=0; i < us.length; i++) {
 			drawSoldier(us[i]);
 		};
 		for (var i=0; i < us.length; i++) {
-			s= us[i]
-			x = s.getCurrentPosition()[0];
-			y = s.getCurrentPosition()[1];
-			drawHealth(x,y-20,20,5,s.healthpercent);
+			s = us[i]
+			drawHealth(s.cX,s.cY-20,20,5,s.healthpercent);
 		};
 	};
 	
 	var drawSoldier = function(s){
-		x = s.getCurrentPosition()[0];
-		y = s.getCurrentPosition()[1];
 		w = s.size * gridXInterval;
 		if (s.isOnFire()){
-			drawCircleFromPosition(s.getCurrentPosition(),'orange',w/(1 + Math.random()))
+			drawCircleFromPosition([s.cX, s.cY],'orange',w/(1 + Math.random()))
 		}
-		drawCircleFromPosition( s.getCurrentPosition(), s.getColor(), w/2);
+		drawSprite(s.sprite, s.cX, s.cY)
 	}
 	
 	var drawHealth = function(x,y,w,h,health){
@@ -223,24 +191,27 @@ var Grid = function(canvas_id, grid) {
 				continue
 			}
 			var opacity =	1 - (frameNum - bit.startTime) / 200;
-			drawCircleFromPosition([bit.cX, bit.cY], 'rgba(255, 0, 0, '+ opacity+')',bloodSpatterSize);
+			drawCircleFromPosition([bit.cX, bit.cY], 'rgba(255, 0, 0, '+ opacity+')', bloodSpatterSize);
 		};
+	}
+	
+	var drawSprite = function(sIndex, x, y){
+		cw = 20
+		ch = 20
+		sy = 0 
+		ctx.drawImage(sprites_img, sIndex, sy, cw, ch, x - cw/2, y - cw/2, cw, ch)
 	}
 	
 	var drawTerrain = function(){
 		for (var i=0; i < terrain.length; i++) {
-			drawCircle(
-				terrain[i][0],
-				terrain[i][1],
-				'brown'
-			);
+			drawSprite(140, pixelC(terrain[i][0]), pixelC(terrain[i][1]) )
 		};
 	}
 	
 	this.pointCenterXY = function(x, y){
 		return [
-			x * gridXInterval + (gridXInterval/2), 
-			y * gridYInterval + (gridXInterval/2)
+			pixelC(x), 
+			pixelC(y)
 		]
 	};
 	
@@ -250,7 +221,9 @@ var Grid = function(canvas_id, grid) {
 		return [xIndex, yIndex];
 	};
 	
-	draw();
+	sprites_img.onload = function(){
+		draw();
+	}
 	
 	$(canvas).click(function(evt){
 		if (playing == false || paused == true){
@@ -292,10 +265,7 @@ var Grid = function(canvas_id, grid) {
 		
 		w = elem.width()
 		h = elem.height()
-		coords = [
-			t.getPosition()[0] * gridXInterval - (w/2) + (gridXInterval /2),
-			t.getPosition()[1] * gridYInterval - (h/2) + (gridYInterval /2)
-		]
+		coords = [ t.cX  - (w/2), t.cY  - (h/2) ]
 		elem.css('left', coords[0])
 		elem.css('top', coords[1])
 		// sellAmount = 2

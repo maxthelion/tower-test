@@ -2,15 +2,14 @@
 var corpses = [];
 
 var bits = [];
-var Corpse = function(position) {
-	var startPosition = position;
+var Corpse = function(x, y) {
 	var i = bloodSpatterNum
 	while (i) {
 		bits.push({
 			speedX: 15 - (Math.random() * 30),
 			speedY: 15 - (Math.random() * 30),
-			cX: position[0],
-			cY: position[1],
+			cX: x,
+			cY: y,
 			startTime: frameNum
 		})
 		i--;

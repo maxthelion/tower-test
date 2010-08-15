@@ -18,7 +18,8 @@ var SoldierManager = function(){
 		 health: 30,
 		 size: 0.6,
 		 bounty: 1,
-		 type: Soldier
+		 type: Soldier,
+		 sprite: 0
 		},
 		{
 		 name: 'Infantry',
@@ -27,7 +28,8 @@ var SoldierManager = function(){
 		 health: 100,
 		 size: 0.8,
 		 bounty: 1,
- 		 type: Soldier
+ 		 type: Soldier,
+		 sprite: 20
 		},
 		{
 		 name: 'heavyInfantry',
@@ -36,34 +38,8 @@ var SoldierManager = function(){
 		 health: 300,
 		 size: 1,
 		 bounty: 4,
- 		 type: Soldier
-		},
-		{
-		 name: 'bike',
-		 speed: 3,
-		 color: 'blue',
-		 health: 100,
-		 size: 0.8,
-		 bounty: 2,
- 		 type: Soldier
-		},
-		{
-		 name: 'megatron',
-		 speed: 2,
-		 color: 'red',
-		 health: 1000,
-		 size: 1.2,
-		 bounty: 10,
- 		 type: Soldier
-		},
-		{
-		 name: 'helicopter',
-		 speed: 2,
-		 color: '#bbb',
-		 health: 100,
-		 size: 1.2,
-		 bounty: 1,
-		 type: Helicopter
+ 		 type: Soldier,
+		 sprite: 40
 		},
 		{
 		 name: 'MediumInfantry',
@@ -72,8 +48,39 @@ var SoldierManager = function(){
 		 health: 200,
 		 size: 0.8,
 		 bounty: 1,
- 		 type: Soldier
+ 		 type: Soldier,
+			sprite: 60
 		},
+		{
+		 name: 'bike',
+		 speed: 3,
+		 color: 'blue',
+		 health: 100,
+		 size: 0.8,
+		 bounty: 2,
+ 		 type: Soldier,
+		sprite: 80
+		},
+		{
+		 name: 'megatron',
+		 speed: 2,
+		 color: 'red',
+		 health: 1000,
+		 size: 1.2,
+		 bounty: 10,
+ 		 type: Soldier,
+		sprite: 100
+		},
+		{
+		 name: 'helicopter',
+		 speed: 2,
+		 color: '#bbb',
+		 health: 100,
+		 size: 1.2,
+		 bounty: 1,
+		 type: Helicopter,
+		 sprite: 120
+		}
 	];
 	
 	this.allSoldiers = function(){
@@ -98,13 +105,13 @@ var SoldierManager = function(){
 		allSoldiersHash[key][a.getId()] = a;
 		soldier.onReachDestination(function(){
 			explosions.push( new Explosion(a.getCurrentPoint(), 1, frameNum, 0) );
-			corpses.push( new Corpse( a.getCurrentPosition()) )
+			corpses.push( new Corpse( a.cX, a.cY ) )
 			removeSoldier(a);
 			loseLife();
 		})
 		soldier.onDie(function(){
 			removeSoldier(a);
-			corpses.push( new Corpse( a.getCurrentPosition()) )
+			corpses.push( new Corpse( a.cX, a.cY ) )
 		})
 		redoHash(key)
 	}

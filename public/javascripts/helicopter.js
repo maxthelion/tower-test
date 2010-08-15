@@ -1,6 +1,8 @@
 var Helicopter = function(startPoint, endPoint, grid, template, id){
 	var self = this;
 	var currentPosition = mygrid.pointCenterXY(startPoint[0], startPoint[1])
+	this.cX = currentPosition[0];
+	this.cY = currentPosition[1];
 	var endPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
 	var currentSpeed = template['speed'];
 	var deathCallback;
@@ -10,28 +12,25 @@ var Helicopter = function(startPoint, endPoint, grid, template, id){
 	this.healthpercent = 1;
 	var bounty = template['bounty'];
 	this.size = template['size'];
+	this.sprite = template['sprite']
 	var id
 	
 	this.move = function(){
 		// kludge
-		if (endPosition[0] > currentPosition[0]){
-			currentPosition[0] += currentSpeed;
+		if (endPosition[0] > self.cX){
+			self.cX += currentSpeed;
 		} else {
-			currentPosition[0] -= currentSpeed;
+			self.cX -= currentSpeed;
 		}
-		if (endPosition[1] > currentPosition[1]){
-			currentPosition[1] += currentSpeed;
+		if (endPosition[1] > self.cY){
+			self.cY += currentSpeed;
 		} else {
-			currentPosition[1] -= currentSpeed;
+			self.cY -= currentSpeed;
 		}
-		var cell = mygrid.cellFromPosition( currentPosition );
+		var cell = mygrid.cellFromPosition( [self.cX, self.cY] );
 		if ( cell[0] == endPoint[0] && cell[1] == endPoint[1]) {
 			destinationCallback()
 		}
-	}
-	
-	this.getCurrentPosition = function(){
-		return currentPosition;
 	}
 
 	this.getColor = function(){
@@ -39,7 +38,7 @@ var Helicopter = function(startPoint, endPoint, grid, template, id){
 	}
 	
 	this.getCurrentPoint = function(){
-		return mygrid.cellFromPosition( currentPosition );
+		return mygrid.cellFromPosition( [self.cX, self.cY] );
 	}
 	
 	this.onReachDestination = function(callback){

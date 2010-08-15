@@ -3,10 +3,10 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 	var initialHealth = template['health'];
 	this.health = initialHealth;
 	this.healthpercent = 1;
+	this.sprite = template['sprite']
 	var myPath;
 	var pathIndex = 0;
 	var currentPoint;
-	var currentPosition;
 	var id;
 	var deathCallback;
 	var destinationCallback;
@@ -20,6 +20,8 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 	var slowedUntil;
 	var startFlameNum;
 	currentSpeed = speed;
+	this.cX;
+	this.cY;
 	
 	this.move = function(){
 		if(self.isOnFire()){
@@ -31,17 +33,17 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 			currentSpeed = speed;
 		}
 		// kludge
-		if (nextPointPosition[0] > currentPosition[0]){
-			currentPosition[0] += currentSpeed;
+		if (nextPointPosition[0] > self.cX){
+			self.cX += currentSpeed;
 		} else {
-			currentPosition[0] -= currentSpeed;
+			self.cX -= currentSpeed;
 		}
-		if (nextPointPosition[1] > currentPosition[1]){
-			currentPosition[1] += currentSpeed;
+		if (nextPointPosition[1] > self.cY){
+			self.cY += currentSpeed;
 		} else {
-			currentPosition[1] -= currentSpeed;
+			self.cY -= currentSpeed;
 		}
-		var cell = mygrid.cellFromPosition( currentPosition );
+		var cell = mygrid.cellFromPosition( [self.cX, self.cY] );
 		if (nextPoint == undefined){
 			destinationCallback();
 			return false
@@ -66,10 +68,6 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 	
 	this.isOnFire = function(){
 		return startFlameNum && startFlameNum > frameNum
-	}
-	
-	this.getCurrentPosition = function(){
-		return currentPosition;
 	}
 	
 	this.regeneratePath = function(){
@@ -121,7 +119,9 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 		myPath = AStar(grid, startPoint, endPoint, "Manhattan");
 		currentPoint = myPath[pathIndex];
 		nextPoint = myPath[pathIndex + 1];
-		currentPosition = mygrid.pointCenterXY(currentPoint[0], currentPoint[1]);
+		var currentPosition = mygrid.pointCenterXY(currentPoint[0], currentPoint[1]);
+		self.cX = currentPosition[0];
+		self.cY = currentPosition[1];
 		nextPointPosition = mygrid.pointCenterXY(nextPoint[0], nextPoint[1]);
 	}
 	
