@@ -10,8 +10,6 @@ var Grid = function(canvas_id, grid) {
 	var gridWidth = canvas.width;
 	var highLight;
 	var result = AStar(grid, startPoint, endPoint, "Manhattan");
-	sprites_img = new Image(); 
-	sprites_img.src = 'soldier.png';
 	
 	var draw = function(){
 		ctx.clearRect(0,0,gridWidth, gridHeight);
@@ -220,10 +218,6 @@ var Grid = function(canvas_id, grid) {
 		var yIndex = Math.floor( position[1] / gridYInterval )
 		return [xIndex, yIndex];
 	};
-	
-	sprites_img.onload = function(){
-		draw();
-	}
 	
 	$(canvas).click(function(evt){
 		if (playing == false || paused == true){

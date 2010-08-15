@@ -122,6 +122,19 @@ var anySoldiers = function(){
 	return mySoldierManager.allUnits().length > 0
 }
 
+sprites_img = new Image(); 
+sprites_img.src = 'soldier.png';
+sprites_img.onload = function(){
+	start();
+}
+
+var start = function(){
+	progressRound()	
+	playing = true;
+	//	global interval
+	globalInterval = setInterval(frameFunction, 60);
+}
+
 var progressRound = function(){
 	round++;
 	$('#notice').text('Round ' + round + ' of ' + waves.length );
@@ -140,10 +153,7 @@ $().ready(function(){
 	
 	//$('#start').click(function(){
 		$('#big_notice').hide()
-		progressRound()	
-		playing = true;
-		//	global interval
-		globalInterval = setInterval(frameFunction, 60);
+		// start();
 	//});
 	
 	$('#pause_button').click(function(evt){
