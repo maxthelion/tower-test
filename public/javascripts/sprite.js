@@ -19,4 +19,22 @@ var EnemyUnit = function(startPoint, endPoint, grid, template, id){
 	this.sprite = template['sprite']
 	this.id = id;
 	
+	
+	this.onReachDestination = function(callback){
+		destinationCallback = callback;
+	}
+	
+	this.onDie = function(callback){
+		deathCallback = callback;
+	}
+	
+	this.takeBullet = function(damage) {
+		self.health -= damage;
+		this.healthpercent = self.health / initialHealth;
+		if ( self.health <= 0 ){
+			deathCallback();
+			incrementKills(bounty);
+		}
+	}
+	
 }
