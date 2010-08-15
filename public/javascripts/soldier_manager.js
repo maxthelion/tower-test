@@ -86,12 +86,16 @@ var SoldierManager = function(){
 	this.allSoldiers = function(){
 		return allSoldiersArrays['s'];
 	};
+	
+	this.getAircraft = function(){
+		return allSoldiersArrays['a'];
+	}
 
 	this.allUnits = function(){
-		var soldiers = []
-		soldiers = soldiers.concat(allSoldiersArrays['a'])
-		soldiers = soldiers.concat(allSoldiersArrays['s'])
-		return soldiers;
+		var s = []
+		s = s.concat(allSoldiersArrays['a'])
+		s = s.concat(allSoldiersArrays['s'])
+		return s;
 	};
 	
 	this.moveUnits = function(){
@@ -102,9 +106,9 @@ var SoldierManager = function(){
 	
 	var addSoldier = function(a){
 		var key = keyFromSoldier(a)
-		allSoldiersHash[key][a.getId()] = a;
+		allSoldiersHash[key][a.id] = a;
 		soldier.onReachDestination(function(){
-			explosions.push( new Explosion(a.getCurrentPoint(), 1, frameNum, 0) );
+			explosions.push( new Explosion(a.cX, a.cY, 1, frameNum, 0) );
 			corpses.push( new Corpse( a.cX, a.cY ) )
 			removeSoldier(a);
 			loseLife();
@@ -126,7 +130,7 @@ var SoldierManager = function(){
 	}
 	
 	var removeSoldier = function(s){
-		allSoldiersHash[keyFromSoldier(s)][s.getId()] = null;
+		allSoldiersHash[keyFromSoldier(s)][s.id] = null;
 		redoHash(keyFromSoldier(s))
 	}
 	
@@ -142,11 +146,6 @@ var SoldierManager = function(){
 	var keyFromSoldier = function(soldier){
 		 return (object == Soldier) ? 's' : 'a'
 	}
-	
-	this.getAircraft = function(){
-		return allSoldiersArrays['a'];
-	}
-	
 
 	this.withinRange = function(x, y, range, ground, air){
 		var myArray = []
@@ -157,12 +156,10 @@ var SoldierManager = function(){
 			soldiers = soldiers.concat(allSoldiersArrays['s'])
 			
 		for (var i=0; i < soldiers.length; i++) {
-			var soldier = soldiers[i];
-			if (soldier.getCurrentPoint()[0] >= x-range && 
-						soldier.getCurrentPoint()[0] <= x+range &&
-					soldier.getCurrentPoint()[1] >= y-range && 
-						soldier.getCurrentPoint()[1] <= y+range ){
-				myArray.push(soldier);
+			var s = soldiers[i];
+			if (s.cX >= x - range && s.cX <= x + range &&
+					s.cY >= y - range && s.cY <= y + range ){
+				myArray.push(s);
 			}
 		};
 		return myArray;

@@ -1,5 +1,6 @@
 var selectedUnit;
 var Grid = function(canvas_id, grid) {
+	var self = this;
 	var canvas = document.getElementById(canvas_id)
 	var ctx = canvas.getContext('2d'); 
 	var width = grid[0].length;
@@ -34,21 +35,16 @@ var Grid = function(canvas_id, grid) {
 	
 	var drawExplosions = function(){
 		for (var i=0; i < explosions.length; i++) {
-			var bit = explosions[i]
-			if (bit == null)
+			var e = explosions[i]
+			if (e.finished())
 				continue
 			decay = 10
-			if (frameNum - bit.getStartFrame() < decay){
-				var scale = (frameNum - bit.getStartFrame()) / decay;
-				var opacity = 1 - (scale * .5)
-				radius = radiusFromRange( bit.getRadius() )
-				drawCircleFromPosition(
-					[ 
-						pixelC( bit.getX() ), pixelC( bit.getY() ) ],
-					'rgba(255, 100, 0, '+ opacity+')',
-					radius +(radius * scale)
-				)
-			}
+			var opacity = 1 - (e.scale * .5)
+			drawCircleFromPosition(
+				[ e.cX, e.cY ],
+				'rgba(255, 100, 0, '+ opacity+')',
+				e.radius +(e.radius * e.scale)
+			)
 		};
 	}
 	
@@ -61,7 +57,7 @@ var Grid = function(canvas_id, grid) {
 			// check there is money
 			var color = (money < currentUnit()['cost']) ? '255, 0, 0' : '0, 255, 0';
 			drawCircleFromPosition( [pixelC(highLight[0]), pixelC(highLight[1])], 'rgb(' + color +')', gridXInterval/2);
-			drawCircleFromPosition( [pixelC(highLight[0]), pixelC(highLight[1])], 'rgba('+ color +', 0.3)', radiusFromRange(currentUnit()['range']));
+			drawCircleFromPosition( [pixelC(highLight[0]), pixelC(highLight[1])], 'rgba('+ color +', 0.3)', self.radiusFromRange(currentUnit()['range']));
 		} else if(highLight){
 			if (myUnitMangager.unitAt(highLight)){
 				var u = myUnitMangager.unitAt(highLight);
@@ -74,7 +70,7 @@ var Grid = function(canvas_id, grid) {
 		return grid[y][x] != 1;
 	}
 	
-	var radiusFromRange = function(range){
+	this.radiusFromRange = function(range){
 		return ((range * 2 + 1 ) / 2) * gridXInterval;
 	}
 	
@@ -95,14 +91,15 @@ var Grid = function(canvas_id, grid) {
 	var drawTurrets = function(){
 		for(var i =0; i < units.length; i++){
 			var unit = units[i]
-			drawCircleFromPosition(
-				[
-					unit.cX,
-					unit.cY
-				],
-				unit.getColor(),
-				unit.getSize() * gridXInterval / 2
-			);
+			// drawCircleFromPosition(
+			// 	[
+			// 		unit.cX,
+			// 		unit.cY
+			// 	],
+			// 	unit.getColor(),
+			// 	unit.size * gridXInterval / 2
+			// );
+			drawSprite(200, unit.cX, unit.cY)
 			// see if they are a turret
 			if (unit.targettedSoldier)
 				drawBarrel(unit);

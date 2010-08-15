@@ -1,7 +1,9 @@
 var Turret = function(position, template, id){
+	var self = this;
 	var position = position;
 	this.id = id;
 	var range = template['range'];
+	this.radius = mygrid.radiusFromRange( range )
 	var damage = template['damage'];
 	var fireRate = template['fireRate'];
 	var color = template['color'];
@@ -46,18 +48,10 @@ var Turret = function(position, template, id){
 	}
 	
 	var soldiersInRange = function(){
-		return mySoldierManager.withinRange(position[0], position[1], range, true, template['attacks_air']);
+		return mySoldierManager.withinRange(self.cX, self.cY, self.radius, true, template['attacks_air']);
 	};
 	
 	this.sellCost = function(){
 		return Math.floor(template['cost'] * 0.6)
-	}
-	
-	this.getDamage = function(){
-		return damage;
-	};
-	
-	this.getSize = function() {
-		return template['size']
 	}
 }

@@ -1,27 +1,15 @@
-var Soldier = function(startPoint, endPoint, grid, template, id){	
-	var self = this;
-	var initialHealth = template['health'];
-	this.health = initialHealth;
-	this.healthpercent = 1;
-	this.sprite = template['sprite']
+Soldier.prototype = EnemyUnit
+
+function Soldier(startPoint, endPoint, grid, template, id) {
+	EnemyUnit.call(this, startPoint, endPoint, grid, template, id)
 	var myPath;
 	var pathIndex = 0;
 	var currentPoint;
-	var id;
-	var deathCallback;
-	var destinationCallback;
 	var nextPoint;
 	var nextPointPosition;
-	var speed = template['speed'];
-	var color = template['color'];
-	this.size = template['size'];
-	var bounty = template['bounty']
-	var template = template;
 	var slowedUntil;
 	var startFlameNum;
-	currentSpeed = speed;
-	this.cX;
-	this.cY;
+	var speed = currentSpeed
 	
 	this.move = function(){
 		if(self.isOnFire()){
@@ -81,10 +69,6 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 		};
 	}
 
-	this.getColor = function(){
-		return isSlowed() ? 'green' : color;
-	}
-	
 	// this is the grid coordinate for the soldier
 	this.getCurrentPoint = function(){
 		return currentPoint;
@@ -110,11 +94,7 @@ var Soldier = function(startPoint, endPoint, grid, template, id){
 	this.setAlight = function(sfn){
 		startFlameNum = sfn
 	}
-	
-	this.getId = function(){
-		return id;
-	};
-	
+
 	var initialise = function(){
 		myPath = AStar(grid, startPoint, endPoint, "Manhattan");
 		currentPoint = myPath[pathIndex];

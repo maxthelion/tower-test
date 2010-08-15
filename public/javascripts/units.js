@@ -1,17 +1,3 @@
-var Obstacle = function(position, template){
-	this.getColor = function(){
-		return 'silver';
-	};
-	
-	this.getPosition = function() {
-		return position;
-	};
-	
-	this.getSize = function() {
-		return template['size']
-	}
-}
-
 var unitTypes = [
 	{
 		name: 'machine gun',
@@ -53,14 +39,7 @@ var unitTypes = [
 		cost: 20,
 		size: 1,
 		hitCallback: function(soldier, myFrameNum){
-			explosions.push(
-				new Explosion(
-					soldier.getCurrentPoint(),
-					1, 
-					myFrameNum,
-					5
-				) 
-			);
+			explosions.push(new Explosion( soldier.cX, soldier.cY,1, myFrameNum,5) );
 		},
 		type: Turret
 	},
@@ -132,7 +111,7 @@ var UnitManager = function(){
 	
 	this.createUnit = function(template, position){
 		if(template['type'] == Explosion){
-			explosions.push( new Explosion(position, template['range'], frameNum, template['damage']) );
+			explosions.push( new Explosion( 3, 4, template['range'], frameNum, template['damage']) );
 			changeMoney( template['cost'] * -1 );
 			return false;
 		};

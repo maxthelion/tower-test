@@ -84,7 +84,8 @@ var frameFunction = function(){
 	sounds = {}
 	frameNum ++;
 	checkDeath();
-	aimAndFireTurrets()
+	aimAndFireTurrets();
+	progressExplosions()
 	attemptToWinGame();
 	if( !gameWon() && !isDead()){
 		if(soldierCountDown == 0) {
@@ -106,6 +107,12 @@ var frameFunction = function(){
 		playSound(s);
 	}
 	mygrid.public_draw();
+}
+
+var progressExplosions = function(){
+	for (var i=0; i < explosions.length; i++) {
+		explosions[i].progress()
+	};
 }
 
 var isDead = function(){
