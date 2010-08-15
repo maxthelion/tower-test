@@ -43,14 +43,12 @@ var k = 10;
 var terrain = [];
 while(k > 0){
 	var t = [Math.floor(Math.random() * 15), Math.floor(Math.random() * 15)]
-	// this looks backwards, but is the way the grid is set up
-	if (	(t[0] == startPoint[1] && t[0] == endPoint[1]) ||
-				(t[1] == startPoint[0] && t[1] == endPoint[0])
+	if (	(t[0] == startPoint[0] && t[1] == startPoint[1]) ||
+				(t[0] == endPoint[0] && t[1] == endPoint[1])
 		) {
 		// console.log('clash')
 	} else {
 		terrain.push( t );
-
 	}
 	k--
 }
