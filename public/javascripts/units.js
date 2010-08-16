@@ -20,29 +20,29 @@ var unitTypes = [
 		size: 0.8,
 		type: Turret
 	},
-	{
-		name: 'sniper',
-		fireRate: 100,
-		range: 5,
-		color: '#000',
-		damage: 100,
-		cost: 20,
-		size: 0.2,
-		type: Turret
-	},
-	{
-		name: 'heavy cannon',
-		fireRate: 50,
-		range: 4,
-		color: '#999',
-		damage: 30,
-		cost: 20,
-		size: 1,
-		hitCallback: function(soldier, myFrameNum){
-			explosions.push(new Explosion( soldier.cX, soldier.cY,1, myFrameNum,5) );
-		},
-		type: Turret
-	},
+  // {
+  //  name: 'sniper',
+  //  fireRate: 100,
+  //  range: 5,
+  //  color: '#000',
+  //  damage: 100,
+  //  cost: 20,
+  //  size: 0.2,
+  //  type: Turret
+  // },
+  // {
+  //  name: 'heavy cannon',
+  //  fireRate: 50,
+  //  range: 4,
+  //  color: '#999',
+  //  damage: 30,
+  //  cost: 20,
+  //  size: 1,
+  //  hC: function(soldier, myFrameNum){
+  //    explosions.push(new Explosion( soldier.cX, soldier.cY,1, myFrameNum,5) );
+  //  },
+  //  type: Turret
+  // },
 	{
 		name: 'glue gun',
 		fireRate: 20,
@@ -50,19 +50,19 @@ var unitTypes = [
 		color: 'green',
 		damage: 0,
 		cost: 5,
-		hitCallback: function(soldier, myFrameNum){
+		hC: function(soldier, myFrameNum){
 			soldier.slow(myFrameNum + 30);
 		},
 		size: 0.4,
 		type: Turret
 	},
-	{
-		name: 'nuke',
-		damage: 100,
-		cost: 30,
-		range: 3,
-		type: Explosion
-	},
+  // {
+  //  name: 'nuke',
+  //  damage: 100,
+  //  cost: 30,
+  //  range: 3,
+  //  type: Explosion
+  // },
 	{
 		name: 'wall',
 		cost: 2,
@@ -77,11 +77,11 @@ var unitTypes = [
 		damage: 2,
 		cost: 3,
 		size: 0.5,
-		hitCallback: function(soldier, myFrameNum){
+		hC: function(soldier, myFrameNum){
 			soldier.setAlight(frameNum + 30);
 		},
 		type: Turret
-	},
+	}
 ]
 
 var currentUnit = function(){
@@ -121,9 +121,6 @@ var UnitManager = function(){
 		createUnitArray()
 		addUnitAtPosition(position, unit);
 		changeMoney( template['cost'] * -1 );
-		// if (template['type'] == Turret) {
-		// 	turrets.push(unit)
-		// };
 	};
 	
 	var createUnitArray = function(){

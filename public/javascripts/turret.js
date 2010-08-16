@@ -6,49 +6,31 @@ var Turret = function(position, template, id){
 	this.radius = mygrid.radiusFromRange( range )
 	var damage = template['damage'];
 	var fireRate = template['fireRate'];
-	var color = template['color'];
 	this.cost = template['cost']
-	var tSoldier;
-	var firing = false;
+	this.tSoldier;
+	this.firing = false;
 	this.cX = mygrid.pointCenterXY( position[0], position[1] )[0]
 	this.cY = mygrid.pointCenterXY( position[0], position[1] )[1]
+	this.hC = template['hC']; // hit callback
 	
 	this.getPosition = function() {
 		return position;
 	};
 	
-	this.targettedSoldier = function() {
-		return tSoldier;
-	}
-	
-	this.getColor = function(){
-		return color;
-	}
-	
-	var setTargettedSoldier = function(){
-		tSoldier = soldiersInRange()[0];
-	}
-	
 	this.aimAndFire = function(){
-		setTargettedSoldier();
-		if (tSoldier && (frameNum % fireRate == 0)){
-			firing = true;
-			sounds['shot'] = true
-			tSoldier.takeBullet(damage);
-			if (template['hitCallback']){
-				template['hitCallback'](tSoldier, frameNum)
-			}
+		self.tSoldier = soldiersInRange()[0];
+		if (self.tSoldier && (frameNum % fireRate == 0)){
+			self.firing = true;
+			self.tSoldier.takeBullet(damage);
+			if (self.hC)
+				template['hC'](self.tSoldier, frameNum)
 		} else {
-			firing = false;
+			self.firing = false;
 		}
 	}
 	
-	this.isFiring = function(){
-		return firing;
-	}
-	
 	var soldiersInRange = function(){
-		return mySoldierManager.withinRange(self.cX, self.cY, self.radius, true, template['attacks_air']);
+		return mSM.withinRange(self.cX, self.cY, self.radius, true, template['attacks_air']);
 	};
 	
 	this.sellCost = function(){

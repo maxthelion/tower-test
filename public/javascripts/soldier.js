@@ -5,12 +5,10 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 	this.cY = currentPosition[1];
 	var endPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
 	var currentSpeed = template['speed'];
-	var deathCallback;
-	var destinationCallback;
 	var initialHealth = template['health'];
 	this.health = initialHealth;
 	this.healthpercent = 1;
-	var bounty = template['bounty'];
+	this.bounty = template['bounty'];
 	this.size = template['size'];
 	this.sprite = template['sprite']
 	this.id = id;
@@ -46,7 +44,7 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 		}
 		var cell = mygrid.cellFromPosition( [self.cX, self.cY] );
 		if (nextPoint == undefined){
-			destinationCallback();
+			self.destC();
 			return false
 		} else if ( cell[0] == nextPoint[0] && cell[1] == nextPoint[1]) {
 			pathIndex++
@@ -81,26 +79,12 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 			return true;			
 		};
 	}
-
-	// this is the grid coordinate for the soldier
-	this.getCurrentPoint = function(){
-		return currentPoint;
-	}
-	
-	this.onReachDestination = function(callback){
-		destinationCallback = callback;
-	}
-	
-	this.onDie = function(callback){
-		deathCallback = callback;
-	}
 	
 	this.takeBullet = function(damage) {
 		self.health -= damage;
 		this.healthpercent = self.health / initialHealth;
 		if ( self.health <= 0 ){
-			deathCallback();
-			incrementKills(bounty);
+			self.dC();
 		}
 	}
 	

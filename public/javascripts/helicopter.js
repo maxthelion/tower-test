@@ -5,12 +5,10 @@ function Helicopter(startPoint, endPoint, grid, template, id) {
 	this.cY = currentPosition[1];
 	var endPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
 	var currentSpeed = template['speed'];
-	var deathCallback;
-	var destinationCallback;
 	var initialHealth = template['health'];
 	this.health = initialHealth;
 	this.healthpercent = 1;
-	var bounty = template['bounty'];
+	this.bounty = template['bounty'];
 	this.size = template['size'];
 	this.sprite = template['sprite']
 	this.id = id;
@@ -29,20 +27,8 @@ function Helicopter(startPoint, endPoint, grid, template, id) {
 		}
 		var cell = mygrid.cellFromPosition( [self.cX, self.cY] );
 		if ( cell[0] == endPoint[0] && cell[1] == endPoint[1]) {
-			destinationCallback()
+			self.destC()
 		}
-	}
-
-	this.getCurrentPoint = function(){
-		return mygrid.cellFromPosition( [self.cX, self.cY] );
-	}
-	
-	this.onReachDestination = function(callback){
-		destinationCallback = callback;
-	}
-	
-	this.onDie = function(callback){
-		deathCallback = callback;
 	}
 	
 	this.isOnFire = function(){
@@ -53,8 +39,7 @@ function Helicopter(startPoint, endPoint, grid, template, id) {
 		self.health -= damage;
 		self.healthpercent = self.health / initialHealth; 
 		if ( self.health <= 0 ){
-			deathCallback();
-			incrementKills(bounty);
+			self.dC();
 		}
 	}
 }

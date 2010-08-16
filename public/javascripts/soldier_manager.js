@@ -14,7 +14,6 @@ var SoldierManager = function(){
 		{
 		 name: 'lightInfantry',
 		 speed: 2,
-		 color: '#bbb',
 		 health: 30,
 		 size: 0.6,
 		 bounty: 1,
@@ -24,7 +23,6 @@ var SoldierManager = function(){
 		{
 		 name: 'Infantry',
 		 speed: 2,
-		 color: 'cyan',
 		 health: 100,
 		 size: 0.8,
 		 bounty: 1,
@@ -34,7 +32,6 @@ var SoldierManager = function(){
 		{
 		 name: 'heavyInfantry',
 		 speed: 2,
-		 color: 'grey',
 		 health: 300,
 		 size: 1,
 		 bounty: 4,
@@ -44,7 +41,6 @@ var SoldierManager = function(){
 		{
 		 name: 'MediumInfantry',
 		 speed: 2,
-		 color: 'cyan',
 		 health: 200,
 		 size: 0.8,
 		 bounty: 1,
@@ -54,7 +50,6 @@ var SoldierManager = function(){
 		{
 		 name: 'bike',
 		 speed: 3,
-		 color: 'blue',
 		 health: 100,
 		 size: 0.8,
 		 bounty: 2,
@@ -64,17 +59,15 @@ var SoldierManager = function(){
 		{
 		 name: 'megatron',
 		 speed: 2,
-		 color: 'red',
 		 health: 1000,
 		 size: 1.2,
 		 bounty: 10,
  		 type: Soldier,
-		sprite: 100
+		 sprite: 100
 		},
 		{
 		 name: 'helicopter',
 		 speed: 2,
-		 color: '#bbb',
 		 health: 100,
 		 size: 1.2,
 		 bounty: 1,
@@ -91,32 +84,36 @@ var SoldierManager = function(){
 		return allSoldiersArrays['a'];
 	}
 
-	this.allUnits = function(){
+	this.allUnits = function(ground, air){
 		var s = []
-		s = s.concat(allSoldiersArrays['a'])
-		s = s.concat(allSoldiersArrays['s'])
+		ground = (ground == undefined) ? true : ground
+		air = (air == undefined) ? true : air
+		if (air) 
+			s = s.concat(allSoldiersArrays['a'])
+		if (ground) 
+			s = s.concat(allSoldiersArrays['s'])
 		return s;
 	};
 	
 	this.moveUnits = function(){
-		for (var i=0; i < self.allUnits().length; i++) {
-			self.allUnits()[i].move();
+	  var a = self.allUnits()
+		for (var i=0; i < a.length; i++) {
+			a[i].move();
 		};
 	}
 	
 	var addSoldier = function(a){
 		var key = keyFromSoldier(a)
 		allSoldiersHash[key][a.id] = a;
-		soldier.onReachDestination(function(){
+		a.destC = function(){
 			explosions.push( new Explosion(a.cX, a.cY, 1, frameNum, 0) );
-			corpses.push( new Corpse( a.cX, a.cY ) )
 			removeSoldier(a);
 			loseLife();
-		})
-		soldier.onDie(function(){
+		}
+		a.dC = function(){
+		  incrementKills(a.bounty);
 			removeSoldier(a);
-			corpses.push( new Corpse( a.cX, a.cY ) )
-		})
+		}
 		redoHash(key)
 	}
 	
@@ -130,6 +127,7 @@ var SoldierManager = function(){
 	}
 	
 	var removeSoldier = function(s){
+	  corpses.push( new Corpse( s.cX, s.cY ) )
 		allSoldiersHash[keyFromSoldier(s)][s.id] = null;
 		redoHash(keyFromSoldier(s))
 	}
@@ -149,11 +147,7 @@ var SoldierManager = function(){
 
 	this.withinRange = function(x, y, range, ground, air){
 		var myArray = []
-		var soldiers = []
-		if (air) 
-			soldiers = soldiers.concat(allSoldiersArrays['a'])
-		if (ground) 
-			soldiers = soldiers.concat(allSoldiersArrays['s'])
+		var soldiers = this.allUnits(ground, air)
 			
 		for (var i=0; i < soldiers.length; i++) {
 			var s = soldiers[i];

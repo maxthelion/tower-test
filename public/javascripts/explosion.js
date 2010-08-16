@@ -17,7 +17,7 @@ var Explosion = function(x, y, radius, start, damage){
 	}
 	
 	var detonate = function(){
-		unfortunates = mySoldierManager.withinRange(self.cX, self.cY, radius, true, true)
+		unfortunates = mSM.withinRange(self.cX, self.cY, radius, true, true)
 		for (var i=0; i < unfortunates.length; i++) {
 			unfortunates[i].takeBullet(damage);
 		};

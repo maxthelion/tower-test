@@ -1,6 +1,4 @@
-
 var corpses = [];
-
 var bits = [];
 var Corpse = function(x, y) {
 	var i = bloodSpatterNum
@@ -17,9 +15,7 @@ var Corpse = function(x, y) {
 };
 
 function GridGenerator(width, height){
-	var	floor = Math.floor,
-		random = Math.random,
-		result = new Array(height);
+	var	result = new Array(height);
 	for(var	j, i = 0; i < height; i++) {
 		result[i] = new Array(width);
 		for(j = 0; j < width; j++)
@@ -28,17 +24,16 @@ function GridGenerator(width, height){
 	return result;
 };
 
-
 var kills = 0;
 var grid;	
 var startLives = 20;
 var lives = startLives;
-var mySoldierManager;
+var mSM;
 var mygrid;
 var regularity = 20; // the speed that new soldiers appear
-var waveLength = 10; // the length of a wave - eg how many soldiers per round
+var waveLength; // the length of a wave - eg how many soldiers per round
 var soldierCountDown = regularity;
-var waveCountDown = waveLength;
+var waveCountDown;
 var round = 0;
 var money = 20;
 var frameNum = 0;
@@ -46,11 +41,8 @@ var currentTurretIndex = 0;
 var paused = false;
 var playing =	false;
 var explosions = [];
-var sounds;
-var muted = true;
 var bloodSpatterSize = 2
 var bloodSpatterNum = 3
-var helis = [];
 
 var incrementKills = function(bounty){			
 	changeMoney(bounty);
@@ -85,7 +77,19 @@ var frameFunction = function(){
 	frameNum ++;
 	checkDeath();
 	aimAndFireTurrets();
-	progressExplosions()
+	progressExplosions();
+	for (var i=0; i < bits.length; i++) {
+	  var bit = bits[i]
+	 	// progress bits
+  	if (bit.startTime > frameNum - 5) {
+  		bit.cX += bit.speedX
+  		bit.cY += bit.speedY
+  	} else if (bit.startTime < frameNum - 200) {
+  		bit = null
+  		continue
+  	}
+	};
+
 	attemptToWinGame();
 	if( !gameWon() && !isDead()){
 		if(soldierCountDown == 0) {
@@ -95,16 +99,13 @@ var frameFunction = function(){
 				}
 			} else {
 				waveCountDown--;
-				mySoldierManager.createSoldier(typeIndex);
+				mSM.createSoldier(typeIndex);
 				soldierCountDown = regularity;
 			}
 		} else {
 			soldierCountDown--;
 		}
-		mySoldierManager.moveUnits();
-	}
-	for(s in sounds){
-		playSound(s);
+		mSM.moveUnits();
 	}
 	mygrid.public_draw();
 }
@@ -126,7 +127,7 @@ var checkDeath = function(){
 }
 
 var anySoldiers = function(){
-	return mySoldierManager.allUnits().length > 0
+	return mSM.allUnits().length > 0
 }
 
 sprites_img = new Image(); 
@@ -154,7 +155,7 @@ var progressRound = function(){
 }
 
 $().ready(function(){			
-	mySoldierManager = new SoldierManager();
+	mSM = new SoldierManager();
 	mygrid = new Grid('canvas', grid);
 	drawTurretButtons();
 	
@@ -173,14 +174,6 @@ $().ready(function(){
 			$('#big_notice').hide()
 		});
 		$('#pause_button').hide();
-	})
-
-	$('#mute_button').click(function(evt){
-		if(!muted){
-			muted = true;
-		} else {
-			muted = false;
-		}
 	})
 });
 
@@ -211,18 +204,12 @@ var setCurrentUnit = function(i){
 	$('.selected').removeClass('selected');
 	$('#button_'+ i).addClass('selected');
 }
+
 var aimAndFireTurrets = function(){
 	// aim the turrets and fire if possible
 	for(var i =0; i < units.length; i++){
 		if (units[i].aimAndFire){ // if it quacks like a turret
 			units[i].aimAndFire();
 		}
-	}
-}
-
-playSound = function(id) {
-	if(!muted){
-		x = $('#'+ id).clone();
-		x[0].play();
 	}
 }

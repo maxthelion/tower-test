@@ -9,8 +9,6 @@ var EnemyUnit = function(startPoint, endPoint, grid, template, id){
 	this.cY = currentPosition[1];
 	var endPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
 	var currentSpeed = template['speed'];
-	var deathCallback;
-	var destinationCallback;
 	var initialHealth = template['health'];
 	this.health = initialHealth;
 	this.healthpercent = 1;
@@ -19,20 +17,11 @@ var EnemyUnit = function(startPoint, endPoint, grid, template, id){
 	this.sprite = template['sprite']
 	this.id = id;
 	
-	
-	this.onReachDestination = function(callback){
-		destinationCallback = callback;
-	}
-	
-	this.onDie = function(callback){
-		deathCallback = callback;
-	}
-	
 	this.takeBullet = function(damage) {
 		self.health -= damage;
 		this.healthpercent = self.health / initialHealth;
 		if ( self.health <= 0 ){
-			deathCallback();
+			dC();
 			incrementKills(bounty);
 		}
 	}
