@@ -22,7 +22,7 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 	var startFlameNum;
 	var speed = currentSpeed
 	
-	this.move = function(){
+	this.enterFrame = function(){
 		if(self.isOnFire()){
 			self.health -= 0.5;
 			currentSpeed = speed * 2
@@ -78,6 +78,17 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 			myPath = newPath;
 			return true;			
 		};
+	}
+	
+	this.destC = function(){
+		explosions.push( new Explosion(self.cX, self.cY, 1, frameNum, 0) );
+		mSM.removeSoldier(self);
+		loseLife();
+	}
+	
+	this.dC = function(){
+	  incrementKills(self.bounty);
+		mSM.removeSoldier(self);
 	}
 	
 	this.takeBullet = function(damage) {

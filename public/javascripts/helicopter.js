@@ -13,7 +13,7 @@ function Helicopter(startPoint, endPoint, grid, template, id) {
 	this.sprite = template['sprite']
 	this.id = id;
 	
-	this.move = function(){
+	this.enterFrame = function(){
 		// kludge
 		if (endPosition[0] > self.cX){
 			self.cX += currentSpeed;
@@ -31,15 +31,22 @@ function Helicopter(startPoint, endPoint, grid, template, id) {
 		}
 	}
 	
-	this.isOnFire = function(){
-		return false;
-	}
-	
 	this.takeBullet = function(damage) {
 		self.health -= damage;
 		self.healthpercent = self.health / initialHealth; 
 		if ( self.health <= 0 ){
 			self.dC();
 		}
+	}
+	
+	this.destC = function(){
+		explosions.push( new Explosion(self.cX, self.cY, 1, frameNum, 0) );
+		mSM.removeSoldier(self.id);
+		loseLife();
+	}
+	
+	this.dC = function(){
+	  incrementKills(self.bounty);
+		mSM.removeSoldier(self.id);
 	}
 }

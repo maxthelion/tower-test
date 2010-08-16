@@ -23,20 +23,14 @@ var Grid = function(canvas_id, grid) {
 			var opacity =	1 - (frameNum - bit.startTime) / 200;
 			dCircle(bit.cX, bit.cY, 'rgba(255, 0, 0, '+ opacity+')', bloodSpatterSize);
 		};
-		drawSprite(160, pixelC(endPoint[0]), pixelC(endPoint[1]))
-		drawSprite(180, pixelC(startPoint[0]), pixelC(startPoint[1]))
 		// draw turrets
-		for(var i =0; i < units.length; i++){
-			var unit = units[i]
-			drawSprite(200, unit.cX, unit.cY)
+		for(var i =0; i < spritesArray.length; i++){
+			var unit = spritesArray[i]
+			drawSprite(unit.spriteX, unit.cX, unit.cY)
 			// see if they are a turret
 			if (unit.tSoldier)
 				drawBarrel(unit);
 		}
-		//draw terrain
-		for (var i=0; i < terrain.length; i++) {
-			drawSprite(140, pixelC(terrain[i][0]), pixelC(terrain[i][1]) )
-		};
 		drawSoldiers();
 		// draw explosions
 		for (var i=0; i < explosions.length; i++) {
@@ -44,13 +38,13 @@ var Grid = function(canvas_id, grid) {
 			if (e.finished())
 				continue
 			var opacity = 1 - (e.scale * .5)
-			dCircle([ e.cX, e.cY ],'rgba(255, 100, 0, '+ opacity+')',e.radius +(e.radius * e.scale))
+			dCircle( e.cX, e.cY ,'rgba(255, 100, 0, '+ opacity+')',e.radius +(e.radius * e.scale))
 		};
 		// would normally do pixelC on the y as welll
-		drawHealth(	pixelC(endPoint[0]), pixelC(endPoint[1])-30,50,10,lives/startLives)
+		drawHealth(pixelC(endPoint[0]), pixelC(endPoint[1])-30,50,10,lives/startLives)
 		// draw highlight
 		if(selectedUnit){
-			dCircle( [selectedUnit.cX, selectedUnit.cY], 'rgba(255, 255, 255, 0.5)', 50);
+			dCircle( selectedUnit.cX, selectedUnit.cY, 'rgba(255, 255, 255, 0.5)', 50);
 		}
 		if(highLight && squareAvaliable( highLight[0], highLight[1] )){
 			// check there is money
@@ -92,23 +86,19 @@ var Grid = function(canvas_id, grid) {
 		ctx.fill();
 	}
 	
-	var drawBarrel = function(turret){
-		var soldier = turret.tSoldier;
-		if (soldier){
+	var drawBarrel = function(t){
+		var s = t.tSoldier;
+		if (s){
 			ctx.beginPath()
-			tx = turret.cX
-			ty = turret.cY
-			ctx.moveTo(tx, ty )
-			sx = soldier.cX
-			sy = soldier.cY
-			var coords = getNewCoords(tx, ty, sx, sy, 15);
+			ctx.moveTo( t.cX,  t.cY )
+			var c = getNewCoords( t.cX,  t.cY, s.cX, s.cY, 15);
 			ctx.strokeStyle = 'black';
 			ctx.lineWidth = 2;
-			ctx.lineTo(coords[0], coords[1]);
+			ctx.lineTo(c[0], c[1]);
 			ctx.stroke()
 			// draw the fire
 			if(turret.firing){
-				dCircle(coords[0], coords[1], 'orange', 5);
+				dCircle(c[0], c[1], 'orange', 5);
 			};
 		}
 	}
@@ -130,9 +120,6 @@ var Grid = function(canvas_id, grid) {
 	var drawSoldiers = function() {
 		us = mSM.allUnits();
 		for (var i=0; i < us.length; i++) {
-			drawSoldier(us[i]);
-		};
-		for (var i=0; i < us.length; i++) {
 			s = us[i]
 			drawHealth(s.cX,s.cY-20,20,5,s.healthpercent);
 		};
@@ -140,9 +127,8 @@ var Grid = function(canvas_id, grid) {
 	
 	var drawSoldier = function(s){
 		w = s.size * gridXInterval;
-		if (s.isOnFire())
+		if (s.isOnFire && s.isOnFire())
 			dCircle(s.cX, s.cY,'orange',w/(1 + Math.random()))
-		drawSprite(s.sprite, s.cX, s.cY)
 	}
 	
 	var drawHealth = function(x,y,w,h,health){
@@ -169,6 +155,12 @@ var Grid = function(canvas_id, grid) {
 		var yIndex = Math.floor( position[1] / gridYInterval )
 		return [xIndex, yIndex];
 	};
+	
+	for (var i=0; i < terrain.length; i++) {
+		addSprite('tn', {cX: pixelC(terrain[i][0]), cY: pixelC(terrain[i][1]), spriteX: 140})
+	};
+	addSprite('b', {cX: pixelC(endPoint[0]), cY: pixelC(endPoint[1]), spriteX: 160})
+	addSprite('b', {cX: pixelC(startPoint[0]), cY: pixelC(startPoint[1]), spriteX: 180})
 	
 	$(canvas).click(function(evt){
 		if (playing == false || paused == true){

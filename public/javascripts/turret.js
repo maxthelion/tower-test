@@ -1,6 +1,6 @@
 var Turret = function(position, template, id){
 	var self = this;
-	var position = position;
+	this.p = position;
 	this.id = id;
 	var range = template['range'];
 	this.radius = mygrid.radiusFromRange( range )
@@ -9,15 +9,11 @@ var Turret = function(position, template, id){
 	this.cost = template['cost']
 	this.tSoldier;
 	this.firing = false;
-	this.cX = mygrid.pointCenterXY( position[0], position[1] )[0]
-	this.cY = mygrid.pointCenterXY( position[0], position[1] )[1]
+	this.cX = mygrid.pointCenterXY( this.p[0], this.p[1] )[0]
+	this.cY = mygrid.pointCenterXY( this.p[0], this.p[1] )[1]
 	this.hC = template['hC']; // hit callback
 	
-	this.getPosition = function() {
-		return position;
-	};
-	
-	this.aimAndFire = function(){
+	this.enterFrame = function(){
 		self.tSoldier = soldiersInRange()[0];
 		if (self.tSoldier && (frameNum % fireRate == 0)){
 			self.firing = true;

@@ -1,29 +1,25 @@
-var Sprite = function(x, y, frameNum) {
-	
-}
+var id = 0;
+var sprites = {}
+var spritesArray = []
+sprites['tn'] = {}
 
-var EnemyUnit = function(startPoint, endPoint, grid, template, id){
-	var self = this;
-	var currentPosition = mygrid.pointCenterXY(startPoint[0], startPoint[1])
-	this.cX = currentPosition[0];
-	this.cY = currentPosition[1];
-	var endPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
-	var currentSpeed = template['speed'];
-	var initialHealth = template['health'];
-	this.health = initialHealth;
-	this.healthpercent = 1;
-	var bounty = template['bounty'];
-	this.size = template['size'];
-	this.sprite = template['sprite']
-	this.id = id;
-	
-	this.takeBullet = function(damage) {
-		self.health -= damage;
-		this.healthpercent = self.health / initialHealth;
-		if ( self.health <= 0 ){
-			dC();
-			incrementKills(bounty);
+var redoSprites = function(){
+	spritesArray = []
+	for (i in sprites){
+		for(j in sprites[i]){
+			spritesArray.push(sprites[i][j])
 		}
 	}
-	
+}
+
+var removeSprite = function(key, id){
+	delete sprites[key][id];
+	redoSprites();
+}
+
+var addSprite = function(k, sprite) {
+	id++;
+	sprites[k][id] = sprite;
+	redoSprites();
+	sprite.id = id;
 }

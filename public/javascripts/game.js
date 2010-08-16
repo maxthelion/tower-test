@@ -105,7 +105,6 @@ var frameFunction = function(){
 		} else {
 			soldierCountDown--;
 		}
-		mSM.moveUnits();
 	}
 	mygrid.public_draw();
 }
@@ -207,9 +206,9 @@ var setCurrentUnit = function(i){
 
 var aimAndFireTurrets = function(){
 	// aim the turrets and fire if possible
-	for(var i =0; i < units.length; i++){
-		if (units[i].aimAndFire){ // if it quacks like a turret
-			units[i].aimAndFire();
+	for(var i =0; i < spritesArray.length; i++){
+		if (spritesArray[i].enterFrame){ 
+			spritesArray[i].enterFrame();
 		}
 	}
 }

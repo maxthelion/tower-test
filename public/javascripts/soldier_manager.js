@@ -1,11 +1,8 @@
+sprites.s = {}
+sprites.a = {}
 var SoldierManager = function(){
 	var self = this;
-	var id = 0;
-	var allSoldiersHash = {
-		s: {},
-		a: {}
-	};
-	var allSoldiersArrays = {
+	var asa = {
 		s: [],
 		a: []
 	};
@@ -26,7 +23,7 @@ var SoldierManager = function(){
 		 health: 100,
 		 size: 0.8,
 		 bounty: 1,
- 		 type: Soldier,
+		 type: Soldier,
 		 sprite: 20
 		},
 		{
@@ -77,69 +74,47 @@ var SoldierManager = function(){
 	];
 	
 	this.allSoldiers = function(){
-		return allSoldiersArrays['s'];
+		return asa['s'];
 	};
-	
-	this.getAircraft = function(){
-		return allSoldiersArrays['a'];
-	}
 
 	this.allUnits = function(ground, air){
 		var s = []
 		ground = (ground == undefined) ? true : ground
 		air = (air == undefined) ? true : air
 		if (air) 
-			s = s.concat(allSoldiersArrays['a'])
+			s = s.concat(asa['a'])
 		if (ground) 
-			s = s.concat(allSoldiersArrays['s'])
+			s = s.concat(asa['s'])
 		return s;
 	};
 	
-	this.moveUnits = function(){
-	  var a = self.allUnits()
-		for (var i=0; i < a.length; i++) {
-			a[i].move();
-		};
-	}
-	
-	var addSoldier = function(a){
-		var key = keyFromSoldier(a)
-		allSoldiersHash[key][a.id] = a;
-		a.destC = function(){
-			explosions.push( new Explosion(a.cX, a.cY, 1, frameNum, 0) );
-			removeSoldier(a);
-			loseLife();
-		}
-		a.dC = function(){
-		  incrementKills(a.bounty);
-			removeSoldier(a);
-		}
-		redoHash(key)
-	}
-	
-	redoHash = function(key){
-		allSoldiersArrays[key] = [];
-		for( i in allSoldiersHash[key]){
-			if(allSoldiersHash[key][i] != null){
-				allSoldiersArrays[key].push(allSoldiersHash[key][i]);
-			};
-		}
-	}
-	
-	var removeSoldier = function(s){
+	this.removeSoldier = function(s){
 	  corpses.push( new Corpse( s.cX, s.cY ) )
-		allSoldiersHash[keyFromSoldier(s)][s.id] = null;
-		redoHash(keyFromSoldier(s))
+		removeSprite('s', s.id);
+		redoArrays();
 	}
 	
 	this.createSoldier = function(typeIndex){
-		var newId = id++;
 		var template = soldierTypes[typeIndex]
 		object = template['type'] // soldier or heli
-		soldier = new object(startPoint, endPoint, grid, template, newId);
-		addSoldier(soldier);
-		return soldier;
+		var a = new object(startPoint, endPoint, grid, template);
+		a.spriteX = template.sprite
+		a.key = keyFromSoldier(a)
+		addSprite(a.key, a);
+		redoArrays()
+		return a;
 	};
+	
+	var redoArrays = function(){
+		asa['s'] = []
+		for (i in sprites['s']){
+			asa['s'].push(sprites['s'][i])			
+		}
+		asa['a'] = []
+		for (i in sprites['a']){
+			asa['a'].push(sprites['a'][i])
+		}
+	}
 	
 	var keyFromSoldier = function(soldier){
 		 return (object == Soldier) ? 's' : 'a'

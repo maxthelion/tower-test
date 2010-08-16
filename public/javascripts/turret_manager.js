@@ -88,12 +88,11 @@ var currentUnit = function(){
 	return unitTypes[currentTurretIndex]
 };
 
-var units = [];
+sprites['t'] = {}
 // var turrets = [];
 var UnitManager = function(){
 	var self = this;
 	var positionHash = {};
-	var id = 0;
 	var turretHash = {}
 	
 	var addUnitAtPosition = function(p, u){
@@ -110,39 +109,23 @@ var UnitManager = function(){
 	};
 	
 	this.createUnit = function(template, position){
-		if(template['type'] == Explosion){
-			explosions.push( new Explosion( 3, 4, template['range'], frameNum, template['damage']) );
-			changeMoney( template['cost'] * -1 );
-			return false;
-		};
-		newId = id++;
-		var unit = new template['type'](position, template, newId);
-		turretHash[newId] = unit;
-		createUnitArray()
+		// if(template['type'] == Explosion){
+		// 	explosions.push( new Explosion( 3, 4, template['range'], frameNum, template['damage']) );
+		// 	changeMoney( template['cost'] * -1 );
+		// 	return false;
+		// };
+		var unit = new template['type'](position, template);
+		unit.spriteX = 200
+		addSprite('t', unit)
 		addUnitAtPosition(position, unit);
 		changeMoney( template['cost'] * -1 );
 	};
 	
-	var createUnitArray = function(){
-		units = []
-		for (i in turretHash){
-			var u = turretHash[i]
-			if (u != null){
-				units.push( u );
-			}
-		}
-	}
-	
-	var removeUnit = function(u){
-		turretHash[u.id] = null;
-		createUnitArray();
-	};
-	
 	this.sell = function(u){
 		changeMoney( Math.floor(u.sellCost()) );
-		removeUnit(u);
+		removeSprite('t', u.id);
 		// back to front x and y again
-		grid[u.getPosition()[1]][u.getPosition()[0]] = 0
+		grid[u.p[1]][u.p[0]] = 0
 	}
 }
 myUnitMangager = new UnitManager();
