@@ -30,6 +30,6 @@ var Turret = function(position, template, id){
 	};
 	
 	this.sellCost = function(){
-		return Math.floor(template['cost'] * 0.6)
+		return MF(template['cost'] * 0.6)
 	}
 }

@@ -42,7 +42,7 @@ var endPoint = [5, 14];
 var k = 10;
 var terrain = [];
 while(k > 0){
-	var t = [Math.floor(Math.random() * 15), Math.floor(Math.random() * 15)]
+	var t = [MF(Math.random() * 15), MF(Math.random() * 15)]
 	if (	(t[0] == startPoint[0] && t[1] == startPoint[1]) ||
 				(t[0] == endPoint[0] && t[1] == endPoint[1])
 		) {

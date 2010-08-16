@@ -9,7 +9,6 @@ function Helicopter(startPoint, endPoint, grid, template, id) {
 	this.health = initialHealth;
 	this.healthpercent = 1;
 	this.bounty = template['bounty'];
-	this.size = template['size'];
 	this.sprite = template['sprite']
 	this.id = id;
 	

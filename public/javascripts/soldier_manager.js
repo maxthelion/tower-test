@@ -12,7 +12,6 @@ var SoldierManager = function(){
 		 name: 'lightInfantry',
 		 speed: 2,
 		 health: 30,
-		 size: 0.6,
 		 bounty: 1,
 		 type: Soldier,
 		 sprite: 0
@@ -21,7 +20,6 @@ var SoldierManager = function(){
 		 name: 'Infantry',
 		 speed: 2,
 		 health: 100,
-		 size: 0.8,
 		 bounty: 1,
 		 type: Soldier,
 		 sprite: 20
@@ -30,7 +28,6 @@ var SoldierManager = function(){
 		 name: 'heavyInfantry',
 		 speed: 2,
 		 health: 300,
-		 size: 1,
 		 bounty: 4,
  		 type: Soldier,
 		 sprite: 40
@@ -39,7 +36,6 @@ var SoldierManager = function(){
 		 name: 'MediumInfantry',
 		 speed: 2,
 		 health: 200,
-		 size: 0.8,
 		 bounty: 1,
  		 type: Soldier,
 			sprite: 60
@@ -48,7 +44,6 @@ var SoldierManager = function(){
 		 name: 'bike',
 		 speed: 3,
 		 health: 100,
-		 size: 0.8,
 		 bounty: 2,
  		 type: Soldier,
 		sprite: 80
@@ -57,7 +52,6 @@ var SoldierManager = function(){
 		 name: 'megatron',
 		 speed: 2,
 		 health: 1000,
-		 size: 1.2,
 		 bounty: 10,
  		 type: Soldier,
 		 sprite: 100
@@ -66,7 +60,6 @@ var SoldierManager = function(){
 		 name: 'helicopter',
 		 speed: 2,
 		 health: 100,
-		 size: 1.2,
 		 bounty: 1,
 		 type: Helicopter,
 		 sprite: 120
@@ -89,7 +82,7 @@ var SoldierManager = function(){
 	};
 	
 	this.removeSoldier = function(s){
-	  corpses.push( new Corpse( s.cX, s.cY ) )
+	  addCorpse(s);
 		removeSprite('s', s.id);
 		redoArrays();
 	}

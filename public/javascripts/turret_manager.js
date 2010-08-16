@@ -3,10 +3,8 @@ var unitTypes = [
 		name: 'machine gun',
 		fireRate: 2,
 		range: 1,
-		color: '#555',
 		damage: 2,
 		cost: 5,
-		size: 0.5,
 		type: Turret,
 		attacks_air: true
 	},
@@ -14,30 +12,24 @@ var unitTypes = [
 		name: 'mortar',
 		fireRate: 20,
 		range: 3,
-		color: '#999',
 		damage: 20,
 		cost: 10,
-		size: 0.8,
 		type: Turret
 	},
   // {
   //  name: 'sniper',
   //  fireRate: 100,
   //  range: 5,
-  //  color: '#000',
   //  damage: 100,
   //  cost: 20,
-  //  size: 0.2,
   //  type: Turret
   // },
   // {
   //  name: 'heavy cannon',
   //  fireRate: 50,
   //  range: 4,
-  //  color: '#999',
   //  damage: 30,
   //  cost: 20,
-  //  size: 1,
   //  hC: function(soldier, myFrameNum){
   //    explosions.push(new Explosion( soldier.cX, soldier.cY,1, myFrameNum,5) );
   //  },
@@ -47,13 +39,11 @@ var unitTypes = [
 		name: 'glue gun',
 		fireRate: 20,
 		range: 2,
-		color: 'green',
 		damage: 0,
 		cost: 5,
 		hC: function(soldier, myFrameNum){
 			soldier.slow(myFrameNum + 30);
 		},
-		size: 0.4,
 		type: Turret
 	},
   // {
@@ -67,16 +57,13 @@ var unitTypes = [
 		name: 'wall',
 		cost: 2,
 		type: Obstacle,
-		size: 0.6
 	},
 	{
 		name: 'flamer',
 		fireRate: 10,
 		range: 1,
-		color: 'orange',
 		damage: 2,
 		cost: 3,
-		size: 0.5,
 		hC: function(soldier, myFrameNum){
 			soldier.setAlight(frameNum + 30);
 		},
@@ -122,10 +109,10 @@ var UnitManager = function(){
 	};
 	
 	this.sell = function(u){
-		changeMoney( Math.floor(u.sellCost()) );
+		changeMoney( u.sellCost() );
 		removeSprite('t', u.id);
 		// back to front x and y again
 		grid[u.p[1]][u.p[0]] = 0
 	}
 }
-myUnitMangager = new UnitManager();
+mUM = new UnitManager();

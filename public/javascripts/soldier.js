@@ -9,7 +9,6 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 	this.health = initialHealth;
 	this.healthpercent = 1;
 	this.bounty = template['bounty'];
-	this.size = template['size'];
 	this.sprite = template['sprite']
 	this.id = id;
 	
@@ -81,7 +80,7 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 	}
 	
 	this.destC = function(){
-		explosions.push( new Explosion(self.cX, self.cY, 1, frameNum, 0) );
+		addExplosion(self.cX, self.cY, 1, frameNum, 0);
 		mSM.removeSoldier(self);
 		loseLife();
 	}

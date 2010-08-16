@@ -4,7 +4,7 @@ var Obstacle = function(position, template){
 	this.p = position
 	
 	this.sellCost = function(){
-		return Math.floor(template['cost'] * 0.6)
+		return MF(template['cost'] * 0.6)
 	}
 }
 
@@ -14,6 +14,6 @@ var Obstacle = function(position, template){
 	this.p = position
 	
 	this.sellCost = function(){
-		return Math.floor(template['cost'] * 0.6)
+		return MF(template['cost'] * 0.6)
 	}
 }

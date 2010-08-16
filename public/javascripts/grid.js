@@ -16,30 +16,30 @@ var Grid = function(canvas_id, grid) {
 		ctx.clearRect(0,0,gridWidth, gridHeight);
 		ctx.fillStyle = '#e3d19b'
 		ctx.fillRect(0,0,gridWidth, gridHeight);
-		for (var i=0; i < bits.length; i++) {
-			var bit = bits[i]
-			if (bit == null)
-				continue
-			var opacity =	1 - (frameNum - bit.startTime) / 200;
-			dCircle(bit.cX, bit.cY, 'rgba(255, 0, 0, '+ opacity+')', bloodSpatterSize);
-		};
 		// draw turrets
 		for(var i =0; i < spritesArray.length; i++){
-			var unit = spritesArray[i]
-			drawSprite(unit.spriteX, unit.cX, unit.cY)
-			// see if they are a turret
-			if (unit.tSoldier)
-				drawBarrel(unit);
-		}
-		drawSoldiers();
-		// draw explosions
-		for (var i=0; i < explosions.length; i++) {
-			var e = explosions[i]
-			if (e.finished())
+			var u = spritesArray[i]
+			if (u.bss){ // blood spatter
+				dCircle(u.cX, u.cY, u.color, u.bss);
 				continue
-			var opacity = 1 - (e.scale * .5)
-			dCircle( e.cX, e.cY ,'rgba(255, 100, 0, '+ opacity+')',e.radius +(e.radius * e.scale))
-		};
+			}
+			if (u.type == 'Explosion'){
+				console.log(u.cX, u.cY ,u.color, u.radius )
+				dCircle( u.cX, u.cY ,u.color, u.radius +(u.radius * u.scale))
+				continue
+			}
+			if (u.isOnFire && u.isOnFire()){
+				w = gridXInterval;
+				dCircle(u.cX, u.cY,'orange',w/(1 + Math.random()))
+			}
+			drawSprite(u.spriteX, u.cX, u.cY)
+			// see if they are a turret
+			if (u.tSoldier)
+				drawBarrel(u);
+			if (u.healthpercent){
+				drawHealth(u.cX,u.cY-20,20,5,u.healthpercent);
+			}
+		}
 		// would normally do pixelC on the y as welll
 		drawHealth(pixelC(endPoint[0]), pixelC(endPoint[1])-30,50,10,lives/startLives)
 		// draw highlight
@@ -52,8 +52,8 @@ var Grid = function(canvas_id, grid) {
 			dCircle( hlp[0], hlp[1], 'rgb(' + color +')', gridXInterval/2);
 			dCircle( hlp[0], hlp[1], 'rgba('+ color +', 0.3)', self.radiusFromRange(currentUnit()['range']));
 		} else if(highLight){
-			if (myUnitMangager.unitAt(highLight)){
-				var u = myUnitMangager.unitAt(highLight);
+			if (mUM.unitAt(highLight)){
+				var u = mUM.unitAt(highLight);
 				dCircle( hlp[0], hlp[1], 'rgba(255, 200, 0, 0.5)', gridXInterval/2);
 			}
 		}
@@ -97,7 +97,7 @@ var Grid = function(canvas_id, grid) {
 			ctx.lineTo(c[0], c[1]);
 			ctx.stroke()
 			// draw the fire
-			if(turret.firing){
+			if(t.firing){
 				dCircle(c[0], c[1], 'orange', 5);
 			};
 		}
@@ -115,20 +115,6 @@ var Grid = function(canvas_id, grid) {
 	
 	var pixelC = function(p){
 		return p * gridXInterval + (gridXInterval / 2);
-	}
-		
-	var drawSoldiers = function() {
-		us = mSM.allUnits();
-		for (var i=0; i < us.length; i++) {
-			s = us[i]
-			drawHealth(s.cX,s.cY-20,20,5,s.healthpercent);
-		};
-	};
-	
-	var drawSoldier = function(s){
-		w = s.size * gridXInterval;
-		if (s.isOnFire && s.isOnFire())
-			dCircle(s.cX, s.cY,'orange',w/(1 + Math.random()))
 	}
 	
 	var drawHealth = function(x,y,w,h,health){
@@ -151,8 +137,8 @@ var Grid = function(canvas_id, grid) {
 	};
 	
 	this.cellFromPosition = function(position){
-		var xIndex = Math.floor( position[0] / gridXInterval )
-		var yIndex = Math.floor( position[1] / gridYInterval )
+		var xIndex = MF( position[0] / gridXInterval )
+		var yIndex = MF( position[1] / gridYInterval )
 		return [xIndex, yIndex];
 	};
 	
@@ -166,16 +152,16 @@ var Grid = function(canvas_id, grid) {
 		if (playing == false || paused == true){
 			return false;
 		}
-		var xIndex = Math.floor( evt.offsetX/gridXInterval )
-		var yIndex = Math.floor( evt.offsetY/gridYInterval )
+		var xIndex = MF( evt.offsetX/gridXInterval )
+		var yIndex = MF( evt.offsetY/gridYInterval )
 		u = currentUnit();
 		if (selectedUnit){
 			$('#fC').remove()
 			selectedUnit = undefined;
 		} else if (squareAvaliable(xIndex, yIndex) && !selectedUnit){
 			addUnit(u, xIndex, yIndex);
-		} else if (myUnitMangager.unitAt([xIndex, yIndex])){
-			t = myUnitMangager.unitAt([xIndex, yIndex])
+		} else if (mUM.unitAt([xIndex, yIndex])){
+			t = mUM.unitAt([xIndex, yIndex])
 			highLight = null;
 			showTurretControl(t);
 			selectedUnit = t;
@@ -185,8 +171,8 @@ var Grid = function(canvas_id, grid) {
 	
 	$(canvas).mousemove(function(evt){
 		if (!selectedUnit) {
-			var xIndex = Math.floor( evt.offsetX/gridXInterval )
-			var yIndex = Math.floor( evt.offsetY/gridYInterval )
+			var xIndex = MF( evt.offsetX/gridXInterval )
+			var yIndex = MF( evt.offsetY/gridYInterval )
 			highLight = [xIndex, yIndex];
 			hlp = self.pointCenterXY(xIndex, yIndex)
 		}
@@ -217,7 +203,7 @@ var Grid = function(canvas_id, grid) {
 			id: 'sellBtn'
 		}).html('<span>$</span><span class="amount">'+t.sellCost()+'</span>').
 		click(function(){
-			myUnitMangager.sell(t);
+			mUM.sell(t);
 			elem.remove();
 			selectedUnit = undefined;
 			return false;
@@ -237,8 +223,8 @@ var addUnit = function(u, x, y){
 	// check there is money
 	if(money < u['cost'])
 		return false
-	if (u['type'] == Explosion)
-		return myUnitMangager.createUnit(u, [x, y]);
+	// if (u['type'] == Explosion)
+	// 	return mUM.createUnit(u, [x, y]);
 	grid[y][x] = 1;
 	// check the global path
 	result = AStar(grid, startPoint, endPoint, "Manhattan");
@@ -251,6 +237,6 @@ var addUnit = function(u, x, y){
 			return revertGridPoint(x, y);
 		}
 	};
-	myUnitMangager.createUnit(u, [x, y]);
+	mUM.createUnit(u, [x, y]);
 }
 

@@ -1,19 +1,3 @@
-var corpses = [];
-var bits = [];
-var Corpse = function(x, y) {
-	var i = bloodSpatterNum
-	while (i) {
-		bits.push({
-			speedX: 15 - (Math.random() * 30),
-			speedY: 15 - (Math.random() * 30),
-			cX: x,
-			cY: y,
-			startTime: frameNum
-		})
-		i--;
-	}
-};
-
 function GridGenerator(width, height){
 	var	result = new Array(height);
 	for(var	j, i = 0; i < height; i++) {
@@ -23,7 +7,8 @@ function GridGenerator(width, height){
 	};
 	return result;
 };
-
+MF = Math.floor
+MR = Math.random
 var kills = 0;
 var grid;	
 var startLives = 20;
@@ -40,9 +25,6 @@ var frameNum = 0;
 var currentTurretIndex = 0;
 var paused = false;
 var playing =	false;
-var explosions = [];
-var bloodSpatterSize = 2
-var bloodSpatterNum = 3
 
 var incrementKills = function(bounty){			
 	changeMoney(bounty);
@@ -76,20 +58,7 @@ var frameFunction = function(){
 	sounds = {}
 	frameNum ++;
 	checkDeath();
-	aimAndFireTurrets();
-	progressExplosions();
-	for (var i=0; i < bits.length; i++) {
-	  var bit = bits[i]
-	 	// progress bits
-  	if (bit.startTime > frameNum - 5) {
-  		bit.cX += bit.speedX
-  		bit.cY += bit.speedY
-  	} else if (bit.startTime < frameNum - 200) {
-  		bit = null
-  		continue
-  	}
-	};
-
+	spritesProgress();
 	attemptToWinGame();
 	if( !gameWon() && !isDead()){
 		if(soldierCountDown == 0) {
@@ -107,12 +76,6 @@ var frameFunction = function(){
 		}
 	}
 	mygrid.public_draw();
-}
-
-var progressExplosions = function(){
-	for (var i=0; i < explosions.length; i++) {
-		explosions[i].progress()
-	};
 }
 
 var isDead = function(){
@@ -204,7 +167,7 @@ var setCurrentUnit = function(i){
 	$('#button_'+ i).addClass('selected');
 }
 
-var aimAndFireTurrets = function(){
+var spritesProgress = function(){
 	// aim the turrets and fire if possible
 	for(var i =0; i < spritesArray.length; i++){
 		if (spritesArray[i].enterFrame){ 
