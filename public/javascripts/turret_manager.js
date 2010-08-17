@@ -6,7 +6,8 @@ var unitTypes = [
 		damage: 2,
 		cost: 5,
 		type: Turret,
-		attacks_air: true
+		attacks_air: true,
+		spriteX: 200
 	},
 	{
 		name: 'mortar',
@@ -14,7 +15,8 @@ var unitTypes = [
 		range: 3,
 		damage: 20,
 		cost: 10,
-		type: Turret
+		type: Turret,
+		spriteX: 240
 	},
   // {
   //  name: 'sniper',
@@ -44,7 +46,8 @@ var unitTypes = [
 		hC: function(soldier, myFrameNum){
 			soldier.slow(myFrameNum + 30);
 		},
-		type: Turret
+		type: Turret,
+		spriteX: 220
 	},
   // {
   //  name: 'nuke',
@@ -56,7 +59,8 @@ var unitTypes = [
 	{
 		name: 'wall',
 		cost: 2,
-		type: Obstacle
+		type: Obstacle,
+		spriteX: 260
 	},
 	{
 		name: 'flamer',
@@ -67,7 +71,8 @@ var unitTypes = [
 		hC: function(soldier, myFrameNum){
 			soldier.setAlight(frameNum + 30);
 		},
-		type: Turret
+		type: Turret,
+		spriteX: 280
 	}
 ]
 
@@ -102,7 +107,7 @@ var UnitManager = function(){
 		// 	return false;
 		// };
 		var unit = new template['type'](position, template);
-		unit.spriteX = 200
+		unit.spriteX = template.spriteX;
 		addSprite('t', unit)
 		addUnitAtPosition(position, unit);
 		changeMoney( template['cost'] * -1 );
