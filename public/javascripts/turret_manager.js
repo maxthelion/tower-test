@@ -3,7 +3,7 @@ var unitTypes = [
 		name: 'machine gun',
 		fireRate: 2,
 		range: 1,
-		damage: 1,
+		damage: 2,
 		cost: 5,
 		type: Turret,
 		attacks_air: true,
