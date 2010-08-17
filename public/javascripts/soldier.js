@@ -30,17 +30,6 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 		} else {
 			currentSpeed = speed;
 		}
-		// kludge
-		if (nextPointPosition[0] > self.cX){
-			self.cX += currentSpeed;
-		} else {
-			self.cX -= currentSpeed;
-		}
-		if (nextPointPosition[1] > self.cY){
-			self.cY += currentSpeed;
-		} else {
-			self.cY -= currentSpeed;
-		}
 		var cell = mygrid.cellFromPosition( [self.cX, self.cY] );
 		if (nextPoint == undefined){
 			self.destC();
@@ -54,6 +43,21 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 					nextPointPosition = mygrid.pointCenterXY(nextPoint[0], nextPoint[1]);
 			} 
 		}
+		if(nextPoint){
+			nextX = currentSpeed * (nextPoint[0] - 
+				currentPoint[0])
+			if (Math.abs(nextPointPosition[0] - self.cX) >= currentSpeed){
+				self.cX += nextX;
+			} else {
+				self.cX = nextPointPosition[0];
+			}
+			nextY = currentSpeed * (nextPoint[1] - currentPoint[1])
+			if (Math.abs(nextPointPosition[1] - self.cY) >= currentSpeed){
+				self.cY += nextY;
+			} else {
+				self.cY = nextPointPosition[1];
+			}
+		}	
 	}
 	
 	this.slow = function(myFrameNum){
