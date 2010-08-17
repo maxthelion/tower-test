@@ -88,7 +88,7 @@ var checkDeath = function(){
 }
 
 var anySoldiers = function(){
-	return mSM.allUnits().length > 0
+	return mSM.allUnits(true, true).length > 0
 }
 
 sprites_img = new Image(); 
