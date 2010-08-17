@@ -24,7 +24,7 @@ var Grid = function(canvas_id, grid) {
 				continue
 			}
 			if (u.type == 'Explosion'){
-				dCircle( u.cX, u.cY ,u.color, u.radius +(u.radius * u.scale))
+				dCircle( u.cX, u.cY ,u.color, u.radius)
 				continue
 			}
 			if (u.isOnFire && u.isOnFire()){

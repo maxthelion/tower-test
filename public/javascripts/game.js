@@ -59,7 +59,7 @@ var frameFunction = function(){
 	attemptToWinGame();
 	$('#kills').text(kills)
 	$('#money').text(money)
-	if( !gameWon() && !isDead()){
+	if(playing){
 		if(soldierCountDown == 0) {
 			if (waveCountDown == 0) {
 				if (!anySoldiers() && round <= waves.length){

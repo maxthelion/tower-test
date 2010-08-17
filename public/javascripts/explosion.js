@@ -30,8 +30,10 @@ addExplosion = function(x, y,radius,start,damage){
 		cY: y,
 		decay: 10,
 		radius: mygrid.radiusFromRange( radius ),
+		iradius: mygrid.radiusFromRange( radius ),
 		color: 'rgba(255, 100, 0,1)',
 		scale: 1,
+		startFrame: frameNum,
 		enterFrame: function(){
 			if(frameNum - this.startFrame < this.decay){
 				this.scale = (frameNum - this.startFrame) / this.decay;
