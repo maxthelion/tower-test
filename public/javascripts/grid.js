@@ -24,7 +24,6 @@ var Grid = function(canvas_id, grid) {
 				continue
 			}
 			if (u.type == 'Explosion'){
-				console.log(u.cX, u.cY ,u.color, u.radius )
 				dCircle( u.cX, u.cY ,u.color, u.radius +(u.radius * u.scale))
 				continue
 			}
@@ -49,7 +48,7 @@ var Grid = function(canvas_id, grid) {
 		if(highLight && squareAvaliable( highLight[0], highLight[1] )){
 			// check there is money
 			var color = (money < currentUnit()['cost']) ? '255, 0, 0' : '0, 255, 0';
-			dCircle( hlp[0], hlp[1], 'rgb(' + color +')', gridXInterval/2);
+			drawSprite(currentUnit().spriteX, hlp[0], hlp[1])
 			dCircle( hlp[0], hlp[1], 'rgba('+ color +', 0.3)', self.radiusFromRange(currentUnit()['range']));
 		} else if(highLight){
 			if (mUM.unitAt(highLight)){
