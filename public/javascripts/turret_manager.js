@@ -56,7 +56,7 @@ var unitTypes = [
 	{
 		name: 'wall',
 		cost: 2,
-		type: Obstacle,
+		type: Obstacle
 	},
 	{
 		name: 'flamer',
