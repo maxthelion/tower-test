@@ -39,13 +39,13 @@ function Helicopter(startPoint, endPoint, grid, template, id) {
 	}
 	
 	this.destC = function(){
-		explosions.push( new Explosion(self.cX, self.cY, 1, frameNum, 0) );
-		mSM.removeSoldier(self.id);
+		addExplosion(self.cX, self.cY, 1, frameNum, 0);
+		mSM.removeSoldier(self);
 		loseLife();
 	}
 	
 	this.dC = function(){
 	  incrementKills(self.bounty);
-		mSM.removeSoldier(self.id);
+		mSM.removeSoldier(self);
 	}
 }

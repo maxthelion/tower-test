@@ -118,6 +118,28 @@
 	#sellBtn span, #upgradeBtn span {
 	  display: block;
 	}
+	#kills, #money {
+		display: block;
+		text-align: center;
+		background: black;
+		padding: 5px;
+		font-size: 2em;
+		color: white;
+	}
+	#pause_button {
+		display: block;
+		background: silver;
+		padding: 5px;
+		margin-top: 5px;
+	}
+	#footer {
+		padding: 20px;
+		text-align: center;
+		font-size: 0.9em;
+	}
+	#footer a{
+		color: #91B6CF;
+	}
 </style>
 </head>
 
@@ -126,8 +148,8 @@
 <div id="notice">Game starting soon</div>
 
 <div id="side">
-	<p>Kills: <span id="kills"></span></p>
-	<p>Money: <span id="money"></span></p>
+	<h3>Kills</h3><p id="kills"></p>
+	<h3>Money</h3><p id="money"></p>
 	
 	<div>
 		<h3>Weapons!!!</h3>
@@ -143,14 +165,9 @@
   </div>
   <canvas id="canvas" height="400" width="400"></canvas>
 </div>
-</div>
 
-<audio class='hidden' id="sweet"> 
-	<source src='audio/K.mp3' /> 
-</audio>
-<audio class='hidden' id="shot"> 
-	<source src='audio/gun_shotgun2.mp3' /> 
-</audio>
+</div>
+<div id="footer">Made by <a href="http://new-bamboo.co.uk">New Bamboo</a>. We think HTML5 is the future!</div>
 
 </body>
 </html>

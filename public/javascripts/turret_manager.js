@@ -12,8 +12,8 @@ var unitTypes = [
 	{
 		name: 'mortar',
 		fireRate: 20,
-		range: 3,
-		damage: 20,
+		range: 2,
+		damage: 15,
 		cost: 10,
 		type: Turret,
 		spriteX: 240

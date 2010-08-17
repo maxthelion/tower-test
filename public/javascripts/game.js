@@ -23,19 +23,16 @@ var round = 0;
 var money = 20;
 var frameNum = 0;
 var currentTurretIndex = 0;
-var paused = false;
 var playing =	false;
 
 var incrementKills = function(bounty){			
 	changeMoney(bounty);
 	kills++;
-	$('#kills').text(kills);
 	attemptToWinGame();
 };
 
 function changeMoney(amount){
 	money += amount;
-	$('#money').text(money);
 	drawTurretButtons();
 }
 
@@ -60,6 +57,8 @@ var frameFunction = function(){
 	checkDeath();
 	spritesProgress();
 	attemptToWinGame();
+	$('#kills').text(kills)
+	$('#money').text(money)
 	if( !gameWon() && !isDead()){
 		if(soldierCountDown == 0) {
 			if (waveCountDown == 0) {
@@ -128,10 +127,10 @@ $().ready(function(){
 	
 	$('#pause_button').click(function(evt){
 		clearInterval(globalInterval);
-		paused = true;
+		playing = false;
 		$('#big_notice').show().html('<h2>Game paused</h2><p>click to resume</p>').click(function(){
 			globalInterval = setInterval(frameFunction, 60);
-			paused = false;
+			playing = true;
 			$('#pause_button').show();
 			$('#big_notice').hide()
 		});

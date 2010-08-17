@@ -148,7 +148,7 @@ var Grid = function(canvas_id, grid) {
 	addSprite('b', {cX: pixelC(startPoint[0]), cY: pixelC(startPoint[1]), spriteX: 180})
 	
 	$(canvas).click(function(evt){
-		if (playing == false || paused == true){
+		if (playing == false){
 			return false;
 		}
 		var xIndex = MF( evt.offsetX/gridXInterval )
@@ -169,7 +169,7 @@ var Grid = function(canvas_id, grid) {
 	});
 	
 	$(canvas).mousemove(function(evt){
-		if (!selectedUnit) {
+		if (!selectedUnit && playing) {
 			var xIndex = MF( evt.offsetX/gridXInterval )
 			var yIndex = MF( evt.offsetY/gridYInterval )
 			highLight = [xIndex, yIndex];

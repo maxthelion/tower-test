@@ -27,24 +27,24 @@ var SoldierManager = function(){
 		{
 		 name: 'heavyInfantry',
 		 speed: 2,
-		 health: 300,
-		 bounty: 4,
+		 health: 500,
+		 bounty: 2,
  		 type: Soldier,
 		 sprite: 40
 		},
 		{
 		 name: 'MediumInfantry',
 		 speed: 2,
-		 health: 200,
+		 health: 300,
 		 bounty: 1,
  		 type: Soldier,
 			sprite: 60
 		},
 		{
 		 name: 'bike',
-		 speed: 3,
-		 health: 100,
-		 bounty: 2,
+		 speed: 4,
+		 health: 150,
+		 bounty: 1,
  		 type: Soldier,
 		sprite: 80
 		},
@@ -72,8 +72,7 @@ var SoldierManager = function(){
 
 	this.allUnits = function(ground, air){
 		var s = []
-		ground = (ground == undefined) ? true : ground
-		air = (air == undefined) ? true : air
+		air = (air == undefined) ? false : air
 		if (air) 
 			s = s.concat(asa['a'])
 		if (ground) 
@@ -83,7 +82,7 @@ var SoldierManager = function(){
 	
 	this.removeSoldier = function(s){
 	  addCorpse(s);
-		removeSprite('s', s.id);
+		removeSprite(s.key, s.id);
 		redoArrays();
 	}
 	
