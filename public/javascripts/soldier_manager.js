@@ -38,7 +38,7 @@ var SoldierManager = function(){
 		 health: 300,
 		 bounty: 1,
  		 type: Soldier,
-			sprite: 60
+			sprite: 80
 		},
 		{
 		 name: 'bike',
@@ -46,7 +46,7 @@ var SoldierManager = function(){
 		 health: 150,
 		 bounty: 1,
  		 type: Soldier,
-		sprite: 80
+		sprite: 60
 		},
 		{
 		 name: 'megatron',

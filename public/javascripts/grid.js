@@ -124,11 +124,10 @@ var Grid = function(canvas_id, grid) {
 		ctx.fillRect(x-w/2, y, w*health, h)
 	}
   
-	var drawSprite = function(sIndex, x, y){
+	var drawSprite = function(sx, x, y){
 		cw = 20
 		ch = 20
-		sy = 0 
-		ctx.drawImage(sprites_img, sIndex, sy, cw, ch, x - cw/2, y - cw/2, cw, ch)
+		ctx.drawImage(sprites_img, sx, 0, cw, ch, x - cw/2, y - cw/2, cw, ch)
 	}
 	
 	this.pointCenterXY = function(x, y){

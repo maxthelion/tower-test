@@ -44,16 +44,15 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 			} 
 		}
 		if(nextPoint){
-			nextX = currentSpeed * (nextPoint[0] - 
-				currentPoint[0])
+		  xSpeed = (nextPoint[0] == currentPoint[0]) ? currentSpeed : currentSpeed * (nextPoint[0] - currentPoint[0])
 			if (Math.abs(nextPointPosition[0] - self.cX) >= currentSpeed){
-				self.cX += nextX;
+				self.cX += xSpeed;
 			} else {
 				self.cX = nextPointPosition[0];
 			}
-			nextY = currentSpeed * (nextPoint[1] - currentPoint[1])
+		  ySpeed = (nextPoint[1] == currentPoint[1]) ? currentSpeed : currentSpeed * (nextPoint[1] - currentPoint[1])
 			if (Math.abs(nextPointPosition[1] - self.cY) >= currentSpeed){
-				self.cY += nextY;
+				self.cY += ySpeed;
 			} else {
 				self.cY = nextPointPosition[1];
 			}
