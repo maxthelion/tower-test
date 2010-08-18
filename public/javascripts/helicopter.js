@@ -3,7 +3,7 @@ function Helicopter(startPoint, endPoint, grid, template, id) {
 	var currentPosition = mygrid.pointCenterXY(startPoint[0], startPoint[1])
 	this.cX = currentPosition[0];
 	this.cY = currentPosition[1];
-	var endPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
+	var nextPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
 	var currentSpeed = template['speed'];
 	var initialHealth = template['health'];
 	this.health = initialHealth;
@@ -13,20 +13,24 @@ function Helicopter(startPoint, endPoint, grid, template, id) {
 	this.id = id;
 	
 	this.enterFrame = function(){
-		// kludge
-		if (endPosition[0] > self.cX){
+    getNewPos()
+		var cell = mygrid.cellFromPosition( [self.cX, self.cY] );
+		if ( cell[0] == endPoint[0] && cell[1] == endPoint[1]) {
+			self.destC()
+		}
+	}
+	
+	var getNewPos = function(){
+	  // kludge
+		if (nextPosition[0] > self.cX){
 			self.cX += currentSpeed;
 		} else {
 			self.cX -= currentSpeed;
 		}
-		if (endPosition[1] > self.cY){
+		if (nextPosition[1] > self.cY){
 			self.cY += currentSpeed;
 		} else {
 			self.cY -= currentSpeed;
-		}
-		var cell = mygrid.cellFromPosition( [self.cX, self.cY] );
-		if ( cell[0] == endPoint[0] && cell[1] == endPoint[1]) {
-			self.destC()
 		}
 	}
 	
