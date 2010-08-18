@@ -16,6 +16,11 @@ configure :production do
   #       from ENV['DATABASE_URI'] (see /env route below)
 end
 
+# Quick test
+get '/' do
+  return File.open("public/index.html")
+end
+
 # Test at <appname>.heroku.com
 
 # You can see all your app specific information this way.
