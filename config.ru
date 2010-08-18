@@ -1,3 +1,6 @@
-use Rack::Static, :urls => ["/stylesheets", "/images", "/javascripts", "/audio", "/"], :root => "public"
+require 'heroku-sinatra-app'
 
-run lambda{|e| [200, {'Content-Type' => 'text/html'}, 'hello']}
+## There is no need to set directories here anymore;
+## Just run the application
+
+run Sinatra::Application
