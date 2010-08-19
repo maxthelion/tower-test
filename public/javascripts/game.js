@@ -92,10 +92,6 @@ var anySoldiers = function(){
 }
 
 sprites_img = new Image(); 
-sprites_img.src = 'soldier.png';
-sprites_img.onload = function(){
-	start();
-}
 
 var start = function(){
 	progressRound()	
@@ -120,10 +116,17 @@ $().ready(function(){
 	mygrid = new Grid('canvas', grid);
 	drawTurretButtons();
 	
-	//$('#start').click(function(){
+	sprites_img.src = 'soldier.png';
+	sprites_img.onload = function(){
+		mygrid.public_draw();
+		$('#kills').text(kills)
+		$('#money').text(money)	
+	}
+	
+	$('#start').click(function(){
 		$('#big_notice').hide()
-		// start();
-	//});
+		start();
+	});
 	
 	$('#pause_button').click(function(evt){
 		clearInterval(globalInterval);
