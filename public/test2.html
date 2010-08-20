@@ -1,0 +1,78 @@
+<html>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+	<script src="javascripts/AStar_memtronic.js"></script>
+  	<script src="javascripts/sprite.js"></script>
+	<script src="javascripts/soldier.js"></script>
+	<script src="javascripts/grid.js"></script>
+	<script src="javascripts/game.js"></script>
+	
+<style type="text/css" media="screen">
+	* {
+		font-family: arial;
+		margin: 0;
+		padding: 0;
+	}
+	body {
+	  background:#637F99;
+	}
+	a {
+		color: black;
+		text-decoration: none;
+	}
+	p {
+		clear: left;
+		margin-bottom: 0.5em;
+	}
+	#wrapper {
+	  width: 800px;
+	  position: relative;
+	  margin-top: 30px;
+	  background: #91B6CF;
+	  margin-left: auto;
+	  margin-right: auto;
+	  padding: 20px;
+	}
+	#footer {
+		padding: 20px;
+		text-align: center;
+		font-size: 0.9em;
+	}
+	#footer a{
+		color: #91B6CF;
+	}
+	#minimap {
+		width: 200px;
+		height: 200px;
+		float: left;
+		background: yellow;
+	}
+	#tools {
+		width: 200px;
+		height: 200px;
+		float: left;
+		background: blue;
+	}
+	#tools a {
+		display: block;
+		background: cyan;
+		margin: 5px;
+	}
+</style>
+</head>
+
+<body>
+<div id="wrapper">
+
+<canvas id="canvas" height="200" width="800"></canvas>
+<div>
+	<div id="minimap"></div>
+	<div id="tools"></div>
+	<div style="clear:both"></div>
+</div>
+
+</div>
+<div id="footer">Made by <a href="http://new-bamboo.co.uk">New Bamboo</a>. We think HTML5 is the future!</div>
+
+</body>
+</html>

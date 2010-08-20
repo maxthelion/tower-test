@@ -7,168 +7,88 @@ function GridGenerator(width, height){
 	};
 	return result;
 };
-MF = Math.floor
-MR = Math.random
-var kills = 0;
-var grid;	
-var startLives = 20;
-var lives = startLives;
-var mSM;
-var mygrid;
-var regularity = 20; // the speed that new soldiers appear
-var waveLength; // the length of a wave - eg how many soldiers per round
-var soldierCountDown = regularity;
-var waveCountDown;
-var round = 0;
-var money = 20;
+
+var currentSoldiers = [];
 var frameNum = 0;
-var currentTurretIndex = 0;
-var playing =	false;
-
-var incrementKills = function(bounty){			
-	changeMoney(bounty);
-	kills++;
-	attemptToWinGame();
-};
-
-function changeMoney(amount){
-	money += amount;
-	drawTurretButtons();
-}
-
-var gameWon = function(){
-	return round == waves.length && waveCountDown == 0 && !anySoldiers()
-}
-
-var attemptToWinGame = function(){
-	if ( gameWon() ){
-		$('#big_notice').show().html('<h2>YOU WIN!</h2>')
-		playing = false;
-	}
-}
-
-var loseLife = function(){
-	lives--;
-}
+var currentAction;
 
 var frameFunction = function(){
-	sounds = {}
 	frameNum ++;
-	checkDeath();
 	spritesProgress();
-	attemptToWinGame();
-	$('#kills').text(kills)
-	$('#money').text(money)
-	if(playing){
-		if(soldierCountDown == 0) {
-			if (waveCountDown == 0) {
-				if (!anySoldiers() && round <= waves.length){
-					progressRound()
-				}
-			} else {
-				waveCountDown--;
-				mSM.createSoldier(typeIndex);
-				soldierCountDown = regularity;
-			}
-		} else {
-			soldierCountDown--;
-		}
-	}
 	mygrid.public_draw();
-}
-
-var isDead = function(){
-	return lives == 0;
-}
-var checkDeath = function(){
-	if (isDead()){
-		$('#big_notice').show().html('<h2>death to you, sucker!!! you are teh suck!!!</h2>');
-		playing = false;
-	}
-}
-
-var anySoldiers = function(){
-	return mSM.allUnits(true, true).length > 0
 }
 
 sprites_img = new Image(); 
 
 var start = function(){
-	progressRound()	
 	playing = true;
-	//	global interval
 	globalInterval = setInterval(frameFunction, 60);
 }
 
-var progressRound = function(){
-	round++;
-	$('#notice').text('Round ' + round + ' of ' + waves.length );
-	// mark the round number
-	$('#round').text(round);
-	wave = waves[round - 1];
-	waveCountDown = wave[2];
-	regularity = wave[1];
-	typeIndex = wave[0];
-}
-
-$().ready(function(){			
-	mSM = new SoldierManager();
+$().ready(function(){	
+	grid = GridGenerator(50, 30);		
 	mygrid = new Grid('canvas', grid);
-	drawTurretButtons();
 	
 	sprites_img.src = 'soldier.png';
 	sprites_img.onload = function(){
 		mygrid.public_draw();
-		$('#kills').text(kills)
-		$('#money').text(money)	
+		start()
 	}
 	
-	$('#start').click(function(){
-		$('#big_notice').hide()
-		start();
-	});
-	
-	$('#pause_button').click(function(evt){
-		clearInterval(globalInterval);
-		playing = false;
-		$('#big_notice').show().html('<h2>Game paused</h2><p>click to resume</p>').click(function(){
-			globalInterval = setInterval(frameFunction, 60);
-			playing = true;
-			$('#pause_button').show();
-			$('#big_notice').hide()
-		});
-		$('#pause_button').hide();
-	})
+	addSoldier(200, 300);
 });
 
-var drawTurretButtons = function(){
-	$('#turret_choices').text('')
-	for (var i=0; i < unitTypes.length; i++) {
-		var t = unitTypes[i];
-		var tbutton = $('<a href="#">').text(t['name'] + ' ($'+ t['cost']+')' )
-		tbutton.attr('id', 'button_'+i);
-		if (i == currentTurretIndex)
-			tbutton.addClass('selected');
-		if (money >= t['cost']){
-			tbutton.addClass('allowed');
-		} else {
-			tbutton.addClass('not_allowed')
-		}
-		(function(i){
-			tbutton.click(function(){
-				setCurrentUnit(i)
- 			});
-		})(i);
-		$('#turret_choices').append(tbutton);
+var addSoldier = function(x, y){
+	var s = new Soldier(x, y);
+	attrs = {
+		 name: 'lightInfantry',
+		 speed: 2,
+		 health: 30,
+		 bounty: 1,
+		 type: Soldier,
+		 spriteX: 0
+	}
+	for (i in attrs) {
+		s[i] = attrs[i]
 	};
+	addSprite('s', s)
+}
+var checkSoldiersWithinSelection = function(x1, y1, x, y){
+	for (var i=0; i < spritesArray.length; i++) {
+		u = spritesArray[i]
+		if ( Math.abs(u.cX - x) < 20 && Math.abs(u.cY - y) < 20 ){
+			return u
+		}
+	};
+	return false;
+}
+var checkSoldierAtLocation = function(x, y){
+	var soldiers = []
+	for (var i=0; i < spritesArray.length; i++) {
+		u = spritesArray[i]
+		if ( Math.abs(u.cX - x) < 20 && Math.abs(u.cY - y) < 20 ){
+			soldiers.push(u)
+		}
+	};
+	return soldiers;
 }
 
-var setCurrentUnit = function(i){
-	currentTurretIndex = i;
-	$('.selected').removeClass('selected');
-	$('#button_'+ i).addClass('selected');
+
+showActionsForSoldier = function(s){
+	$('#tools').empty()
+	for (i in s.actions){
+		var button = $('<a href="#"></a>').text(s.actions[i])
+		button.data('foo', s.actions[i])
+		button.click(function(){
+			setCurrentAction($(this).data('foo'))
+		})
+		$('#tools').append(button)
+	}
 }
 
+var setCurrentAction = function(){
+	
+}
 var spritesProgress = function(){
 	// aim the turrets and fire if possible
 	for(var i =0; i < spritesArray.length; i++){

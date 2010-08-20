@@ -8,14 +8,7 @@ var SoldierManager = function(){
 	};
 	
 	var soldierTypes = [
-		{
-		 name: 'lightInfantry',
-		 speed: 2,
-		 health: 30,
-		 bounty: 1,
-		 type: Soldier,
-		 sprite: 0
-		},
+,
 		{
 		 name: 'Infantry',
 		 speed: 2,
