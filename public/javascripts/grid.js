@@ -21,7 +21,6 @@ var Grid = function(canvas_id, grid) {
 			endSelectionX &&
 			endSelectionY
 			){
-				console.log('aa')
 			ctx.fillStyle = 'yellow'
 			ctx.fillRect(startSelectionX,endSelectionY,
 				endSelectionX - startSelectionX, 
@@ -101,30 +100,31 @@ var Grid = function(canvas_id, grid) {
 	
 	
 	$(canvas).mouseup(function(evt){
-		selecting = false;
-		startSelectionX = null
-		startSelectionY = null
-		endSelectionX = null
-		endSelectionY = null
 		// var xIndex = MF( evt.offsetX/gridXInterval )
 		// var yIndex = MF( evt.offsetY/gridYInterval )
 		var x = evt.offsetX
 		var y = evt.offsetY
 		// check if there is a soldier here already
-		// s = checkSoldierAtLocation(x,y)
-		soldiers = checkSoldiersWithinSelection(startSelectionX, startSelectionY, x,y)
+		if(startSelectionX ==  x && startSelectionY == y){
+			soldiers = checkSoldierAtLocation(x,y)
+		} else {
+			soldiers = checkSoldiersWithinSelection(startSelectionX, startSelectionY, x,y)
+		}
 		// if nothing selected
-		if (soldiers){
-			// currentSoldier = s;
-			// s.selected = true;
+		if (soldiers.length>0){
+			for(i in currentSoldiers){
+				currentSoldiers[i].selected = false
+			}
+			currentSoldiers = [];
 			showActionsForSoldier(soldiers[0])
 			for (i in soldiers){
-				soldiers[i].selected
+				soldiers[i].selected = true
 				currentSoldiers.push(soldiers[i])
 			}
-			
-		} else if ( currentSoldiers && currentAction){
-			// currentSoldier.currentAction(x,y)
+		} else if ( currentSoldiers.length > 0 && currentAction){
+			for (i in currentSoldiers){
+				currentSoldiers[i].doCurrentAction(currentAction, x,y)
+			}
 		} else {
 			addSoldier(
 				evt.offsetX,
@@ -132,6 +132,11 @@ var Grid = function(canvas_id, grid) {
 			);
 		}
 		draw();
+		startSelectionX = null
+		startSelectionY = null
+		endSelectionX = null
+		endSelectionY = null
+		selecting = false;
 	});
 	
 	// $(canvas).mousemove(function(evt){

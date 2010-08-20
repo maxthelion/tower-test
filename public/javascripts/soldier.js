@@ -27,17 +27,12 @@ function Soldier(x, y) {
 		// }
 	}
 	
-	this.setCurrentAction = function(action){
-		if (action == 'move') {
-			self.currentAction = function(x,y){
-				target = {
-					cX: x,
-					cY: y
-				}
+	this.doCurrentAction = function(action, x, y){
+		if (action == 'move') {			
+			target = {
+				cX: x,
+				cY: y
 			}
-		} else if (action == 'stop') {
-			self.currentAction = null
-			self.stop();
 		}
 	}
 	

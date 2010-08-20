@@ -54,13 +54,16 @@ var addSoldier = function(x, y){
 	addSprite('s', s)
 }
 var checkSoldiersWithinSelection = function(x1, y1, x, y){
+	var soldiers = []
 	for (var i=0; i < spritesArray.length; i++) {
 		u = spritesArray[i]
-		if ( Math.abs(u.cX - x) < 20 && Math.abs(u.cY - y) < 20 ){
-			return u
+		if ( u.cX > Math.min(x1, x) && u.cX < Math.max(x1, x) &&
+		 	u.cY > Math.min(y1, y) && u.cY < Math.max(y1, y)
+		){
+			soldiers.push(u)
 		}
 	};
-	return false;
+	return soldiers;
 }
 var checkSoldierAtLocation = function(x, y){
 	var soldiers = []
@@ -75,19 +78,26 @@ var checkSoldierAtLocation = function(x, y){
 
 
 showActionsForSoldier = function(s){
-	$('#tools').empty()
-	for (i in s.actions){
-		var button = $('<a href="#"></a>').text(s.actions[i])
-		button.data('foo', s.actions[i])
-		button.click(function(){
-			setCurrentAction($(this).data('foo'))
-		})
-		$('#tools').append(button)
+	if (s){
+		$('#tools').empty()
+		for (i in s.actions){
+			var button = $('<a href="#"></a>').text(s.actions[i])
+			button.data('foo', s.actions[i])
+			button.click(function(){
+				setCurrentAction($(this).data('foo'))
+			})
+			$('#tools').append(button)
+		}
 	}
 }
 
-var setCurrentAction = function(){
-	
+var setCurrentAction = function(a){
+	if (a == "stop"){
+		for (i in currentSoldiers){
+			currentSoldiers[i].stop()
+		}
+	}
+	currentAction = a;
 }
 var spritesProgress = function(){
 	// aim the turrets and fire if possible
