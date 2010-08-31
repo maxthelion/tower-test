@@ -10,7 +10,6 @@ var Grid = function(canvas_id, grid) {
 	var gridHeight = canvas.height;
 	var gridWidth = canvas.width;
 	var highLight;
-	var result = AStar(grid, startPoint, endPoint, "Manhattan");
 	
 	var draw = function(){
 		ctx.clearRect(0,0,gridWidth, gridHeight);
@@ -144,7 +143,10 @@ var Grid = function(canvas_id, grid) {
 		addSprite('tn', {cX: pixelC(terrain[i][0]), cY: pixelC(terrain[i][1]), spriteX: 140})
 	};
 	addSprite('b', {cX: pixelC(endPoint[0]), cY: pixelC(endPoint[1]), spriteX: 160})
-	addSprite('b', {cX: pixelC(startPoint[0]), cY: pixelC(startPoint[1]), spriteX: 180})
+	for (var i=0; i < startPoints.length; i++) {
+		var startPoint = startPoints[i];
+		addSprite('b', {cX: pixelC(startPoint[0]), cY: pixelC(startPoint[1]), spriteX: 180})
+	};
 	
 	$(canvas).click(function(evt){
 		if (playing == false){
@@ -214,7 +216,16 @@ var Grid = function(canvas_id, grid) {
 
 var revertGridPoint = function(x, y){
 	grid[y][x] = 0;
-	result = AStar(grid, startPoint, endPoint, "Manhattan");
+}
+var checkPaths = function(){
+	for (var i=0; i < startPoints.length; i++) {
+		// check the global path
+		var result = AStar(grid, startPoints[i], endPoint, "Manhattan");
+		if (result.length == 0){ // fail to connect
+			revertGridPoint(x, y);
+			return false
+		};
+	};
 }
 
 var addUnit = function(u, x, y){
@@ -224,11 +235,9 @@ var addUnit = function(u, x, y){
 	// if (u['type'] == Explosion)
 	// 	return mUM.createUnit(u, [x, y]);
 	grid[y][x] = 1;
-	// check the global path
-	result = AStar(grid, startPoint, endPoint, "Manhattan");
-	if (result.length == 0){ // fail to connect
-		return revertGridPoint(x, y);
-	};
+	if (checkPaths() == false){
+		return false
+	}
 	//check for all the soldiers
 	for (var i=0; i < mSM.allSoldiers().length; i++) {
 		if (!mSM.allSoldiers()[i].regeneratePath()) {

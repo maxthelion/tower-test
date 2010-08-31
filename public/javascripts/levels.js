@@ -45,14 +45,25 @@ var waves = [
 	[5, 10, 10]
 ];
 
-var startPoint = [3, 0];
+waves = [
+	[0, 10, 1, 0]
+	[0, 10, 1, 1]
+]
+
+var startPoints = [
+	[3, 0],
+	[5, 0]
+]
+
 var endPoint = [5, 14];
 
 var k = 10;
 var terrain = [];
 while(k > 0){
 	var t = [MF(Math.random() * 15), MF(Math.random() * 15)]
-	if (	(t[0] == startPoint[0] && t[1] == startPoint[1]) ||
+	if (	
+		(t[0] == startPoints[0][0] && t[1] == startPoints[0][1]) ||
+		(t[0] == startPoints[1][0] && t[1] == startPoints[1][1]) ||
 				(t[0] == endPoint[0] && t[1] == endPoint[1])
 		) {
 		// console.log('clash')

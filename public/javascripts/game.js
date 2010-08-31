@@ -67,7 +67,7 @@ var frameFunction = function(){
 				}
 			} else {
 				waveCountDown--;
-				mSM.createSoldier(typeIndex);
+				mSM.createSoldier(typeIndex, wave[3]);
 				soldierCountDown = regularity;
 			}
 		} else {
