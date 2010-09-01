@@ -1,6 +1,6 @@
 var Obstacle = function(position, template){
-	this.cX = mygrid.pointCenterXY( position[0], position[1] )[0]
-	this.cY = mygrid.pointCenterXY( position[0], position[1] )[1]
+	this.cX = gridManager.pointCenterXY( position[0], position[1] )[0]
+	this.cY = gridManager.pointCenterXY( position[0], position[1] )[1]
 	this.p = position
 	
 	this.sellCost = function(){
@@ -9,8 +9,8 @@ var Obstacle = function(position, template){
 }
 
 var Obstacle = function(position, template){
-	this.cX = mygrid.pointCenterXY( position[0], position[1] )[0]
-	this.cY = mygrid.pointCenterXY( position[0], position[1] )[1]
+	this.cX = gridManager.pointCenterXY( position[0], position[1] )[0]
+	this.cY = gridManager.pointCenterXY( position[0], position[1] )[1]
 	this.p = position
 	
 	this.sellCost = function(){

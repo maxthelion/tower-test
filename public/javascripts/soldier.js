@@ -1,9 +1,9 @@
-function Soldier(startPoint, endPoint, grid, template, id) {
+function Soldier(startPoint, endPoint, gridManager, template, id) {
 	var self = this;
-	var currentPosition = mygrid.pointCenterXY(startPoint[0], startPoint[1])
+	var currentPosition = gridManager.pointCenterXY(startPoint[0], startPoint[1])
 	this.cX = currentPosition[0];
 	this.cY = currentPosition[1];
-	var endPosition = mygrid.pointCenterXY(endPoint[0], endPoint[1])
+	var endPosition = gridManager.pointCenterXY(endPoint[0], endPoint[1])
 	var currentSpeed = template['speed'];
 	var initialHealth = template['health'];
 	this.health = initialHealth;
@@ -30,7 +30,7 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 		} else {
 			currentSpeed = speed;
 		}
-		var cell = mygrid.cellFromPosition( [self.cX, self.cY] );
+		var cell = gridManager.cellFromPosition( [self.cX, self.cY] );
 		getNewPos()
 		if (nextPoint == undefined){
 			self.destC();
@@ -39,9 +39,9 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 			pathIndex++
 			if (pathIndex < myPath.length){
 				currentPoint = myPath[pathIndex];
-				nextPoint		= myPath[pathIndex + 1];
+				nextPoint	 = myPath[pathIndex + 1];
 				if (nextPoint)
-					nextPosition = mygrid.pointCenterXY(nextPoint[0], nextPoint[1]);
+					nextPosition = gridManager.pointCenterXY(nextPoint[0], nextPoint[1]);
 			} 
 		}
 	}
@@ -91,7 +91,7 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 	}
 	
 	this.regeneratePath = function(){
-		var newPath = AStar(grid, currentPoint, endPoint, "Manhattan");
+		var newPath = gridManager.getPath(currentPoint, endPoint);
 		if (newPath.length == 0){
 			return false;
 		} else {
@@ -102,14 +102,13 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 	}
 	
 	this.destC = function(){
-		addExplosion(self.cX, self.cY, 1, frameNum, 0);
 		mSM.removeSoldier(self);
-		loseLife();
+		myGame.loseLife();
 	}
 	
 	this.dC = function(){
-	  incrementKills(self.bounty);
-		mSM.removeSoldier(self);
+	  myGame.incrementKills(self.bounty);
+	  mSM.removeSoldier(self);
 	}
 	
 	this.takeBullet = function(damage) {
@@ -125,13 +124,13 @@ function Soldier(startPoint, endPoint, grid, template, id) {
 	}
 
 	var initialise = function(){
-		myPath = AStar(grid, startPoint, endPoint, "Manhattan");
+		myPath = gridManager.getPath(startPoint, endPoint);
 		currentPoint = myPath[pathIndex];
 		nextPoint = myPath[pathIndex + 1];
-		var currentPosition = mygrid.pointCenterXY(currentPoint[0], currentPoint[1]);
+		var currentPosition = gridManager.pointCenterXY(currentPoint[0], currentPoint[1]);
 		self.cX = currentPosition[0];
 		self.cY = currentPosition[1];
-		nextPosition = mygrid.pointCenterXY(nextPoint[0], nextPoint[1]);
+		nextPosition = gridManager.pointCenterXY(nextPoint[0], nextPoint[1]);
 	}
 	
 	initialise();

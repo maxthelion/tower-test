@@ -86,10 +86,10 @@ var SoldierManager = function(){
 		redoArrays();
 	}
 	
-	this.createSoldier = function(typeIndex, startIndex){
+	this.createSoldier = function(typeIndex, startPoint, endPoint, grid){
 		var template = soldierTypes[typeIndex]
 		object = template['type'] // soldier or heli
-		var a = new object(startPoints[startIndex], endPoint, grid, template);
+		var a = new object(startPoint, endPoint, grid, template);
 		a.spriteX = template.sprite
 		a.key = keyFromSoldier(a)
 		addSprite(a.key, a);
