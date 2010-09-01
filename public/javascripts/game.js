@@ -195,8 +195,26 @@ var Game = function(){
 			if (!selectedUnit && playing) {
 				var xIndex = MF( evt.offsetX/gridManager.cellWidth )
 				var yIndex = MF( evt.offsetY/gridManager.cellWidth )
-				canvasManager.highLight = [xIndex, yIndex];
-				canvasManager.hlp = gridManager.pointCenterXY(xIndex, yIndex)
+				var u = mUM.unitAt([xIndex, yIndex]);
+				if (gridManager.squareAvaliable( xIndex, yIndex ) || u){
+					canvasManager.highLight = {
+						x: xIndex,
+						y: yIndex,
+						cX: gridManager.pointCenterXY(xIndex, yIndex)[0],
+						cY: gridManager.pointCenterXY(xIndex, yIndex)[1]
+					}
+					if (u){
+						canvasManager.highLight.haloColor = '255, 255, 0'
+						canvasManager.highLight.range = gridManager.cellWidth / 2
+					} else {
+						canvasManager.highLight.unit = currentUnit,
+						canvasManager.highLight.haloColor = (money < currentUnit['cost']) ? '255, 0, 0' : '0, 255, 0',
+						canvasManager.highLight.range = gridManager.radiusFromRange(currentUnit.range)
+					}
+				} else {
+					canvasManager.highLight = null
+				}
+
 			}
 		});
 

@@ -45,17 +45,11 @@ var CanvasManager = function(canvas, grid, startPoints, endPoint, gridManager) {
 		if(self.selectedUnit){
 			dCircle( selectedUnit.cX, selectedUnit.cY, 'rgba(255, 255, 255, 0.5)', 50);
 		}
-		if(highLight && squareAvaliable( highLight[0], highLight[1] )){
-			// check there is money
-			var color = (money < currentUnit()['cost']) ? '255, 0, 0' : '0, 255, 0';
-			drawSprite(currentUnit().spriteX, hlp[0], hlp[1])
-			dCircle( hlp[0], hlp[1], 'rgba('+ color +', 0.3)', self.radiusFromRange(currentUnit()['range']));
-		} else if(highLight){
-			if (mUM.unitAt(highLight)){
-				var u = mUM.unitAt(highLight);
-				dCircle( hlp[0], hlp[1], 'rgba(255, 200, 0, 0.5)', gridXInterval/2);
-			}
-		}
+		if(self.highLight){
+			if (self.highLight.unit)
+				drawSprite(self.highLight.unit.spriteX, self.highLight.cX, self.highLight.cY)
+			dCircle( self.highLight.cX, self.highLight.cY, 'rgba('+ self.highLight.haloColor +', 0.3)', self.highLight.range);
+		} 
 	};
 	
 	// called from the setinterval
