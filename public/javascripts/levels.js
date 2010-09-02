@@ -41,7 +41,8 @@ levels = [
 		unitTypes[1], // mortar
 		unitTypes[5], // wall
 		unitTypes[4] // glue gun
-		]
+		],
+		terrain: []
 	},
 	{
 		waves: [
@@ -65,6 +66,25 @@ levels = [
 		unitTypes[5], // wall
 		unitTypes[4], // glue gun
 		unitTypes[6] // flamer
-		]
+		],
+		terrain: []
 	}
 ]
+
+var addRandomTerrain = function(){
+	var terrain = []
+	while(k > 0){
+		var t = [MF(Math.random() * 15), MF(Math.random() * 15)]
+		if (	
+			(t[0] == startPoints[0][0] && t[1] == startPoints[0][1]) ||
+			(startPoints[1] && t[0] == startPoints[1][0] && t[1] == startPoints[1][1]) ||
+					(t[0] == endPoint[0] && t[1] == endPoint[1])
+			) {
+			// console.log('clash')
+		} else {
+			terrain.push( t );
+		}
+		k--
+	}
+	return terrain;
+}

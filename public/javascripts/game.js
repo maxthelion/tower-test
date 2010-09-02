@@ -182,18 +182,13 @@ var Game = function(){
 		money = 20;
 		currentUnit = availableUnits[0]
 		initSprites();
+		selectedUnit = undefined;
 		mSM = new SoldierManager();
 		grid = GridGenerator(15, 15);
 		var canvas = document.getElementById('canvas')
 		gridManager = new GridManager(grid, 400, 400);
-		myBase = {
-			cX: gridManager.pixelC(endPoint[0]), 
-			cY: gridManager.pixelC(endPoint[1]), 
-			spriteX: 160,
-			healthpercent: 1,
-			base: true
-		}
-		generateTerrain();
+		addBases();
+		generateTerrain(thisLevel.terrain);
 		canvasManager = new CanvasManager(canvas, grid, startPoints, endPoint, gridManager);
 		drawTurretButtons();
 
@@ -234,6 +229,7 @@ var Game = function(){
 				selectedUnit = undefined;
 			} else if (gridManager.squareAvaliable(xIndex, yIndex) && !selectedUnit){
 				addUnit(xIndex, yIndex);
+				selectedUnit = undefined;
 			} else if (mUM.unitAt([xIndex, yIndex])){
 				t = mUM.unitAt([xIndex, yIndex])
 				highLight = null;
@@ -346,30 +342,26 @@ var Game = function(){
 		elem.append(sellBtn)
 	}
 	
-	var generateTerrain = function(){
+	var generateTerrain = function(terrain){
 		var k = 10;
-		var terrain = [];
-		while(k > 0){
-			var t = [MF(Math.random() * 15), MF(Math.random() * 15)]
-			if (	
-				(t[0] == startPoints[0][0] && t[1] == startPoints[0][1]) ||
-				(startPoints[1] && t[0] == startPoints[1][0] && t[1] == startPoints[1][1]) ||
-						(t[0] == endPoint[0] && t[1] == endPoint[1])
-				) {
-				// console.log('clash')
-			} else {
-				terrain.push( t );
-			}
-			k--
-		}
 		//add terrain to grid
 		for (var i=0; i < terrain.length; i++) {
-		 grid[ terrain[i][1] ][terrain[i][0]] = 1;
+		 	grid[ terrain[i][1] ][terrain[i][0]] = 1;
 		};
 		
 		for (var i=0; i < terrain.length; i++) {
 			addSprite('tn', {cX: gridManager.pixelC(terrain[i][0]), cY: gridManager.pixelC(terrain[i][1]), spriteX: 140})
 		};
+	}
+	
+	var addBases = function(){
+		myBase = {
+			cX: gridManager.pixelC(endPoint[0]), 
+			cY: gridManager.pixelC(endPoint[1]), 
+			spriteX: 160,
+			healthpercent: 1,
+			base: true
+		}
 		addSprite('b', myBase)
 		for (var i=0; i < startPoints.length; i++) {
 			var startPoint = startPoints[i];
