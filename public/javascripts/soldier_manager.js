@@ -1,5 +1,3 @@
-sprites.s = {}
-sprites.a = {}
 var SoldierManager = function(){
 	var self = this;
 	var asa = {

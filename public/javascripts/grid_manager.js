@@ -33,6 +33,11 @@ var GridManager = function(grid, canvasWidth, canvasHeight){
 		return ((range * 2 + 1 ) / 2) * self.cellWidth;
 	}
 	
+	this.clearCell = function(x, y){
+		// back to front x and y again
+		grid[y][x] = 0
+	}
+	
 	var units = function(x, y){ 
 		if(startSelectionX ==  x && startSelectionY == y){
 			soldiers = checkSoldierAtLocation(x,y)

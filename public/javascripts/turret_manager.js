@@ -76,16 +76,8 @@ var unitTypes = [
 	}
 ]
 
-var currentUnit = function(){
-	return unitTypes[currentTurretIndex]
-};
-
-sprites['t'] = {}
-// var turrets = [];
 var UnitManager = function(){
 	var self = this;
-	var positionHash = {};
-	var turretHash = {}
 	
 	var addUnitAtPosition = function(p, u){
 		if (!positionHash[ p[0] ]){
@@ -113,10 +105,8 @@ var UnitManager = function(){
 	};
 	
 	this.sell = function(u){
-		changeMoney( u.sellCost() );
+		positionHash[u.p[0]][u.p[1]] = null
 		removeSprite('t', u.id);
-		// back to front x and y again
-		grid[u.p[1]][u.p[0]] = 0
 	}
 }
 mUM = new UnitManager();

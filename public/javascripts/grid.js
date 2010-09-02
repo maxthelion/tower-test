@@ -33,13 +33,10 @@ var CanvasManager = function(canvas, grid, startPoints, endPoint, gridManager) {
 			// see if they are a turret
 			if (u.tSoldier)
 				drawBarrel(u);
-			if (u.healthpercent){
+			if (u.healthpercent)
 				drawHealth(u.cX,u.cY-20,20,5,u.healthpercent);
-			}
-		}
-		if(u.base){
-			// would normally do pixelC on the y as well
-			drawHealth(u.CX, u.cY-30,50,10,u.healthpercent)
+			// if(u.base)
+			// 	drawHealth(u.cX, u.cY-30,50,10,u.healthpercent);
 		}
 		// draw highlight
 		if(self.selectedUnit){

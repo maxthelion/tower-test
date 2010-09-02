@@ -13,30 +13,62 @@ MR = Math.random
 
 var frameNum = 0;
 var mSM;
+var positionHash;
+
 var Game = function(){
-	var level = levels[0]
-	var waves = level.waves
-	var startPoints = level.startPoints
-	var endPoint = level.endPoint;
-	var availableUnits = level.availableUnits;
-	var kills = 0;
+	var level = 0;
+	var waves;
+	var startPoints;
+	var endPoint;
+	var availableUnits;
+	var kills;
 	var grid;	
-	var startLives = 20;
-	var lives = startLives;
+	var startLives;
+	var lives;
 	var gridManager;
-	var regularity = 20; // the speed that new soldiers appear
+	var regularity; // the speed that new soldiers appear
 	var waveLength; // the length of a wave - eg how many soldiers per round
-	var soldierCountDown = regularity;
+	var soldierCountDown;
 	var waveCountDown;
-	var round = 0;
-	var money = 20;
-	var currentTurretIndex = 0;
-	var playing =	false;
+	var round;
+	var money;
+	var playing;
 	var gridManager;
 	var myBase;
 	var selectedUnit;
-	var currentUnit = availableUnits[0]
+	var currentUnit;
 	var canvasManager;
+	var emergencePoint;
+	sprites_img = new Image(); 
+	
+	var resumeBtn = function(){
+	 	return $('<a href="#">Resume</a>').click(function(){
+			globalInterval = setInterval(frameFunction, 60);
+			playing = true;
+			$('#pause_button').show();
+			$('#big_notice').hide()
+			return false;
+		});
+	}
+	
+	var restartBtn = function(){
+		return $('<a href="#">Restart</a>').click(function(){
+			restart();
+			$('#pause_button').show();
+			$('#big_notice').hide()
+			return false;
+		});
+	}
+	
+	var progressLevelBtn = function(){
+		return $('<a href="#">Next level</a>').click(function(){
+			level++;
+			restart();
+			$('#pause_button').show();
+			$('#big_notice').hide()
+			return false;
+		});
+	}
 
 	this.incrementKills = function(bounty){			
 		changeMoney(bounty);
@@ -55,15 +87,18 @@ var Game = function(){
 
 	var attemptToWinGame = function(){
 		if ( gameWon() ){
-			$('#big_notice').show().html('<h2>YOU WIN!</h2>')
+			$('#big_notice').show().html('<h2>YOU WIN!</h2>');
+			$('#big_notice').append(progressLevelBtn());
+			$('#big_notice').append(restartBtn());
+			clearInterval(globalInterval);
 			playing = false;
 		}
 	}
 
 	this.loseLife = function(){
-		myBase.healthPercent = lives/startLives
+		myBase.healthpercent = lives/startLives
 		lives--;
-		addExplosion(myBase.cX, myBase.cY, 1, frameNum, 0);
+		addExplosion(myBase.cX, myBase.cY, gridManager.radiusFromRange( 1 ), frameNum, 0);
 	}
 
 	var frameFunction = function(){
@@ -82,7 +117,7 @@ var Game = function(){
 					}
 				} else {
 					waveCountDown--;
-					mSM.createSoldier(typeIndex, startPoints[wave[3]], endPoint, gridManager);
+					mSM.createSoldier(typeIndex, emergencePoint, endPoint, gridManager);
 					soldierCountDown = regularity;
 				}
 			} else {
@@ -95,9 +130,12 @@ var Game = function(){
 	var isDead = function(){
 		return lives == 0;
 	}
+	
 	var checkDeath = function(){
 		if (isDead()){
 			$('#big_notice').show().html('<h2>death to you, sucker!!! you are teh suck!!!</h2>');
+			$('#big_notice').append(restartBtn());
+			clearInterval(globalInterval);
 			playing = false;
 		}
 	}
@@ -106,13 +144,15 @@ var Game = function(){
 		return mSM.allUnits(true, true).length > 0
 	}
 
-	sprites_img = new Image(); 
-
 	var start = function(){
 		progressRound()	
 		playing = true;
-		//	global interval
 		globalInterval = setInterval(frameFunction, 60);
+	}
+	
+	var restart = function(){
+		initialise();
+		start();
 	}
 
 	var progressRound = function(){
@@ -121,12 +161,27 @@ var Game = function(){
 		// mark the round number
 		$('#round').text(round);
 		wave = waves[round - 1];
-		waveCountDown = wave[2];
-		regularity = wave[1];
-		typeIndex = wave[0];
+		waveCountDown = wave[0][2];
+		regularity = wave[0][1];
+		soldierCountDown = regularity;
+		typeIndex = wave[0][0];
+		emergencePoint = startPoints[wave[1]]
 	}
 	
 	var initialise = function(){
+		positionHash = {}
+		var thisLevel = levels[level]
+		waves = thisLevel.waves
+		startPoints = thisLevel.startPoints
+		endPoint = thisLevel.endPoint;
+		availableUnits = thisLevel.availableUnits;
+		kills = 0;
+		startLives = 20;
+		lives = startLives;
+		round = 0;
+		money = 20;
+		currentUnit = availableUnits[0]
+		initSprites();
 		mSM = new SoldierManager();
 		grid = GridGenerator(15, 15);
 		var canvas = document.getElementById('canvas')
@@ -135,7 +190,7 @@ var Game = function(){
 			cX: gridManager.pixelC(endPoint[0]), 
 			cY: gridManager.pixelC(endPoint[1]), 
 			spriteX: 160,
-			healthPercent: 1,
+			healthpercent: 1,
 			base: true
 		}
 		generateTerrain();
@@ -161,12 +216,9 @@ var Game = function(){
 		$('#pause_button').click(function(evt){
 			clearInterval(globalInterval);
 			playing = false;
-			$('#big_notice').show().html('<h2>Game paused</h2><p>click to resume</p>').click(function(){
-				globalInterval = setInterval(frameFunction, 60);
-				playing = true;
-				$('#pause_button').show();
-				$('#big_notice').hide()
-			});
+			$('#big_notice').show().html('<h2>Game paused</h2>')
+			$('#big_notice').append(resumeBtn());
+			$('#big_notice').append(restartBtn())
 			$('#pause_button').hide();
 		})
 		
@@ -228,28 +280,28 @@ var Game = function(){
 		$('#turret_choices').text('')
 		for (var i=0; i < availableUnits.length; i++) {
 			var t = availableUnits[i];
-			var tbutton = $('<a href="#">').text(t['name'] + ' ($'+ t['cost']+')' )
-			tbutton.attr('id', 'button_'+i);
-			if (i == currentTurretIndex)
+			var tbutton = $('<a href="#">').text(t.name + ' ($'+ t.cost+')' )
+			tbutton.attr('id', 'button_'+t.name);
+			if (t == currentUnit)
 				tbutton.addClass('selected');
 			if (money >= t['cost']){
 				tbutton.addClass('allowed');
 			} else {
 				tbutton.addClass('not_allowed')
 			}
-			(function(i){
+			(function(t){
 				tbutton.click(function(){
-					setCurrentUnit(i)
+					setCurrentUnit(t)
 	 			});
-			})(i);
+			})(t);
 			$('#turret_choices').append(tbutton);
 		};
 	}
 
-	var setCurrentUnit = function(i){
-		currentTurretIndex = i;
+	var setCurrentUnit = function(t){
+		currentUnit = t;
 		$('.selected').removeClass('selected');
-		$('#button_'+ i).addClass('selected');
+		$('#button_'+ t.name).addClass('selected');
 	}
 
 	var spritesProgress = function(){
@@ -283,6 +335,8 @@ var Game = function(){
 		}).html('<span>$</span><span class="amount">'+t.sellCost()+'</span>').
 		click(function(){
 			mUM.sell(t);
+			changeMoney( t.sellCost() );
+			gridManager.clearCell( t.p[0], t.p[1] )
 			elem.remove();
 			selectedUnit = undefined;
 			return false;
