@@ -51,10 +51,11 @@ levels = [
 			[lightInf1, 1],
 			[inf1, 0],
 			[inf1, 1],
-			[heavyInf1, 0],
 			[lightInf1, 1],
+			[mediumInf1, 1]
 			[inf1, 0],
 			[inf2, 1]
+			[heavyInf1, 0],
 		],
 		startPoints: [
 			[2, 0],
