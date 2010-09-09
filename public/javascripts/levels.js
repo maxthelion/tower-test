@@ -28,10 +28,11 @@ levels = [
 			[lightInf1, 0],
 			[lightInf1, 0],
 			[inf1, 0],
-			[inf1, 0],
-			[heavyInf1, 0],
+			[lightInf2, 0],
 			[lightInf1, 0],
 			[inf1, 0],
+			[inf2, 0],
+			[mediumInf1, 0],
 			[inf2, 0]
 		],
 		startPoints: [[2, 0]],
@@ -47,13 +48,13 @@ levels = [
 	{
 		waves: [
 			[lightInf1, 0],
-			[lightInf1, 0],
+			[lightInf1, 1],
 			[inf1, 0],
-			[inf1, 0],
+			[inf1, 1],
 			[heavyInf1, 0],
-			[lightInf1, 0],
+			[lightInf1, 1],
 			[inf1, 0],
-			[inf2, 0]
+			[inf2, 1]
 		],
 		startPoints: [
 			[2, 0],

@@ -79,6 +79,8 @@ var Game = function(){
 	function changeMoney(amount){
 		money += amount;
 		drawTurretButtons();
+		if (canvasManager.highLight)
+		  canvasManager.highLight.haloColor = (money < currentUnit.cost) ? '255, 0, 0' : '0, 255, 0';
 	}
 
 	var gameWon = function(){
@@ -190,6 +192,7 @@ var Game = function(){
 		addBases();
 		generateTerrain(thisLevel.terrain);
 		canvasManager = new CanvasManager(canvas, grid, startPoints, endPoint, gridManager);
+		canvasManager.highLight = null;
 		drawTurretButtons();
 
 		sprites_img.src = 'soldier.png';
@@ -227,6 +230,7 @@ var Game = function(){
 			if (selectedUnit){
 				$('#fC').remove()
 				selectedUnit = undefined;
+				return false;
 			} else if (gridManager.squareAvaliable(xIndex, yIndex) && !selectedUnit){
 				addUnit(xIndex, yIndex);
 				selectedUnit = undefined;
@@ -256,7 +260,7 @@ var Game = function(){
 						canvasManager.highLight.range = gridManager.cellWidth / 2
 					} else {
 						canvasManager.highLight.unit = currentUnit,
-						canvasManager.highLight.haloColor = (money < currentUnit['cost']) ? '255, 0, 0' : '0, 255, 0',
+						canvasManager.highLight.haloColor = (money < currentUnit['cost']) ? '255, 0, 0' : '0, 255, 0';
 						canvasManager.highLight.range = gridManager.radiusFromRange(currentUnit.range)
 					}
 				} else {
@@ -270,7 +274,9 @@ var Game = function(){
 			canvasManager.highLight = null;
 		});
 	}
-	
+	var canAfford = function(num){
+	  return money >= num;
+	}
 	
 	var drawTurretButtons = function(){
 		$('#turret_choices').text('')
@@ -320,10 +326,21 @@ var Game = function(){
 		elem.css('left', coords[0])
 		elem.css('top', coords[1])
 		// sellAmount = 2
-		// upgradeBtn = $('<a>').attr({
-		// 	href: '#',
-		// 	id: 'upgradeBtn'
-		// }).html('<span>^</span><span class="amount">'+sellAmount+'</span>')
+		if (t.upgrade_id) {
+		  var upgradeBtn = $('<a>').attr({
+  		 	href: '#',
+  		 	id: 'upgradeBtn'
+  		}).html('<span>^</span><span class="amount">'+unitTypes[t.upgrade_id].cost+'</span>').
+  		click(function(){
+  		  if (!canAfford(unitTypes[t.upgrade_id].cost))
+  		    return false;
+  		  changeMoney(-unitTypes[t.upgrade_id].cost);
+  		  t.upgrade();
+  		  elem.remove();
+  		  selectedUnit = undefined;
+  		  return false;
+  		});
+		}
 		
 		sellBtn = $('<a>').attr({
 			href: '#',
@@ -338,7 +355,8 @@ var Game = function(){
 			return false;
 		})
 		
-		//elem.append(upgradeBtn)
+		if (upgradeBtn)
+		  elem.append(upgradeBtn)
 		elem.append(sellBtn)
 	}
 	

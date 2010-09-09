@@ -1,5 +1,5 @@
-var unitTypes = [
-	{
+var unitTypes = {
+  0: {
 		name: 'machine gun',
 		fireRate: 2,
 		range: 1,
@@ -7,9 +7,10 @@ var unitTypes = [
 		cost: 5,
 		type: Turret,
 		attacks_air: true,
-		spriteX: 200
+		spriteX: 200,
+		upgrade_id: 7
 	},
-	{
+	1: {
 		name: 'mortar',
 		fireRate: 20,
 		range: 2,
@@ -18,15 +19,15 @@ var unitTypes = [
 		type: Turret,
 		spriteX: 240
 	},
-	  {
+	2: {
 	   name: 'sniper',
 	   fireRate: 100,
 	   range: 5,
 	   damage: 100,
 	   cost: 20,
 	   type: Turret
-	  },
-	  {
+	},
+	3: {
 	   name: 'heavy cannon',
 	   fireRate: 50,
 	   range: 4,
@@ -36,8 +37,8 @@ var unitTypes = [
 	     explosions.push(new Explosion( soldier.cX, soldier.cY,1, myFrameNum,5) );
 	   },
 	   type: Turret
-	  },
-	{
+	},
+	4: {
 		name: 'glue gun',
 		fireRate: 20,
 		range: 2,
@@ -56,25 +57,35 @@ var unitTypes = [
   //  range: 3,
   //  type: Explosion
   // },
-	{
+	5: {
 		name: 'wall',
 		cost: 2,
 		type: Obstacle,
 		spriteX: 260
 	},
-	{
+	6: {
 		name: 'flamer',
 		fireRate: 10,
 		range: 1,
-		damage: 2,
-		cost: 3,
+		damage: 4,
+		cost: 7,
 		hC: function(soldier, myFrameNum){
 			soldier.setAlight(frameNum + 30);
 		},
 		type: Turret,
 		spriteX: 280
+	},
+	7: {
+		name: 'heavy machine gun',
+		fireRate: 2,
+		range: 1,
+		damage: 5,
+		cost: 10,
+		type: Turret,
+		attacks_air: true,
+		spriteX: 300
 	}
-]
+}
 
 var UnitManager = function(){
 	var self = this;
@@ -99,7 +110,6 @@ var UnitManager = function(){
 		// 	return false;
 		// };
 		var unit = new template['type'](position, template, gridManager);
-		unit.spriteX = template.spriteX;
 		addSprite('t', unit)
 		addUnitAtPosition(position, unit);
 	};
