@@ -111,6 +111,7 @@ var Game = function(){
 		attemptToWinGame();
 		$('#kills').text(kills)
 		$('#money').text(money)
+		renderTurretControl();
 		if(playing){
 			if(soldierCountDown == 0) {
 				if (waveCountDown == 0) {
@@ -237,7 +238,6 @@ var Game = function(){
 			} else if (mUM.unitAt([xIndex, yIndex])){
 				t = mUM.unitAt([xIndex, yIndex])
 				highLight = null;
-				showTurretControl(t);
 				selectedUnit = t;
 			}
 			canvasManager.public_draw();
@@ -315,25 +315,36 @@ var Game = function(){
 		}
 	}
 	
-	var showTurretControl = function(t){
-		$('#fC').remove()
-		var elem = $('<div id="fC"></div>')
-		$('#cW').append(elem)
-		
-		w = elem.width()
-		h = elem.height()
+	var elem;
+	var renderTurretControl = function(){
+	  if (selectedUnit && (!elem || elem.data('id') != selectedUnit.id)){
+	    addTurretControl(selectedUnit);
+	  } else if( !selectedUnit ) {
+	    $('#fC').remove();
+	  }
+	}
+	
+	
+	var addTurretControl = function(t){
+	  $('#fC').remove();
+		elem = $('<div id="fC"></div>');
+		elem.data('id', t.id)
+		$('#cW').append(elem);
+		w = elem.width();
+		h = elem.height();
 		coords = [ t.cX  - (w/2), t.cY  - (h/2) ]
 		elem.css('left', coords[0])
 		elem.css('top', coords[1])
-		// sellAmount = 2
 		if (t.upgrade_id) {
 		  var upgradeBtn = $('<a>').attr({
   		 	href: '#',
   		 	id: 'upgradeBtn'
-  		}).html('<span>^</span><span class="amount">'+unitTypes[t.upgrade_id].cost+'</span>').
+  		}).html('<span class="label">upgrade</span><span class="amount">$'+unitTypes[t.upgrade_id].cost+'</span>').
   		click(function(){
-  		  if (!canAfford(unitTypes[t.upgrade_id].cost))
+  		  if (!canAfford(unitTypes[t.upgrade_id].cost)){
+  		    $(this).addClass('unavailable')
   		    return false;
+		    }
   		  changeMoney(-unitTypes[t.upgrade_id].cost);
   		  t.upgrade();
   		  elem.remove();
@@ -345,7 +356,7 @@ var Game = function(){
 		sellBtn = $('<a>').attr({
 			href: '#',
 			id: 'sellBtn'
-		}).html('<span>$</span><span class="amount">'+t.sellCost()+'</span>').
+		}).html('<span class="label">sell</span><span class="amount">$'+t.sellCost()+'</span>').
 		click(function(){
 			mUM.sell(t);
 			changeMoney( t.sellCost() );
@@ -355,9 +366,24 @@ var Game = function(){
 			return false;
 		})
 		
+		closeBtn = $('<a>').attr({
+			href: '#',
+			id: 'closeBtn'
+		}).html('<span>x</span>').
+		click(function(){
+			elem.remove();
+			selectedUnit = undefined;
+			return false;
+		})
+		
 		if (upgradeBtn)
-		  elem.append(upgradeBtn)
-		elem.append(sellBtn)
+		  elem.append(upgradeBtn);
+		elem.append(sellBtn);
+		elem.append(closeBtn);
+  }
+  
+	var showTurretControl = function(t){
+
 	}
 	
 	var generateTerrain = function(terrain){

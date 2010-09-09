@@ -12,7 +12,7 @@ var unitTypes = {
 	},
 	1: {
 		name: 'mortar',
-		fireRate: 20,
+		fireRate: 18,
 		range: 2,
 		damage: 15,
 		cost: 10,
@@ -84,7 +84,19 @@ var unitTypes = {
 		type: Turret,
 		attacks_air: true,
 		spriteX: 300
-	}
+	},
+	8: {
+		name: 'heavy glue gun',
+		fireRate: 10,
+		range: 2,
+		damage: 0,
+		cost: 10,
+		hC: function(soldier, myFrameNum){
+			soldier.slow(myFrameNum + 50);
+		},
+		type: Turret,
+		spriteX: 220
+	},
 }
 
 var UnitManager = function(){

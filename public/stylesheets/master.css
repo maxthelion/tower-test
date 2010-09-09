@@ -78,14 +78,16 @@
 	}
 	#fC {
 	  position: absolute;
-	  width: 70px;
-	  height: 70px;
+	  width: 100px;
+	  height: 100px;
 	}
 	#fC a {
 	  position: absolute;
-	  top: 15px;
-	  padding: 5px;
-	  font-size: 1.2em;
+	  text-align: center;
+	  width: 40px;
+	}
+	#fC a span.label {
+	  display:block;
 	}
 	#upgradeBtn {
 	  left: 0;
@@ -93,14 +95,20 @@
 	#sellBtn {
 	  right: 0;
 	}
+	a#closeBtn {
+	  left: 30px;
+	  bottom: 20px;
+	}
+	#sellBtn, #upgradeBtn {
+	  font-size: 10px;
+	  top: 45px;
+	  text-shadow: #fff 0px 0px 1px;
+	}
 	#upgradeBtn:hover {
 	  color: green;
 	}
 	#sellBtn:hover {
 	  color: red;
-	}
-	#sellBtn span, #upgradeBtn span {
-	  display: block;
 	}
 	#kills, #money {
 		display: block;
