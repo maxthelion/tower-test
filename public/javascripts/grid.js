@@ -26,7 +26,7 @@ var CanvasManager = function(canvas, grid, startPoints, endPoint, gridManager) {
 				continue
 			}
 			if (u.isOnFire && u.isOnFire()){
-				w = gridXInterval;
+				w = gridManager.cellWidth;
 				dCircle(u.cX, u.cY,'orange',w/(1 + Math.random()))
 			}
 			drawSprite(u.spriteX, u.cX, u.cY)

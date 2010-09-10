@@ -13,9 +13,9 @@ var unitTypes = {
 	1: {
 		name: 'mortar',
 		fireRate: 18,
-		range: 2,
+		range: 3,
 		damage: 15,
-		cost: 10,
+		cost: 15,
 		type: Turret,
 		spriteX: 240
 	},
@@ -65,9 +65,9 @@ var unitTypes = {
 	},
 	6: {
 		name: 'flamer',
-		fireRate: 10,
+		fireRate: 4,
 		range: 1,
-		damage: 4,
+		damage: 8,
 		cost: 7,
 		hC: function(soldier, myFrameNum){
 			soldier.setAlight(frameNum + 30);
@@ -131,4 +131,3 @@ var UnitManager = function(){
 		removeSprite('t', u.id);
 	}
 }
-mUM = new UnitManager();

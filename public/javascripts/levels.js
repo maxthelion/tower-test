@@ -26,22 +26,20 @@ levels = [
 	{	
 	waves: [
 			[lightInf1, 0],
-			[lightInf1, 0],
-			[inf1, 0],
-			[lightInf2, 0],
-			[lightInf1, 0],
-			[inf1, 0],
-			[inf2, 0],
-			[mediumInf1, 0],
-			[inf2, 0]
+      [lightInf1, 0],
+      [inf1, 0],
+      [lightInf2, 0],
+      [lightInf1, 0],
+      [inf1, 0],
+      [inf2, 0],
+      [mediumInf1, 0],
+      [inf2, 0]
 		],
 		startPoints: [[2, 0]],
 		endPoint: [5, 14],
 		availableUnits: [
-		unitTypes[0], // machine gun
-		unitTypes[1], // mortar
-		unitTypes[5], // wall
-		unitTypes[4] // glue gun
+		  unitTypes[0], // machine gun
+		  unitTypes[5] // wall
 		],
 		terrain: []
 	},
@@ -52,10 +50,10 @@ levels = [
 			[inf1, 0],
 			[inf1, 1],
 			[lightInf1, 1],
-			[mediumInf1, 1]
+			[mediumInf1, 1],
 			[inf1, 0],
-			[inf2, 1]
-			[heavyInf1, 0],
+			[inf2, 1],
+			[heavyInf1, 0]
 		],
 		startPoints: [
 			[2, 0],
@@ -63,12 +61,64 @@ levels = [
 		],
 		endPoint: [5, 14],
 		availableUnits: [
-		unitTypes[0], // machine gun
-		unitTypes[1], // mortar
-		unitTypes[5], // wall
-		unitTypes[4], // glue gun
-		unitTypes[6] // flamer
+		  unitTypes[0], // machine gun
+		  unitTypes[5], // wall
+		  unitTypes[6] // flamer
 		],
+		newUnits: [6],
+		terrain: []
+	},
+	{
+		waves: [
+			[lightInf1, 0],
+			[lightInf1, 1],
+			[inf1, 0],
+			[inf1, 1],
+			[lightInf1, 1],
+			[mediumInf1, 1],
+			[inf1, 0],
+			[inf2, 1],
+			[heavyInf1, 0]
+		],
+		startPoints: [
+			[2, 0],
+			[10, 0]
+		],
+		endPoint: [5, 14],
+		availableUnits: [
+		  unitTypes[0], // machine gun
+		  unitTypes[5], // wall
+		  unitTypes[6], // flamer
+		  unitTypes[4] // gluegun
+		],
+		newUnits: [4],
+		terrain: []
+	},
+	{
+		waves: [
+			[lightInf1, 0],
+			[lightInf1, 1],
+			[inf1, 0],
+			[inf1, 1],
+			[lightInf1, 1],
+			[mediumInf1, 1],
+			[inf1, 0],
+			[inf2, 1],
+			[heavyInf1, 0]
+		],
+		startPoints: [
+			[2, 0],
+			[10, 0]
+		],
+		endPoint: [5, 14],
+		availableUnits: [
+		  unitTypes[0], // machine gun
+		  unitTypes[5], // wall
+		  unitTypes[6], // flamer
+		  unitTypes[4], // gluegun
+		  unitTypes[1]
+		],
+		newUnits: [1],
 		terrain: []
 	}
 ]

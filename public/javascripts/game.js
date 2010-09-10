@@ -16,7 +16,8 @@ var mSM;
 var positionHash;
 
 var Game = function(){
-	var level = 0;
+	var level = localStorage.getItem('level') || 0;
+	var elem;
 	var waves;
 	var startPoints;
 	var endPoint;
@@ -40,13 +41,14 @@ var Game = function(){
 	var canvasManager;
 	var emergencePoint;
 	var initFrameSpeed = 60;
-	var highSpeed = 30
+	var highSpeed = 10;
 	var frameSpeed;
+	var mUM;
 	sprites_img = new Image(); 
 	
 	var resumeBtn = function(){
 	 	return $('<a href="#">Resume</a>').click(function(){
-			globalInterval = setInterval(frameFunction, 60);
+			globalInterval = setInterval(frameFunction, frameSpeed);
 			playing = true;
 			$('#pause_button').show();
 			$('#big_notice').hide()
@@ -65,10 +67,9 @@ var Game = function(){
 	
 	var progressLevelBtn = function(){
 		return $('<a href="#">Next level</a>').click(function(){
-			level++;
 			restart();
 			$('#pause_button').show();
-			$('#big_notice').hide()
+			$('#big_notice').hide();
 			return false;
 		});
 	}
@@ -93,11 +94,23 @@ var Game = function(){
 	var attemptToWinGame = function(){
 		if ( gameWon() ){
 			$('#big_notice').show().html('<h2>YOU WIN!</h2>');
-			$('#big_notice').append(progressLevelBtn());
+			progressLevel();
 			$('#big_notice').append(restartBtn());
 			clearInterval(globalInterval);
 			playing = false;
 		}
+	}
+	
+	var progressLevel = function(){
+	  if ((levels.length -1)  > level) {
+			level++;
+		  localStorage.setItem('level', level);
+		  $('#big_notice').append('<h3>New units available!</h3>')
+			for (var i=0; i < levels[level].newUnits.length; i++) {
+			 	$('#big_notice').append('<h4>'+ unitTypes[ levels[level].newUnits[i] ].name  +'</h4>');
+			};
+			$('#big_notice').append(progressLevelBtn());
+	  }
 	}
 
 	this.loseLife = function(){
@@ -151,7 +164,7 @@ var Game = function(){
 	}
 
 	var start = function(){
-		progressRound()	
+		progressRound();
 		playing = true;
 		globalInterval = setInterval(frameFunction, frameSpeed);
 	}
@@ -175,10 +188,11 @@ var Game = function(){
 	}
 	
 	var initialise = function(){
-		positionHash = {}
-		var thisLevel = levels[level]
-		waves = thisLevel.waves
-		startPoints = thisLevel.startPoints
+	  elem = undefined;
+		positionHash = {};
+		var thisLevel = levels[level];
+		waves = thisLevel.waves;
+		startPoints = thisLevel.startPoints;
 		endPoint = thisLevel.endPoint;
 		availableUnits = thisLevel.availableUnits;
 		frameSpeed = initFrameSpeed;
@@ -191,6 +205,7 @@ var Game = function(){
 		initSprites();
 		selectedUnit = undefined;
 		mSM = new SoldierManager();
+		mUM = new UnitManager();
 		grid = GridGenerator(15, 15);
 		var canvas = document.getElementById('canvas')
 		gridManager = new GridManager(grid, 400, 400);
@@ -199,6 +214,7 @@ var Game = function(){
 		canvasManager = new CanvasManager(canvas, grid, startPoints, endPoint, gridManager);
 		canvasManager.highLight = null;
 		drawTurretButtons();
+		$('#speed_button').text('Speed up');
 
 		sprites_img.src = 'soldier.png';
 		sprites_img.onload = function(){
@@ -206,8 +222,6 @@ var Game = function(){
 			$('#kills').text(kills)
 			$('#money').text(money)	
 		}
-
-		addEvents()
 	}
 	
 	var addEvents = function(){
@@ -235,7 +249,8 @@ var Game = function(){
 			  frameSpeed = initFrameSpeed;
 			  $(this).text('Speed up');
 			}
-			start();
+			globalInterval = setInterval(frameFunction, frameSpeed);
+			playing = true;
 			return false;
 		})
 		
@@ -247,22 +262,17 @@ var Game = function(){
 		
 		
 		$(canvas).click(function(evt){
-			if (playing == false){
+			if (playing == false || selectedUnit)
 				return false;
-			}
 			var xIndex = MF( evt.offsetX/gridManager.cellWidth )
 			var yIndex = MF( evt.offsetY/gridManager.cellHeight)
-			if (selectedUnit){
-				$('#fC').remove()
-				selectedUnit = undefined;
-				return false;
-			} else if (gridManager.squareAvaliable(xIndex, yIndex) && !selectedUnit){
+			if (gridManager.squareAvaliable(xIndex, yIndex)){
 				addUnit(xIndex, yIndex);
 				selectedUnit = undefined;
 			} else if (mUM.unitAt([xIndex, yIndex])){
-				t = mUM.unitAt([xIndex, yIndex])
-				highLight = null;
-				selectedUnit = t;
+        var t = mUM.unitAt([xIndex, yIndex])
+        highLight = null;
+        selectedUnit = t;
 			}
 			canvasManager.public_draw();
 		});
@@ -340,7 +350,6 @@ var Game = function(){
 		}
 	}
 	
-	var elem;
 	var renderTurretControl = function(){
 	  if (selectedUnit && (!elem || elem.data('id') != selectedUnit.id)){
 	    addTurretControl(selectedUnit);
@@ -439,6 +448,7 @@ var Game = function(){
 	}
 	
 	initialise();
+	addEvents();
 	
 	var revertGridPoint = function(x, y){
 		grid[y][x] = 0;
