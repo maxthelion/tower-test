@@ -118,7 +118,7 @@
 		font-size: 2em;
 		color: white;
 	}
-	#pause_button {
+	#pause_button, #speed_button {
 		display: block;
 		background: silver;
 		padding: 5px;
@@ -131,4 +131,7 @@
 	}
 	#footer a{
 		color: #91B6CF;
+	}
+	#instructions p{
+	  font-size: 10px;
 	}

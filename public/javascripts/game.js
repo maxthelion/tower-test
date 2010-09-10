@@ -39,6 +39,9 @@ var Game = function(){
 	var currentUnit;
 	var canvasManager;
 	var emergencePoint;
+	var initFrameSpeed = 60;
+	var highSpeed = 30
+	var frameSpeed;
 	sprites_img = new Image(); 
 	
 	var resumeBtn = function(){
@@ -150,7 +153,7 @@ var Game = function(){
 	var start = function(){
 		progressRound()	
 		playing = true;
-		globalInterval = setInterval(frameFunction, 60);
+		globalInterval = setInterval(frameFunction, frameSpeed);
 	}
 	
 	var restart = function(){
@@ -178,6 +181,7 @@ var Game = function(){
 		startPoints = thisLevel.startPoints
 		endPoint = thisLevel.endPoint;
 		availableUnits = thisLevel.availableUnits;
+		frameSpeed = initFrameSpeed;
 		kills = 0;
 		startLives = 20;
 		lives = startLives;
@@ -207,7 +211,7 @@ var Game = function(){
 	}
 	
 	var addEvents = function(){
-		$('#start').click(function(){
+		$('.start_button').live('click', function(){
 			$('#big_notice').hide()
 			start();
 		});
@@ -219,6 +223,26 @@ var Game = function(){
 			$('#big_notice').append(resumeBtn());
 			$('#big_notice').append(restartBtn())
 			$('#pause_button').hide();
+			return false;
+		})
+		
+		$('#speed_button').click(function(evt){
+			clearInterval(globalInterval);
+			if (frameSpeed == initFrameSpeed ) {
+			  frameSpeed = highSpeed;
+			  $(this).text('Slow down');
+			} else {
+			  frameSpeed = initFrameSpeed;
+			  $(this).text('Speed up');
+			}
+			start();
+			return false;
+		})
+		
+		$('#info').click(function(evt){
+		  var info = $('#instructions').clone();
+			$('#big_notice').show().html(info);
+			return false;
 		})
 		
 		
@@ -293,7 +317,8 @@ var Game = function(){
 			}
 			(function(t){
 				tbutton.click(function(){
-					setCurrentUnit(t)
+					setCurrentUnit(t);
+					return false;
 	 			});
 			})(t);
 			$('#turret_choices').append(tbutton);
