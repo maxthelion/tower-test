@@ -454,7 +454,7 @@ var Game = function(){
 		grid[y][x] = 0;
 	}
 	
-	var checkPaths = function(){
+	var checkPaths = function(x, y){
 		for (var i=0; i < startPoints.length; i++) {
 			// check the global path
 			var result = AStar(grid, startPoints[i], endPoint, "Manhattan");
@@ -463,6 +463,7 @@ var Game = function(){
 				return false
 			};
 		};
+		return true
 	}
 
 	var addUnit = function(x, y){
@@ -472,7 +473,7 @@ var Game = function(){
 		// if (u['type'] == Explosion)
 		// 	return mUM.createUnit(u, [x, y]);
 		grid[y][x] = 1;
-		if (checkPaths() == false){
+		if (!checkPaths(x, y)){
 			return false
 		}
 		//check for all the soldiers
