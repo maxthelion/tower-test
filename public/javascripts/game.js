@@ -230,15 +230,6 @@ var Game = function(){
 			start();
 		});
 
-		$('#pause_button').click(function(evt){
-			clearInterval(globalInterval);
-			playing = false;
-			$('#big_notice').show().html('<h2>Game paused</h2>')
-			$('#big_notice').append(resumeBtn());
-			$('#big_notice').append(restartBtn())
-			$('#pause_button').hide();
-			return false;
-		})
 		
 		$('#speed_button').click(function(evt){
 			clearInterval(globalInterval);
@@ -485,10 +476,67 @@ var Game = function(){
 		mUM.createUnit(currentUnit, [x, y], gridManager);
 		changeMoney( currentUnit['cost'] * -1 );
 	}
+	
+	this.pause = function(){
+	  if (playing){
+	    clearInterval(globalInterval);
+		  playing = false;
+	  }
+	}
+	
+	this.play = function(){
+	  
+	}
 }
 var myGame;
 
 $().ready(function(){	
 	myGame = new Game(0);
+	var app = $.sammy(function() {
+
+    var hideMenus = function(){
+      $('.tab').hide();
+    }
+    
+    this.get('#/', function() {
+      myGame.pause();
+      hideMenus();
+      $('#menu').show();
+    });
+
+    this.get('#/start', function() {
+      hideMenus();
+      $('#big_notice').show();
+      $('#pause_menu').hide();
+      $('#start_menu').show();
+    });
+    
+    this.get('#/instructions', function() {
+      hideMenus();
+      myGame.pause();
+      $('.tab').hide();
+      $('#instructions').show();
+    });
+    
+    this.get('#/game', function() {
+      hideMenus();
+      $('.tab').hide();
+      $('#game').show();
+      // myGame.play();
+    });
+    
+    this.get('#/pause', function() {
+      hideMenus();
+      $('#game').show();
+      myGame.pause();
+      $('#big_notice').show();
+      $('#pause_menu').show();
+      $('#start_menu').hide();
+    });
+    
+  });
+  
+  app.run('#/');
+  
 });
 
