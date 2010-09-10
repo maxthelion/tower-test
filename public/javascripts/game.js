@@ -46,24 +46,7 @@ var Game = function(){
 	var mUM;
 	sprites_img = new Image(); 
 	
-	var resumeBtn = function(){
-	 	return $('<a href="#">Resume</a>').click(function(){
-			globalInterval = setInterval(frameFunction, frameSpeed);
-			playing = true;
-			$('#pause_button').show();
-			$('#big_notice').hide()
-			return false;
-		});
-	}
 	
-	var restartBtn = function(){
-		return $('<a href="#">Restart</a>').click(function(){
-			restart();
-			$('#pause_button').show();
-			$('#big_notice').hide()
-			return false;
-		});
-	}
 	
 	var progressLevelBtn = function(){
 		return $('<a href="#">Next level</a>').click(function(){
@@ -224,13 +207,7 @@ var Game = function(){
 		}
 	}
 	
-	var addEvents = function(){
-		$('.start_button').live('click', function(){
-			$('#big_notice').hide()
-			start();
-		});
-
-		
+	var addEvents = function(){		
 		$('#speed_button').click(function(evt){
 			clearInterval(globalInterval);
 			if (frameSpeed == initFrameSpeed ) {
@@ -485,7 +462,12 @@ var Game = function(){
 	}
 	
 	this.play = function(){
-	  
+	  globalInterval = setInterval(frameFunction, frameSpeed);
+		playing = true;
+	}
+	
+	this.restart = function(){
+	  restart();
 	}
 }
 var myGame;
@@ -506,6 +488,7 @@ $().ready(function(){
 
     this.get('#/start', function() {
       hideMenus();
+      $('#game').show();
       $('#big_notice').show();
       $('#pause_menu').hide();
       $('#start_menu').show();
@@ -518,12 +501,29 @@ $().ready(function(){
       $('#instructions').show();
     });
     
-    this.get('#/game', function() {
+    // this.get('#/game', function() {
+    //   hideMenus();
+    //   $('.tab').hide();
+    //   $('#game').show();
+    //   // myGame.play();
+    // });
+    // 
+    this.get('#/resume', function() {
       hideMenus();
       $('.tab').hide();
       $('#game').show();
-      // myGame.play();
+      $('#big_notice').hide();
+      myGame.play();
     });
+    
+    this.get('#/restart', function() {
+      hideMenus();
+      $('.tab').hide();
+      $('#game').show();
+      $('#big_notice').hide();
+      myGame.restart();
+    });
+    
     
     this.get('#/pause', function() {
       hideMenus();
@@ -532,6 +532,11 @@ $().ready(function(){
       $('#big_notice').show();
       $('#pause_menu').show();
       $('#start_menu').hide();
+    });
+    
+    this.get('#/levels', function() {
+      hideMenus();
+      $('#levels').show();
     });
     
   });
