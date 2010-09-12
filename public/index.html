@@ -16,6 +16,7 @@
 	<script src="javascripts/corpse.js"></script>
 	<script src="javascripts/levels.js"></script>
 	<script src="javascripts/game.js"></script>
+	<script src="javascripts/routes.js"></script>
 	
 	<link rel="stylesheet" href="stylesheets/master.css" >
 <script type="text/javascript">
@@ -38,7 +39,7 @@
 <div id="menu" class="tab">
 	<h2>Max's tower game</h2>
 	
-	<p><a href="#/resume">Resume game</a></p>
+	<p><a href="#/play">Resume game</a></p>
 	<p><a href="#/levels">New Game</a></p>
 	<p><a href="#/instructions">How to play</a></p>
 	
@@ -53,21 +54,29 @@
 		<div>
 			<h3>Weapons</h3>
 			<div id="turret_choices"></div>
-			<p><a href="#/pause">Pause</a></p>
-			<p><a href="#" id="speed_button">Speed up</a></p>
-	    <!-- <p><a href="#" id="mute_button">turn on sound fx</a></p> -->
+			<p><a class="button" href="#/pause">Pause</a></p>
+			<p><a class="button" href="#" id="speed_button">Speed up</a></p>
 		</div>
 	</div>
 	<div id="cW">
 	  <div id="big_notice">
+			
 			<div id="start_menu">
 	    	<h2>Stop the suicide bombers from pwning your base</h2>
-	    	<p><a href="#/resume">Release the hordes!!!</a></p>
+	    	<p><a href="#/play">Release the hordes!!!</a></p>
 	    	<p><a href="#/instructions">How to play</a></p>
 			</div>
+			
 			<div id="pause_menu">
-				<h3>Game paused</h3>
-	    	<p><a href="#/resume">Resume</a></p>
+			<h3>Game paused</h3>
+	    	<p class="resume"><a href="#/play">Resume</a></p>
+	    	<p><a href="#/">Back to menu</a></p>
+	    	<p><a href="#/instructions">How to play</a></p>
+	    	<p><a href="#/restart">Restart level</a></p>
+			</div>
+			
+			<div id="death_menu">
+			<h3>death to you sucker</h3>
 	    	<p><a href="#/">Back to menu</a></p>
 	    	<p><a href="#/instructions">How to play</a></p>
 	    	<p><a href="#/restart">Restart level</a></p>
@@ -78,25 +87,37 @@
 </div>
 <div id="levels" class="tab">
 	<h2>Choose your level</h2>
-	
-	<p>Level 1</p>
-	<p>Level 2</p>
-	<p>Level 3</p>
-	<p>Level etc</p>
-	<p>Level etc</p>
-	<p>Level etc</p>
-	<p>Level etc</p>
-	<p>Level etc</p>
+	<ul id="levelList">
+		
+	</ul>
 </div>
 
 <div id="instructions" class="tab">
-	<h3>How to play</h3>
+	<h2>How to play</h2>
 	<p>Soldiers appear from the entry points, and head towards your base.</p>
 	<p>You can choose weapons from the menu on the left, and place them on the map if you have enough money.</p>
 	<p>You earn a bounty by killing the soldiers.</p> 
 	<p>By extending the distance the soldiers have to travel, you can increase your opportunities for firing at them.</p>
 	<p>Clicking on a deployed unit gives you options to sell it or upgrade it.</p>
-	<a href="#/start">Start</a>
+	<a class="button" href="#/start">Start</a>
+</div>
+
+<div id="winMenu" class="tab">
+	<h2>You win!!!</h2>
+	
+	<p>Prepare for level <span id="levelNum"></span></p>
+	
+	<div id="newUnitsContainer"></div>
+	
+	<p><a class="levelStart button" href="#/play">Start level</a></p>
+</div>
+
+<div id="templates" style="display:none">
+	<div id="newUnitTemplate" class="newUnit">
+		<h3 class="unitName"></h3>
+		<div class="unitIcon"></div>
+		<p class="info"></p>
+	</div>
 </div>
 
 </div>

@@ -25,15 +25,15 @@ var helicopter2 = [6, 20, 20]
 levels = [
 	{	
 	waves: [
-			[lightInf1, 0],
-      [lightInf1, 0],
-      [inf1, 0],
-      [lightInf2, 0],
-      [lightInf1, 0],
-      [inf1, 0],
-      [inf2, 0],
-      [mediumInf1, 0],
-      [inf2, 0]
+			[lightInf1, 0]//,
+      // [lightInf1, 0],
+      // [inf1, 0],
+      // [lightInf2, 0],
+      // [lightInf1, 0],
+      // [inf1, 0],
+      // [inf2, 0],
+      // [mediumInf1, 0],
+      // [inf2, 0]
 		],
 		startPoints: [[2, 0]],
 		endPoint: [5, 14],

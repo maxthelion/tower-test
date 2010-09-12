@@ -10,6 +10,9 @@
 		color: black;
 		text-decoration: none;
 	}
+	h2 {
+		margin-bottom: 1em;
+	}
 	#notice {
 		font-size: 2em;
 		text-align: center;
@@ -60,7 +63,18 @@
 	  display: block;
 	  background: white;
 	  margin-top: 1em;
-	  
+	}
+	.button {
+		display: block;
+	  background: white;
+	  margin-top: 1em;
+		padding: 0.5em;
+	}
+	.button:hover {
+		background: yellow;
+	}
+	#levelList {
+		list-style-type: none;
 	}
 	#wrapper {
 	  width: 560px;
@@ -118,12 +132,6 @@
 		font-size: 2em;
 		color: white;
 	}
-	#pause_button, #speed_button {
-		display: block;
-		background: silver;
-		padding: 5px;
-		margin-top: 5px;
-	}
 	#footer {
 		padding: 20px;
 		text-align: center;
@@ -132,6 +140,17 @@
 	#footer a{
 		color: #91B6CF;
 	}
-	#instructions p{
-	  font-size: 10px;
-	}
+
+.canvasIcon {
+	background: white;
+}
+.newUnit {
+	width: 200px;
+	text-align: center;
+	background: silver;
+	padding: 5px;
+}
+.newUnit .info {
+	margin-top: 0.5em;
+	background: #fff;
+}

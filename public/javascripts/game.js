@@ -45,17 +45,6 @@ var Game = function(){
 	var frameSpeed;
 	var mUM;
 	sprites_img = new Image(); 
-	
-	
-	
-	var progressLevelBtn = function(){
-		return $('<a href="#">Next level</a>').click(function(){
-			restart();
-			$('#pause_button').show();
-			$('#big_notice').hide();
-			return false;
-		});
-	}
 
 	this.incrementKills = function(bounty){			
 		changeMoney(bounty);
@@ -76,11 +65,10 @@ var Game = function(){
 
 	var attemptToWinGame = function(){
 		if ( gameWon() ){
-			$('#big_notice').show().html('<h2>YOU WIN!</h2>');
 			progressLevel();
-			$('#big_notice').append(restartBtn());
 			clearInterval(globalInterval);
 			playing = false;
+			window.location = '#/level/'+level+'/complete';
 		}
 	}
 	
@@ -88,11 +76,8 @@ var Game = function(){
 	  if ((levels.length -1)  > level) {
 			level++;
 		  localStorage.setItem('level', level);
-		  $('#big_notice').append('<h3>New units available!</h3>')
-			for (var i=0; i < levels[level].newUnits.length; i++) {
-			 	$('#big_notice').append('<h4>'+ unitTypes[ levels[level].newUnits[i] ].name  +'</h4>');
-			};
-			$('#big_notice').append(progressLevelBtn());
+			initialise();
+			progressRound();
 	  }
 	}
 
@@ -135,8 +120,7 @@ var Game = function(){
 	
 	var checkDeath = function(){
 		if (isDead()){
-			$('#big_notice').show().html('<h2>death to you, sucker!!! you are teh suck!!!</h2>');
-			$('#big_notice').append(restartBtn());
+			window.location = "#/death"
 			clearInterval(globalInterval);
 			playing = false;
 		}
@@ -159,7 +143,7 @@ var Game = function(){
 
 	var progressRound = function(){
 		round++;
-		$('#notice').text('Round ' + round + ' of ' + waves.length );
+		$('#notice').text('Round ' + round + ' of ' + waves.length + ' (level ' + level+')' );
 		// mark the round number
 		$('#round').text(round);
 		wave = waves[round - 1];
@@ -462,86 +446,30 @@ var Game = function(){
 	}
 	
 	this.play = function(){
-	  globalInterval = setInterval(frameFunction, frameSpeed);
-		playing = true;
+		if (!self.started) {
+			initialise();
+			start();
+			self.started = true;
+		} else {
+			globalInterval = setInterval(frameFunction, frameSpeed);
+			playing = true;
+		};		
 	}
 	
 	this.restart = function(){
 	  restart();
 	}
+	
+	this.getCurrentLevel = function(){
+		return level;
+	}
+	
+	this.setLevel = function(newLevel){
+		level = newLevel;
+		initialise();
+		progressRound();
+		canvasManager.public_draw();
+	}
 }
-var myGame;
 
-$().ready(function(){	
-	myGame = new Game(0);
-	var app = $.sammy(function() {
-
-    var hideMenus = function(){
-      $('.tab').hide();
-    }
-    
-    this.get('#/', function() {
-      myGame.pause();
-      hideMenus();
-      $('#menu').show();
-    });
-
-    this.get('#/start', function() {
-      hideMenus();
-      $('#game').show();
-      $('#big_notice').show();
-      $('#pause_menu').hide();
-      $('#start_menu').show();
-    });
-    
-    this.get('#/instructions', function() {
-      hideMenus();
-      myGame.pause();
-      $('.tab').hide();
-      $('#instructions').show();
-    });
-    
-    // this.get('#/game', function() {
-    //   hideMenus();
-    //   $('.tab').hide();
-    //   $('#game').show();
-    //   // myGame.play();
-    // });
-    // 
-    this.get('#/resume', function() {
-      hideMenus();
-      $('.tab').hide();
-      $('#game').show();
-      $('#big_notice').hide();
-      myGame.play();
-    });
-    
-    this.get('#/restart', function() {
-      hideMenus();
-      $('.tab').hide();
-      $('#game').show();
-      $('#big_notice').hide();
-      myGame.restart();
-    });
-    
-    
-    this.get('#/pause', function() {
-      hideMenus();
-      $('#game').show();
-      myGame.pause();
-      $('#big_notice').show();
-      $('#pause_menu').show();
-      $('#start_menu').hide();
-    });
-    
-    this.get('#/levels', function() {
-      hideMenus();
-      $('#levels').show();
-    });
-    
-  });
-  
-  app.run('#/');
-  
-});
 
