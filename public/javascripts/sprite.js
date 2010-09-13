@@ -1,10 +1,19 @@
-var id = 0;
-var sprites = {}
-var spritesArray = []
-sprites['tn'] = {} // terrain
-sprites['b'] = {} // bases
-sprites['bits'] = {} // bases
-sprites['ex'] = {} // explosions
+var id;
+var sprites;
+var spritesArray;
+
+var initSprites = function(){
+	id = 0;
+	sprites = {}
+	spritesArray = []
+	sprites.tn = {} // terrain
+	sprites.b = {} // bases
+	sprites.bits = {} // bases
+	sprites.ex = {} // explosions
+	sprites.t = {} // turrets
+	sprites.s = {} // ground units
+	sprites.a = {} // air units
+}
 
 var redoSprites = function(){
 	spritesArray = []

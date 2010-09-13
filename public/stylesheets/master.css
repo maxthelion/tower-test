@@ -1,0 +1,158 @@
+	* {
+		font-family: arial;
+		margin: 0;
+		padding: 0;
+	}
+	body {
+	  background:#637F99;
+	}
+	a {
+		color: black;
+		text-decoration: none;
+	}
+	h2 {
+		margin-bottom: 1em;
+	}
+	#notice {
+		font-size: 2em;
+		text-align: center;
+		width: 400px;
+		margin-left: 150px;
+	}
+	#turret_choices a {
+		display: block;
+		padding: 5px;
+	}
+	#turret_choices a:hover {
+		background: yellow;
+	}
+	#instructions p {
+	  margin-bottom: 0.5em;
+	}
+	p {
+		clear: left;
+	}
+	.allowed {
+		background: rgb(0, 255, 0);
+	}
+	.not_allowed {
+		background: silver;
+		color: gray;
+	}
+	.selected {
+		color: black;
+		background: yellow;
+	}
+	#side {
+	  float:left; 
+	  width: 150px;
+	  margin-right: 10px
+	}
+	#big_notice {
+	  position: absolute;
+	  background: #333;
+	  opacity: 0.6;
+	  color: white;
+	  padding: 20px;
+	  left: 30px;
+	  top: 70px;
+	  height: 200px;
+	  width: 300px;
+	  text-align: center;
+	  font-size: 1.2em;
+	}
+	#big_notice a {
+	  display: block;
+	  background: white;
+	  margin-top: 1em;
+	}
+	.button {
+		display: block;
+	  background: white;
+	  margin-top: 1em;
+		padding: 0.5em;
+	}
+	.button:hover {
+		background: yellow;
+	}
+	#levelList {
+		list-style-type: none;
+	}
+	#wrapper {
+	  width: 560px;
+	  position: relative;
+	  margin-top: 30px;
+	  background: #91B6CF;
+	  margin-left: auto;
+	  margin-right: auto;
+	  padding: 20px;
+	}
+	#cW {
+	  background: yellow;
+	  margin-left: 160px;
+	  position: relative;
+	}
+	#fC {
+	  position: absolute;
+	  width: 100px;
+	  height: 100px;
+	}
+	#fC a {
+	  position: absolute;
+	  text-align: center;
+	  width: 40px;
+	}
+	#fC a span.label {
+	  display:block;
+	}
+	#upgradeBtn {
+	  left: 0;
+	}
+	#sellBtn {
+	  right: 0;
+	}
+	a#closeBtn {
+	  left: 30px;
+	  bottom: 20px;
+	}
+	#sellBtn, #upgradeBtn {
+	  font-size: 10px;
+	  top: 45px;
+	  text-shadow: #fff 0px 0px 1px;
+	}
+	#upgradeBtn:hover {
+	  color: green;
+	}
+	#sellBtn:hover {
+	  color: red;
+	}
+	#kills, #money {
+		display: block;
+		text-align: center;
+		background: black;
+		padding: 5px;
+		font-size: 2em;
+		color: white;
+	}
+	#footer {
+		padding: 20px;
+		text-align: center;
+		font-size: 0.9em;
+	}
+	#footer a{
+		color: #91B6CF;
+	}
+
+.canvasIcon {
+	background: white;
+}
+.newUnit {
+	width: 200px;
+	text-align: center;
+	background: silver;
+	padding: 5px;
+}
+.newUnit .info {
+	margin-top: 0.5em;
+	background: #fff;
+}

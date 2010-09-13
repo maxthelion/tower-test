@@ -1,5 +1,3 @@
-sprites.s = {}
-sprites.a = {}
 var SoldierManager = function(){
 	var self = this;
 	var asa = {
@@ -86,7 +84,7 @@ var SoldierManager = function(){
 		redoArrays();
 	}
 	
-	this.createSoldier = function(typeIndex){
+	this.createSoldier = function(typeIndex, startPoint, endPoint, grid){
 		var template = soldierTypes[typeIndex]
 		object = template['type'] // soldier or heli
 		var a = new object(startPoint, endPoint, grid, template);

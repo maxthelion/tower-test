@@ -6,64 +6,137 @@
  // name: 'bike',
  // name: 'tank',
  // name: 'helicopter',
- 
-// wave looks like [soldierType, regularity, wavelength]
-var waves = [
-	[0, 30, 10],
-	[0, 30, 10],
-	[1, 30, 10],
-	[1, 30, 10],
-	[1, 30, 5],
-	[0, 5, 10],
-	[3, 50, 5],
-	[1, 50, 5],
-	[1, 5, 20],
-	[2, 10, 3],
-	[1, 15, 5],
-	[5, 10, 1],
-	[1, 15, 10],
-	[1, 10, 10],
-	[1, 30, 5],
-	[2, 5, 10],
-	[3, 10, 5],
-	[6, 10, 10],
-	[2, 20, 5],
-	[5, 15, 5],
-	[3, 10, 20],
-	[4, 5, 10],
-	[2, 15, 10],
-	[6, 10, 10],
-	[3, 30, 5],
-	[4, 5, 10],
-	[5, 50, 5],
-	[5, 5, 10],
-	[4, 10, 5],
-	[3, 15, 5],
-	[3, 15, 20],
-	[4, 5, 20],
-	[6, 10, 5],
-	[5, 10, 10]
-];
+var lightInf1 = [0, 30, 10]
+var lightInf2 = [0, 10, 10]
+var inf1 = [1, 30, 10]
+var inf2 = [1, 10, 10]
+var mediumInf1 = [3, 30, 10]
+var mediumInf2 = [3, 10, 10]
+var heavyInf1 = [2, 50, 5]
+var heavyInf2 = [2, 30, 10]
+var bike1 = [4, 20, 10]
+var bike2 = [4, 20, 20]
+var tank1 = [5, 10, 1]
+var tank2 = [5, 10, 5]
+var helicopter1 = [6, 20, 10]
+var helicopter2 = [6, 20, 20]
 
-var startPoint = [3, 0];
-var endPoint = [5, 14];
 
-var k = 10;
-var terrain = [];
-while(k > 0){
-	var t = [MF(Math.random() * 15), MF(Math.random() * 15)]
-	if (	(t[0] == startPoint[0] && t[1] == startPoint[1]) ||
-				(t[0] == endPoint[0] && t[1] == endPoint[1])
-		) {
-		// console.log('clash')
-	} else {
-		terrain.push( t );
+levels = [
+	{	
+	waves: [
+			[lightInf1, 0],
+      [lightInf1, 0],
+      [inf1, 0],
+      [lightInf2, 0],
+      [lightInf1, 0],
+      [inf1, 0],
+      [inf2, 0],
+      [mediumInf1, 0],
+      [inf2, 0]
+		],
+		startPoints: [[2, 0]],
+		endPoint: [5, 14],
+		availableUnits: [
+		  unitTypes[0], // machine gun
+		  unitTypes[5] // wall
+		],
+		terrain: []
+	},
+	{
+		waves: [
+			[lightInf1, 0],
+			[lightInf1, 1],
+			[inf1, 0],
+			[inf1, 1],
+			[lightInf1, 1],
+			[mediumInf1, 1],
+			[inf1, 0],
+			[inf2, 1],
+			[heavyInf1, 0]
+		],
+		startPoints: [
+			[2, 0],
+			[10, 0]
+		],
+		endPoint: [5, 14],
+		availableUnits: [
+		  unitTypes[0], // machine gun
+		  unitTypes[5], // wall
+		  unitTypes[6] // flamer
+		],
+		newUnits: [6],
+		terrain: []
+	},
+	{
+		waves: [
+			[lightInf1, 0],
+			[lightInf1, 1],
+			[inf1, 0],
+			[inf1, 1],
+			[lightInf1, 1],
+			[mediumInf1, 1],
+			[inf1, 0],
+			[inf2, 1],
+			[heavyInf1, 0]
+		],
+		startPoints: [
+			[2, 0],
+			[10, 0]
+		],
+		endPoint: [5, 14],
+		availableUnits: [
+		  unitTypes[0], // machine gun
+		  unitTypes[5], // wall
+		  unitTypes[6], // flamer
+		  unitTypes[4] // gluegun
+		],
+		newUnits: [4],
+		terrain: []
+	},
+	{
+		waves: [
+			[lightInf1, 0],
+			[lightInf1, 1],
+			[inf1, 0],
+			[inf1, 1],
+			[lightInf1, 1],
+			[mediumInf1, 1],
+			[inf1, 0],
+			[inf2, 1],
+			[heavyInf1, 0]
+		],
+		startPoints: [
+			[2, 0],
+			[10, 0]
+		],
+		endPoint: [5, 14],
+		availableUnits: [
+		  unitTypes[0], // machine gun
+		  unitTypes[5], // wall
+		  unitTypes[6], // flamer
+		  unitTypes[4], // gluegun
+		  unitTypes[1]
+		],
+		newUnits: [1],
+		terrain: []
 	}
-	k--
-}
+]
 
-grid = GridGenerator(15, 15);
-//add terrain to grid
-for (var i=0; i < terrain.length; i++) {
- grid[ terrain[i][1] ][terrain[i][0]] = 1;
-};
+var addRandomTerrain = function(){
+	var terrain = []
+	while(k > 0){
+		var t = [MF(Math.random() * 15), MF(Math.random() * 15)]
+		if (	
+			(t[0] == startPoints[0][0] && t[1] == startPoints[0][1]) ||
+			(startPoints[1] && t[0] == startPoints[1][0] && t[1] == startPoints[1][1]) ||
+					(t[0] == endPoint[0] && t[1] == endPoint[1])
+			) {
+			// console.log('clash')
+		} else {
+			terrain.push( t );
+		}
+		k--
+	}
+	return terrain;
+}

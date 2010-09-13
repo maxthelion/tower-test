@@ -1,16 +1,14 @@
-var selectedUnit;
-var Grid = function(canvas_id, grid) {
+var CanvasManager = function(canvas, grid, startPoints, endPoint, gridManager) {
 	var self = this;
-	var canvas = document.getElementById(canvas_id)
-	var ctx = canvas.getContext('2d'); 
-	var width = grid[0].length;
-	var height = grid.length;
-	var gridXInterval = canvas.width / width;
-	var gridYInterval = canvas.height / height;
+	var canvas =  canvas;
+	var ctx = canvas.getContext('2d');
 	var gridHeight = canvas.height;
 	var gridWidth = canvas.width;
 	var highLight;
-	var result = AStar(grid, startPoint, endPoint, "Manhattan");
+	var startPoints = startPoints;
+	var endPoint = endPoint;
+	var gridManager = gridManager;
+	this.selectedUnit;
 	
 	var draw = function(){
 		ctx.clearRect(0,0,gridWidth, gridHeight);
@@ -28,34 +26,27 @@ var Grid = function(canvas_id, grid) {
 				continue
 			}
 			if (u.isOnFire && u.isOnFire()){
-				w = gridXInterval;
+				w = gridManager.cellWidth;
 				dCircle(u.cX, u.cY,'orange',w/(1 + Math.random()))
 			}
 			drawSprite(u.spriteX, u.cX, u.cY)
 			// see if they are a turret
 			if (u.tSoldier)
 				drawBarrel(u);
-			if (u.healthpercent){
+			if (u.healthpercent)
 				drawHealth(u.cX,u.cY-20,20,5,u.healthpercent);
-			}
+			// if(u.base)
+			// 	drawHealth(u.cX, u.cY-30,50,10,u.healthpercent);
 		}
-		// would normally do pixelC on the y as welll
-		drawHealth(pixelC(endPoint[0]), pixelC(endPoint[1])-30,50,10,lives/startLives)
 		// draw highlight
-		if(selectedUnit){
+		if(self.selectedUnit){
 			dCircle( selectedUnit.cX, selectedUnit.cY, 'rgba(255, 255, 255, 0.5)', 50);
 		}
-		if(highLight && squareAvaliable( highLight[0], highLight[1] )){
-			// check there is money
-			var color = (money < currentUnit()['cost']) ? '255, 0, 0' : '0, 255, 0';
-			drawSprite(currentUnit().spriteX, hlp[0], hlp[1])
-			dCircle( hlp[0], hlp[1], 'rgba('+ color +', 0.3)', self.radiusFromRange(currentUnit()['range']));
-		} else if(highLight){
-			if (mUM.unitAt(highLight)){
-				var u = mUM.unitAt(highLight);
-				dCircle( hlp[0], hlp[1], 'rgba(255, 200, 0, 0.5)', gridXInterval/2);
-			}
-		}
+		if(self.highLight){
+			if (self.highLight.unit)
+				drawSprite(self.highLight.unit.spriteX, self.highLight.cX, self.highLight.cY)
+			dCircle( self.highLight.cX, self.highLight.cY, 'rgba('+ self.highLight.haloColor +', 0.3)', self.highLight.range);
+		} 
 	};
 	
 	// called from the setinterval
@@ -113,7 +104,7 @@ var Grid = function(canvas_id, grid) {
 	}
 	
 	var pixelC = function(p){
-		return p * gridXInterval + (gridXInterval / 2);
+		return gridManager.pixelC(p)
 	}
 	
 	var drawHealth = function(x,y,w,h,health){
@@ -139,102 +130,7 @@ var Grid = function(canvas_id, grid) {
 		var yIndex = MF( position[1] / gridYInterval )
 		return [xIndex, yIndex];
 	};
-	
-	for (var i=0; i < terrain.length; i++) {
-		addSprite('tn', {cX: pixelC(terrain[i][0]), cY: pixelC(terrain[i][1]), spriteX: 140})
-	};
-	addSprite('b', {cX: pixelC(endPoint[0]), cY: pixelC(endPoint[1]), spriteX: 160})
-	addSprite('b', {cX: pixelC(startPoint[0]), cY: pixelC(startPoint[1]), spriteX: 180})
-	
-	$(canvas).click(function(evt){
-		if (playing == false){
-			return false;
-		}
-		var xIndex = MF( evt.offsetX/gridXInterval )
-		var yIndex = MF( evt.offsetY/gridYInterval )
-		u = currentUnit();
-		if (selectedUnit){
-			$('#fC').remove()
-			selectedUnit = undefined;
-		} else if (squareAvaliable(xIndex, yIndex) && !selectedUnit){
-			addUnit(u, xIndex, yIndex);
-		} else if (mUM.unitAt([xIndex, yIndex])){
-			t = mUM.unitAt([xIndex, yIndex])
-			highLight = null;
-			showTurretControl(t);
-			selectedUnit = t;
-		}
-		draw();
-	});
-	
-	$(canvas).mousemove(function(evt){
-		if (!selectedUnit && playing) {
-			var xIndex = MF( evt.offsetX/gridXInterval )
-			var yIndex = MF( evt.offsetY/gridYInterval )
-			highLight = [xIndex, yIndex];
-			hlp = self.pointCenterXY(xIndex, yIndex)
-		}
-	});
-	
-	$(canvas).mouseout(function(evt){
-		highLight = null;
-	});
-
-	var showTurretControl = function(t){
-		$('#fC').remove()
-		var elem = $('<div id="fC"></div>')
-		$('#cW').append(elem)
-		
-		w = elem.width()
-		h = elem.height()
-		coords = [ t.cX  - (w/2), t.cY  - (h/2) ]
-		elem.css('left', coords[0])
-		elem.css('top', coords[1])
-		// sellAmount = 2
-		// upgradeBtn = $('<a>').attr({
-		// 	href: '#',
-		// 	id: 'upgradeBtn'
-		// }).html('<span>^</span><span class="amount">'+sellAmount+'</span>')
-		
-		sellBtn = $('<a>').attr({
-			href: '#',
-			id: 'sellBtn'
-		}).html('<span>$</span><span class="amount">'+t.sellCost()+'</span>').
-		click(function(){
-			mUM.sell(t);
-			elem.remove();
-			selectedUnit = undefined;
-			return false;
-		})
-		
-		//elem.append(upgradeBtn)
-		elem.append(sellBtn)
-	}
 };
 
-var revertGridPoint = function(x, y){
-	grid[y][x] = 0;
-	result = AStar(grid, startPoint, endPoint, "Manhattan");
-}
 
-var addUnit = function(u, x, y){
-	// check there is money
-	if(money < u['cost'])
-		return false
-	// if (u['type'] == Explosion)
-	// 	return mUM.createUnit(u, [x, y]);
-	grid[y][x] = 1;
-	// check the global path
-	result = AStar(grid, startPoint, endPoint, "Manhattan");
-	if (result.length == 0){ // fail to connect
-		return revertGridPoint(x, y);
-	};
-	//check for all the soldiers
-	for (var i=0; i < mSM.allSoldiers().length; i++) {
-		if (!mSM.allSoldiers()[i].regeneratePath()) {
-			return revertGridPoint(x, y);
-		}
-	};
-	mUM.createUnit(u, [x, y]);
-}
 

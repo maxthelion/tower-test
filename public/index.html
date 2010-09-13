@@ -2,145 +2,23 @@
 <head>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 	<script src="javascripts/AStar_memtronic.js"></script>
+	<script src="javascripts/sammy.js"></script>
   <script src="javascripts/sprite.js"></script>
 	<script src="javascripts/soldier_manager.js"></script>
 	<script src="javascripts/soldier.js"></script>
 	<script src="javascripts/helicopter.js"></script>
 	<script src="javascripts/grid.js"></script>
+	<script src="javascripts/grid_manager.js"></script>
 	<script src="javascripts/explosion.js"></script>
 	<script src="javascripts/turret.js"></script>
 	<script src="javascripts/obstacle.js"></script>
 	<script src="javascripts/turret_manager.js"></script>
 	<script src="javascripts/corpse.js"></script>
-	<script src="javascripts/game.js"></script>
 	<script src="javascripts/levels.js"></script>
+	<script src="javascripts/game.js"></script>
+	<script src="javascripts/routes.js"></script>
 	
-<style type="text/css" media="screen">
-	* {
-		font-family: arial;
-		margin: 0;
-		padding: 0;
-	}
-	body {
-	  background:#637F99;
-	}
-	a {
-		color: black;
-		text-decoration: none;
-	}
-	#notice {
-		font-size: 2em;
-		text-align: center;
-		width: 400px;
-		margin-left: 150px;
-	}
-	#turret_choices a {
-		display: block;
-		padding: 5px;
-	}
-	#turret_choices a:hover {
-		background: yellow;
-	}
-	p {
-		clear: left;
-		margin-bottom: 0.5em;
-	}
-	.allowed {
-		background: rgb(0, 255, 0);
-	}
-	.not_allowed {
-		background: silver;
-		color: gray;
-	}
-	.selected {
-		color: black;
-		background: yellow;
-	}
-	#side {
-	  float:left; 
-	  width: 150px;
-	  margin-right: 10px
-	}
-	#big_notice {
-	  position: absolute;
-	  background: #333;
-	  opacity: 0.6;
-	  color: white;
-	  padding: 20px;
-	  left: 30px;
-	  top: 70px;
-	  height: 200px;
-	  width: 300px;
-	  text-align: center;
-	  font-size: 1.2em;
-	}
-	#big_notice a#start{
-	  display: block;
-	  background: white;
-	}
-	#wrapper {
-	  width: 560px;
-	  position: relative;
-	  margin-top: 30px;
-	  background: #91B6CF;
-	  margin-left: auto;
-	  margin-right: auto;
-	  padding: 20px;
-	}
-	#cW {
-	  background: yellow;
-	  margin-left: 160px;
-	  position: relative;
-	}
-	#fC {
-	  position: absolute;
-	  width: 70px;
-	  height: 70px;
-	}
-	#fC a {
-	  position: absolute;
-	  top: 15px;
-	  padding: 5px;
-	  font-size: 1.2em;
-	}
-	#upgradeBtn {
-	  left: 0;
-	}
-	#sellBtn {
-	  right: 0;
-	}
-	#upgradeBtn:hover {
-	  color: green;
-	}
-	#sellBtn:hover {
-	  color: red;
-	}
-	#sellBtn span, #upgradeBtn span {
-	  display: block;
-	}
-	#kills, #money {
-		display: block;
-		text-align: center;
-		background: black;
-		padding: 5px;
-		font-size: 2em;
-		color: white;
-	}
-	#pause_button {
-		display: block;
-		background: silver;
-		padding: 5px;
-		margin-top: 5px;
-	}
-	#footer {
-		padding: 20px;
-		text-align: center;
-		font-size: 0.9em;
-	}
-	#footer a{
-		color: #91B6CF;
-	}
-</style>
+	<link rel="stylesheet" href="stylesheets/master.css" >
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -157,34 +35,98 @@
 </head>
 
 <body>
+<div style="background: yellow; padding: 20px"><strong>Test version</strong> - I'll be rolling out some updates soon. If you play with the broken glass, don't come crying to me with cut feet.</div>
 <div id="wrapper">
-<div id="notice">Game starting soon</div>
-
-<div id="side">
-	<h3>Kills</h3><p id="kills"></p>
-	<h3>Money</h3><p id="money"></p>
+<div id="menu" class="tab">
+	<h2>Max's tower game</h2>
 	
-	<div>
-		<h3>Weapons!!!</h3>
-		<div id="turret_choices"></div>
-		<p><a href="#" id="pause_button">Pause</a></p>
-    <!-- <p><a href="#" id="mute_button">turn on sound fx</a></p> -->
+	<p><a class="button resume" href="#/play">Resume game</a></p>
+	<p><a class="button" href="#/levels">New Game</a></p>
+	<p><a class="button" href="#/instructions">How to play</a></p>
+	
+</div>
+<div id="game" class="tab">
+	<div id="notice">Game starting soon</div>
+
+	<div id="side">
+		<h3>Kills</h3><p id="kills"></p>
+		<h3>Money</h3><p id="money"></p>
+	
+		<div>
+			<h3>Weapons</h3>
+			<div id="turret_choices"></div>
+			<p><a class="button" href="#/pause">Pause</a></p>
+			<p><a class="button" href="#" id="speed_button">Speed up</a></p>
+		</div>
+	</div>
+	<div id="cW">
+	  <div id="big_notice">
+			
+			<div id="start_menu">
+	    	<h2>Stop the suicide bombers from pwning your base</h2>
+	    	<p><a href="#/play">Release the hordes!!!</a></p>
+	    	<p><a href="#/instructions">How to play</a></p>
+			</div>
+			
+			<div id="pause_menu">
+			<h3>Game paused</h3>
+	    	<p class="resume"><a href="#/play">Resume</a></p>
+	    	<p><a href="#/">Back to menu</a></p>
+	    	<p><a href="#/instructions">How to play</a></p>
+	    	<p><a href="#/restart">Restart level</a></p>
+			</div>
+			
+			<div id="death_menu">
+			<h3>death to you sucker</h3>
+	    	<p><a href="#/">Back to menu</a></p>
+	    	<p><a href="#/instructions">How to play</a></p>
+	    	<p><a href="#/restart">Restart level</a></p>
+			</div>
+	  </div>
+	  <canvas id="canvas" height="400" width="400"></canvas>
 	</div>
 </div>
-<div id="cW">
-  <div id="big_notice">
-    <h2>Stop the suicide bombers from pwning your base</h2>
-    <p><a href="#" id="start">Release the hordes!!!</a></p>
-  </div>
-  <canvas id="canvas" height="400" width="400"></canvas>
+<div id="levels" class="tab">
+	<h2>Choose your level</h2>
+	<ul id="levelList">
+		
+	</ul>
+</div>
+
+<div id="instructions" class="tab">
+	<h2>How to play</h2>
+	<p>Soldiers appear from the entry points, and head towards your base.</p>
+	<p>You can choose weapons from the menu on the left, and place them on the map if you have enough money.</p>
+	<p>You earn a bounty by killing the soldiers.</p> 
+	<p>By extending the distance the soldiers have to travel, you can increase your opportunities for firing at them.</p>
+	<p>Clicking on a deployed unit gives you options to sell it or upgrade it.</p>
+	<a class="button" href="#/start">Start</a>
+</div>
+
+<div id="winMenu" class="tab">
+	<h2>You win!!!</h2>
+	
+	<p>Prepare for level <span id="levelNum"></span></p>
+	
+	<div id="newUnitsContainer"></div>
+	
+	<p><a class="levelStart button" href="#/play">Start level</a></p>
+</div>
+
+<div id="templates" style="display:none">
+	<div id="newUnitTemplate" class="newUnit">
+		<h3 class="unitName"></h3>
+		<div class="unitIcon"></div>
+		<p class="info"></p>
+	</div>
 </div>
 
 </div>
 <div id="footer">Made by <a href="http://twitter.com/maxthelion">@maxthelion</a> at <a href="http://new-bamboo.co.uk">New Bamboo</a>. We think HTML5 rocks!</div>
-
 <script type="text/javascript" src="http://www.observerapp.com/record.js"></script>
 <script type="text/javascript">
-Observerapp.record("4c7cd864d4795cf008001aea");
+Observerapp.r
+ecord("4c7cd864d4795cf008001aea");
 </script>
 </body>
 </html>
