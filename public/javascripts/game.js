@@ -17,6 +17,7 @@ var positionHash;
 
 var Game = function(){
 	var level = localStorage.getItem('level') || 0;
+	level = level * 1;
 	var elem;
 	var waves;
 	var startPoints;
@@ -143,7 +144,7 @@ var Game = function(){
 
 	var progressRound = function(){
 		round++;
-		$('#notice').text('Round ' + round + ' of ' + waves.length + ' (level ' + level+')' );
+		$('#notice').text('Round ' + round + ' of ' + waves.length + ' (level ' + (level + 1) +')' );
 		// mark the round number
 		$('#round').text(round);
 		wave = waves[round - 1];

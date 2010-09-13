@@ -26,9 +26,11 @@
 	#turret_choices a:hover {
 		background: yellow;
 	}
+	#instructions p {
+	  margin-bottom: 0.5em;
+	}
 	p {
 		clear: left;
-		margin-bottom: 0.5em;
 	}
 	.allowed {
 		background: rgb(0, 255, 0);
