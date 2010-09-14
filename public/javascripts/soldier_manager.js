@@ -17,7 +17,7 @@ var SoldierManager = function(){
 		{
 		 name: 'Infantry',
 		 speed: 2,
-		 health: 150,
+		 health: 100,
 		 bounty: 1,
 		 type: Soldier,
 		 sprite: 20
@@ -33,7 +33,7 @@ var SoldierManager = function(){
 		{
 		 name: 'MediumInfantry',
 		 speed: 2,
-		 health: 350,
+		 health: 300,
 		 bounty: 1,
  		 type: Soldier,
 			sprite: 80
