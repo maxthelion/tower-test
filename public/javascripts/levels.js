@@ -41,7 +41,8 @@ levels = [
 		  unitTypes[0], // machine gun
 		  unitTypes[5] // wall
 		],
-		terrain: []
+		terrain: [],
+		unbuildables: [[1,1]]
 	},
 	{
 		waves: [

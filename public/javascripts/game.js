@@ -179,6 +179,7 @@ var Game = function(){
 		gridManager = new GridManager(grid, 400, 400);
 		addBases();
 		generateTerrain(thisLevel.terrain);
+		addUnbuildables(thisLevel.unbuildables)
 		canvasManager = new CanvasManager(canvas, grid, startPoints, endPoint, gridManager);
 		canvasManager.highLight = null;
 		drawTurretButtons();
@@ -311,6 +312,18 @@ var Game = function(){
 	  }
 	}
 	
+	var addUnbuildables = function(unbuildables){
+	  console.log(unbuildables)
+	  if (unbuildables && unbuildables.length > 0){
+	    for (var i=0; i < unbuildables.length; i++) {
+	      var x = unbuildables[i][0]
+	      var y = unbuildables[i][1]
+	      gridManager.makeUnbuildable(x, y)   
+		 	  addSprite('tn', {cX: gridManager.pixelC(x), cY: gridManager.pixelC(y), spriteX: 320})
+	    };
+	  }
+	}
+	
 	
 	var addTurretControl = function(t){
 	  $('#fC').remove();
@@ -374,14 +387,14 @@ var Game = function(){
 	}
 	
 	var generateTerrain = function(terrain){
-		var k = 10;
 		//add terrain to grid
 		for (var i=0; i < terrain.length; i++) {
-		 	grid[ terrain[i][1] ][terrain[i][0]] = 1;
-		};
-		
-		for (var i=0; i < terrain.length; i++) {
-			addSprite('tn', {cX: gridManager.pixelC(terrain[i][0]), cY: gridManager.pixelC(terrain[i][1]), spriteX: 140})
+		  var x = terrain[i][0];
+		  var y = terrain[i][1];
+		  if(gridManager.squareAvaliable(x, y)){
+		 	  gridManager.occupy(x, y)   
+		 	  addSprite('tn', {cX: gridManager.pixelC(x), cY: gridManager.pixelC(y), spriteX: 140}) 
+		  }
 		};
 	}
 	

@@ -2,7 +2,7 @@ var GridManager = function(grid, canvasWidth, canvasHeight){
 	var self = this;
 	var width = grid[0].length;
 	var height = grid.length;
-	
+	var unbuildableGrid = GridGenerator(15, 15);
 	this.cellWidth = canvasWidth / width;
 	this.cellHeight = canvasHeight / height;
 
@@ -22,7 +22,7 @@ var GridManager = function(grid, canvasWidth, canvasHeight){
 	};
 	
 	this.squareAvaliable = function(x, y){
-		return grid[y][x] != 1;
+		return grid[y][x] != 1 && unbuildableGrid[y][x] != 1;
 	}
 	
 	this.getPath = function(startPoint, endPoint){
@@ -36,6 +36,14 @@ var GridManager = function(grid, canvasWidth, canvasHeight){
 	this.clearCell = function(x, y){
 		// back to front x and y again
 		grid[y][x] = 0
+	}
+	
+	this.occupy = function(x, y){
+	  grid[y][x] = 1;
+	}
+	
+	this.makeUnbuildable = function(x, y){
+	  unbuildableGrid[y][x] = 1;
 	}
 	
 	var units = function(x, y){ 
