@@ -91,22 +91,32 @@ $().ready(function(){
     });
     
     this.get('#/levels', function() {
-      hideMenus();
-      $('#levels').show();
-			$('#levelList').empty();
-			for (var i=0; i < levels.length; i++) {
-			 	$('#levelList').append('<li><a class="button" href="#/start/'+i+'">Level '+(i+1)+'</a></li>');
-			};
+		console.log(myGame.maxLevel())
+			if(myGame.maxLevel() == 0){
+				this.redirect('#/start')
+			}else {
+				hideMenus();
+	      $('#levels').show();
+				$('#levelList').empty();
+				for (var i=0; i <= myGame.maxLevel(); i++) {
+				 	$('#levelList').append('<li><a class="button" href="#/start/'+i+'">Level '+(i+1)+'</a></li>');
+				};
+			}
     });
 
     this.get('#/start/:level', function() {
-	  	myGame.setLevel(this.params.level)
-      hideMenus();
-      $('#game').show();
-      $('#big_notice').show();
-      $('#pause_menu').hide();
-      $('#start_menu').show();
-      $('#death_menu').hide();
+			if(!myGame.canPlay(this.params.level)){
+				this.redirect('#/')
+			}else {
+				myGame.setLevel(this.params.level)
+	      hideMenus();
+	      $('#game').show();
+	      $('#big_notice').show();
+	      $('#pause_menu').hide();
+	      $('#start_menu').show();
+	      $('#death_menu').hide();
+		  	
+			}
     });
 
     this.get('#/level/:level/complete', function() {

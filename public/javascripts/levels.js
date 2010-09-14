@@ -29,7 +29,11 @@ levels = [
       [lightInf1, 0],
       [inf1, 0],
       [lightInf2, 0],
-      [lightInf1, 0],
+      [inf1, 0],
+      [inf2, 0],
+      [mediumInf1, 0],
+      [inf2, 0],
+			[lightInf2, 0],
       [inf1, 0],
       [inf2, 0],
       [mediumInf1, 0],
@@ -53,12 +57,13 @@ levels = [
 			[mediumInf1, 1],
 			[inf1, 0],
 			[inf2, 1],
-			[heavyInf1, 0]
+			[mediumInf1, 0],
+			[mediumInf2, 1],
+			[inf2, 1],
+			[mediumInf1, 0],
+			[mediumInf2, 1]
 		],
-		startPoints: [
-			[2, 0],
-			[10, 0]
-		],
+		startPoints: [[2, 0]],
 		endPoint: [5, 14],
 		availableUnits: [
 		  unitTypes[0], // machine gun
@@ -66,23 +71,33 @@ levels = [
 		  unitTypes[6] // flamer
 		],
 		newUnits: [6],
-		terrain: []
+		terrain: [
+			[5, 3],
+			[3, 10],
+			[10,7],
+			[7, 8],
+			[5, 5],
+			[6, 7],
+			[3,2]
+		]
 	},
 	{
 		waves: [
 			[lightInf1, 0],
-			[lightInf1, 1],
+			[lightInf1, 0],
 			[inf1, 0],
-			[inf1, 1],
-			[lightInf1, 1],
-			[mediumInf1, 1],
 			[inf1, 0],
-			[inf2, 1],
-			[heavyInf1, 0]
+			[lightInf1, 0],
+			[mediumInf1, 0],
+			[inf1, 0],
+			[inf2, 0],
+			[heavyInf1, 0],
+			[mediumInf1, 0],
+			[inf2, 0],
+			[heavyInf2, 0]
 		],
 		startPoints: [
-			[2, 0],
-			[10, 0]
+			[3, 0]
 		],
 		endPoint: [5, 14],
 		availableUnits: [
@@ -92,7 +107,27 @@ levels = [
 		  unitTypes[4] // gluegun
 		],
 		newUnits: [4],
-		terrain: []
+		terrain: [
+	 [ 2,0 ],
+	 [ 4,0 ],
+	 [ 2,1 ],
+	 [ 4,1 ],
+	 [ 2,2 ],
+	 [ 4,2 ],
+	 [ 2,3 ],
+	 [ 4,3 ],
+	 [ 5,3 ],
+	 [ 6,3 ],
+	 [ 7,3 ],
+	 [ 8,3 ],
+	 [ 2,4 ],
+	 [ 8,4 ],
+	 [ 9,4 ],
+	 [ 2,5 ],
+	 [ 6,5 ],
+	 [ 8,5 ]
+		
+		]
 	},
 	{
 		waves: [
@@ -107,10 +142,10 @@ levels = [
 			[heavyInf1, 0]
 		],
 		startPoints: [
-			[2, 0],
-			[10, 0]
+			[0, 5],
+			[14, 5]
 		],
-		endPoint: [5, 14],
+		endPoint: [7, 7],
 		availableUnits: [
 		  unitTypes[0], // machine gun
 		  unitTypes[5], // wall

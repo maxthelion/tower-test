@@ -16,8 +16,7 @@ var mSM;
 var positionHash;
 
 var Game = function(){
-	var level = localStorage.getItem('level') || 0;
-	level = level * 1;
+	var level;
 	var elem;
 	var waves;
 	var startPoints;
@@ -45,6 +44,7 @@ var Game = function(){
 	var highSpeed = 10;
 	var frameSpeed;
 	var mUM;
+	var self = this;
 	sprites_img = new Image(); 
 
 	this.incrementKills = function(bounty){			
@@ -64,6 +64,11 @@ var Game = function(){
 		return round == waves.length && waveCountDown == 0 && !anySoldiers()
 	}
 
+	this.maxLevel = function() {
+		var level = localStorage.getItem('level') || 0;
+		return level * 1;
+	}
+	
 	var attemptToWinGame = function(){
 		if ( gameWon() ){
 			progressLevel();
@@ -165,7 +170,7 @@ var Game = function(){
 		availableUnits = thisLevel.availableUnits;
 		frameSpeed = initFrameSpeed;
 		kills = 0;
-		startLives = 20;
+		startLives = 10;
 		lives = startLives;
 		round = 0;
 		money = 20;
@@ -400,7 +405,6 @@ var Game = function(){
 		};
 	}
 	
-	initialise();
 	addEvents();
 	
 	var revertGridPoint = function(x, y){
@@ -470,6 +474,10 @@ var Game = function(){
 		initialise();
 		progressRound();
 		canvasManager.public_draw();
+	}
+	
+	this.canPlay = function(newLevel){
+		return self.maxLevel() >= newLevel;
 	}
 }
 
