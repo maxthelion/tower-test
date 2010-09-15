@@ -214,33 +214,8 @@ var setLevel = function(levelID){
   canvasManager = new CanvasManager(canvas, gridManager);
   canvasManager.public_draw();
 	$('#custom_code').val(JSON.stringify(thisLevel))
-	$('#availableGunSelect').empty();
-	for (var i=0; i < thisLevel.availableUnitIds.length; i++) {
-	 	$('#availableGunSelect').append('<li>'+unitTypes[thisLevel.availableUnitIds[i]].name +'</li>');
-	};
-	$('#allGunSelect').empty();
-	for (i in unitTypes) {
-	 	$('#allGunSelect').append('<li>'+unitTypes[i].name +'</li>');
-	};
-	$('#waveSelect').empty();
-	for (var i=0; i < thisLevel.waves.length; i++) {
-	  var wave = thisLevel.waves[i]
-	  var li = $('<li>')
-	  li.append('<span>'+wave[0][2]+'</span> x ')
-	  li.append( spriteCanvas( soldierTypes[wave[0][0]], 20));
-	 	$('#waveSelect').append(li)
-	};
-	$('#customcanvas').click(function(evt){
-		var xIndex = MF( evt.offsetX/gridManager.cellWidth )
-		var yIndex = MF( evt.offsetY/gridManager.cellHeight)
-		if (gridManager.squareAvaliable(xIndex, yIndex)){
-			thisLevel.terrain.push([xIndex, yIndex]);
-			gridManager.addSpriteFromPoints(xIndex, yIndex, 140);
-			gridManager.occupy(xIndex, yIndex);
-			$('#custom_code').val(JSON.stringify(thisLevel))
-		}
-		canvasManager.public_draw();
-	});
+	drawGunMenu();
+	drawWaveMenu();
   drawTerrainMenu();
 }
 
@@ -261,5 +236,55 @@ var drawTerrainMenu =function(){
 	var endPointsButton = $('<li>').text('end points').click(function(){
 	  console.log('bog')
 	})
-	$('#terrainSelect').append(endPointsButton)
+	$('#terrainSelect').append(endPointsButton);
+	$('#customcanvas').click(function(evt){
+		var xIndex = MF( evt.offsetX/gridManager.cellWidth )
+		var yIndex = MF( evt.offsetY/gridManager.cellHeight)
+		if (gridManager.squareAvaliable(xIndex, yIndex)){
+			thisLevel.terrain.push([xIndex, yIndex]);
+			gridManager.addSpriteFromPoints(xIndex, yIndex, 140);
+			gridManager.occupy(xIndex, yIndex);
+			$('#custom_code').val(JSON.stringify(thisLevel))
+		}
+		canvasManager.public_draw();
+		return false;
+	});
+}
+
+var drawWaveMenu = function(){
+	$('#waveSelect').empty();
+	for (var i=0; i < thisLevel.waves.length; i++) {
+	  var wave = thisLevel.waves[i]
+	  var li = $('<li>')
+	  li.append('<span>'+wave[0][2]+'</span> x ')
+	  li.append( spriteCanvas( soldierTypes[wave[0][0]], 20));
+	 	$('#waveSelect').append(li)
+	};
+}
+
+var drawGunMenu = function(){
+	$('#availableGunSelect').empty();
+	for (var i=0; i < thisLevel.availableUnitIds.length; i++) {
+		var btn = $('<a>').text(unitTypes[thisLevel.availableUnitIds[i]].name).data('id', i).click(function(){
+			thisLevel.availableUnitIds.splice(thisLevel.availableUnitIds.indexOf($(this).data('id')), 1)
+			drawGunMenu();
+			$('#custom_code').val(JSON.stringify(thisLevel))
+			return false;
+		})
+		var li = $('<li>').append(btn);
+	 	$('#availableGunSelect').append(li);
+	};
+	$('#allGunSelect').empty();
+	for (i in unitTypes) {
+		if (thisLevel.availableUnitIds.indexOf(i) == -1){
+			var btn = $('<a>').text(unitTypes[i].name).data('id', i).click(function(){
+				thisLevel.availableUnitIds.push(1*$(this).data('id'));
+				drawGunMenu();
+				$('#custom_code').val(JSON.stringify(thisLevel))
+				return false;
+			})
+			var li = $('<li>').append(btn);
+			$('#allGunSelect').append(li);
+		}
+	};
 }
