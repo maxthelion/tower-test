@@ -113,6 +113,16 @@
 	<p><a class="levelStart button" href="#/play">Start level</a></p>
 </div>
 
+<div id="customise" class="tab">
+	<canvas id="customcanvas" height="400" width="400"></canvas>
+	<form action="#/level/creeate_from_custom" method="post">
+	<select id="level_selector"></select>
+	<textarea name="code" id="custom_code">
+	</textarea>
+	<input type="submit" />
+	</form>
+</div>
+
 <div id="templates" style="display:none">
 	<div id="newUnitTemplate" class="newUnit">
 		<h3 class="unitName"></h3>

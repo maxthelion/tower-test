@@ -20,9 +20,8 @@ function spriteCanvas(sprite){
 	ctx.drawImage(sprites_img, sprite.spriteX, 0, cw, ch, x - cw/2, y - cw/2, 100, 100)
 	return canvas;
 }
-
+var sprites_img;
 $().ready(function(){	
-	myGame = new Game(0);
   var app = $.sammy(function() {
 
     var hideMenus = function(){
@@ -131,8 +130,39 @@ $().ready(function(){
   			};
 			}
     });
+    
+    this.get('#/customise', function(){
+      hideMenus();
+      for (var i=0; i < levels.length; i++) {
+        levels[i]
+        $('#level_selector').append('<option name="'+i+'">'+i+'</option>')
+      };
+      $('#level_selector').change(function(){
+        setLevel( levels[$(this).val()] )
+      })
+      setLevel(levels[0]);
+      $('#customise').show();
+    });
 
   });
-  app.run('#/');
   
+  
+  sprites_img = new Image(); 
+  sprites_img.src = 'soldier.png';
+	sprites_img.onload = function(){
+		myGame = new Game(0);
+    app.run('#/');
+	}
 });
+
+var setLevel = function(thisLevel){
+  initSprites();
+  var canvas = document.getElementById('customcanvas')
+  gridManager = new GridManager(400, 400);
+	gridManager.addBases(thisLevel.startPoints, thisLevel.endPoint);
+	gridManager.generateTerrain(thisLevel.terrain);
+	gridManager.addUnbuildables(thisLevel.unbuildables)
+  canvasManager = new CanvasManager(canvas, gridManager);
+  canvasManager.public_draw();
+	$('#custom_code').val(JSON.stringify(thisLevel))
+}

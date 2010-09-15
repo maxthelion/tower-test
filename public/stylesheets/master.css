@@ -48,6 +48,11 @@
 	  width: 150px;
 	  margin-right: 10px
 	}
+	#custom_code {
+	  display: block;
+	  height: 100px;
+	  width: 100%;
+	}
 	#big_notice {
 	  position: absolute;
 	  background: #333;

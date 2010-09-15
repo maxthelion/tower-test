@@ -1,13 +1,10 @@
-var CanvasManager = function(canvas, grid, startPoints, endPoint, gridManager) {
+var CanvasManager = function(canvas, gridManager) {
 	var self = this;
 	var canvas =  canvas;
 	var ctx = canvas.getContext('2d');
 	var gridHeight = canvas.height;
 	var gridWidth = canvas.width;
 	var highLight;
-	var startPoints = startPoints;
-	var endPoint = endPoint;
-	var gridManager = gridManager;
 	this.selectedUnit;
 	
 	var draw = function(){

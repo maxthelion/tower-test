@@ -153,7 +153,6 @@ var addRandomTerrain = function(){
 			(startPoints[1] && t[0] == startPoints[1][0] && t[1] == startPoints[1][1]) ||
 					(t[0] == endPoint[0] && t[1] == endPoint[1])
 			) {
-			// console.log('clash')
 		} else {
 			terrain.push( t );
 		}

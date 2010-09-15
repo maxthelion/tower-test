@@ -1,5 +1,6 @@
-var GridManager = function(grid, canvasWidth, canvasHeight){
+var GridManager = function(canvasWidth, canvasHeight){
 	var self = this;
+	var grid = GridGenerator(15, 15);
 	var width = grid[0].length;
 	var height = grid.length;
 	var unbuildableGrid = GridGenerator(15, 15);
@@ -42,8 +43,49 @@ var GridManager = function(grid, canvasWidth, canvasHeight){
 	  grid[y][x] = 1;
 	}
 	
-	this.makeUnbuildable = function(x, y){
+	var makeUnbuildable = function(x, y){
 	  unbuildableGrid[y][x] = 1;
+	}
+	
+	this.generateTerrain = function(terrain){
+		//add terrain to grid
+		for (var i=0; i < terrain.length; i++) {
+		  var x = terrain[i][0];
+		  var y = terrain[i][1];
+		  if(self.squareAvaliable(x, y)){
+		 	  self.occupy(x, y);
+		 	  addSprite('tn', {cX: self.pixelC(x), cY: self.pixelC(y), spriteX: 140});
+		  }
+		};
+	}
+	
+	this.addBases = function(endPoint, startPoints){
+	  self.endPoint = endPoint;
+	  self.startPoints = startPoints;
+		myBase = {
+			cX: self.pixelC(endPoint[0]), 
+			cY: self.pixelC(endPoint[1]), 
+			spriteX: 160,
+			healthpercent: 1,
+			base: true
+		}
+		addSprite('b', myBase)
+		for (var i=0; i < startPoints.length; i++) {
+			var startPoint = startPoints[i];
+			addSprite('b', {cX: self.pixelC(startPoint[0]), cY: self.pixelC(startPoint[1]), spriteX: 180})
+		};
+	}
+	
+	
+	this.addUnbuildables = function(unbuildables){
+	  if (unbuildables && unbuildables.length > 0){
+	    for (var i=0; i < unbuildables.length; i++) {
+	      var x = unbuildables[i][0]
+	      var y = unbuildables[i][1]
+	      makeUnbuildable(x, y)   
+		 	  addSprite('tn', {cX: self.pixelC(x), cY: self.pixelC(y), spriteX: 320})
+	    };
+	  }
 	}
 	
 	var units = function(x, y){ 

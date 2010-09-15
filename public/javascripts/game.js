@@ -45,7 +45,6 @@ var Game = function(){
 	var highSpeed = 10;
 	var frameSpeed;
 	var mUM;
-	sprites_img = new Image(); 
 
 	this.incrementKills = function(bounty){			
 		changeMoney(bounty);
@@ -160,8 +159,6 @@ var Game = function(){
 		positionHash = {};
 		var thisLevel = levels[level];
 		waves = thisLevel.waves;
-		startPoints = thisLevel.startPoints;
-		endPoint = thisLevel.endPoint;
 		availableUnits = thisLevel.availableUnits;
 		frameSpeed = initFrameSpeed;
 		kills = 0;
@@ -174,23 +171,17 @@ var Game = function(){
 		selectedUnit = undefined;
 		mSM = new SoldierManager();
 		mUM = new UnitManager();
-		grid = GridGenerator(15, 15);
 		var canvas = document.getElementById('canvas')
-		gridManager = new GridManager(grid, 400, 400);
-		addBases();
-		generateTerrain(thisLevel.terrain);
-		addUnbuildables(thisLevel.unbuildables)
-		canvasManager = new CanvasManager(canvas, grid, startPoints, endPoint, gridManager);
+		gridManager = new GridManager(400, 400);
+		gridManager.addBases(thisLevel.startPoints, thisLevel.endPoint);
+		gridManager.generateTerrain(thisLevel.terrain);
+		gridManager.addUnbuildables(thisLevel.unbuildables)
+		canvasManager = new CanvasManager(canvas, gridManager);
 		canvasManager.highLight = null;
 		drawTurretButtons();
 		$('#speed_button').text('Speed up');
-
-		sprites_img.src = 'soldier.png';
-		sprites_img.onload = function(){
-			canvasManager.public_draw();
-			$('#kills').text(kills)
-			$('#money').text(money)	
-		}
+		$('#kills').text(kills)
+		$('#money').text(money)
 	}
 	
 	var addEvents = function(){		
@@ -312,18 +303,6 @@ var Game = function(){
 	  }
 	}
 	
-	var addUnbuildables = function(unbuildables){
-	  console.log(unbuildables)
-	  if (unbuildables && unbuildables.length > 0){
-	    for (var i=0; i < unbuildables.length; i++) {
-	      var x = unbuildables[i][0]
-	      var y = unbuildables[i][1]
-	      gridManager.makeUnbuildable(x, y)   
-		 	  addSprite('tn', {cX: gridManager.pixelC(x), cY: gridManager.pixelC(y), spriteX: 320})
-	    };
-	  }
-	}
-	
 	
 	var addTurretControl = function(t){
 	  $('#fC').remove();
@@ -386,33 +365,6 @@ var Game = function(){
 
 	}
 	
-	var generateTerrain = function(terrain){
-		//add terrain to grid
-		for (var i=0; i < terrain.length; i++) {
-		  var x = terrain[i][0];
-		  var y = terrain[i][1];
-		  if(gridManager.squareAvaliable(x, y)){
-		 	  gridManager.occupy(x, y)   
-		 	  addSprite('tn', {cX: gridManager.pixelC(x), cY: gridManager.pixelC(y), spriteX: 140}) 
-		  }
-		};
-	}
-	
-	var addBases = function(){
-		myBase = {
-			cX: gridManager.pixelC(endPoint[0]), 
-			cY: gridManager.pixelC(endPoint[1]), 
-			spriteX: 160,
-			healthpercent: 1,
-			base: true
-		}
-		addSprite('b', myBase)
-		for (var i=0; i < startPoints.length; i++) {
-			var startPoint = startPoints[i];
-			addSprite('b', {cX: gridManager.pixelC(startPoint[0]), cY: gridManager.pixelC(startPoint[1]), spriteX: 180})
-		};
-	}
-	
 	initialise();
 	addEvents();
 	
@@ -421,9 +373,9 @@ var Game = function(){
 	}
 	
 	var checkPaths = function(x, y){
-		for (var i=0; i < startPoints.length; i++) {
+		for (var i=0; i < gridManager.startPoints.length; i++) {
 			// check the global path
-			var result = AStar(grid, startPoints[i], endPoint, "Manhattan");
+			var result = AStar(grid, gridManager.startPoints[i], endPoint, "Manhattan");
 			if (result.length == 0){ // fail to connect
 				revertGridPoint(x, y);
 				return false
