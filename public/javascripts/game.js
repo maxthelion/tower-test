@@ -104,7 +104,7 @@ var Game = function(){
 					}
 				} else {
 					waveCountDown--;
-					mSM.createSoldier(typeIndex, emergencePoint, endPoint, gridManager);
+					mSM.createSoldier(typeIndex, emergencePoint, gridManager);
 					soldierCountDown = regularity;
 				}
 			} else {
@@ -151,7 +151,7 @@ var Game = function(){
 		regularity = wave[0][1];
 		soldierCountDown = regularity;
 		typeIndex = wave[0][0];
-		emergencePoint = startPoints[wave[1]]
+		emergencePoint = gridManager.startPoints[wave[1]]
 	}
 	
 	var initialise = function(){
@@ -159,7 +159,10 @@ var Game = function(){
 		positionHash = {};
 		var thisLevel = levels[level];
 		waves = thisLevel.waves;
-		availableUnits = thisLevel.availableUnits;
+		availableUnits = []
+    for (var i=0; i < thisLevel.availableUnitIds.length; i++) {
+      availableUnits.push(unitTypes[thisLevel.availableUnitIds[i]]);
+    };
 		frameSpeed = initFrameSpeed;
 		kills = 0;
 		startLives = 10;
@@ -365,7 +368,6 @@ var Game = function(){
 
 	}
 	
-	initialise();
 	addEvents();
 	
 	var revertGridPoint = function(x, y){
@@ -375,8 +377,7 @@ var Game = function(){
 	var checkPaths = function(x, y){
 		for (var i=0; i < gridManager.startPoints.length; i++) {
 			// check the global path
-			var result = AStar(grid, gridManager.startPoints[i], endPoint, "Manhattan");
-			if (result.length == 0){ // fail to connect
+			if (!gridManager.pathExists(gridManager.startPoints[i])){ // fail to connect
 				revertGridPoint(x, y);
 				return false
 			};
@@ -390,7 +391,7 @@ var Game = function(){
 			return false
 		// if (u['type'] == Explosion)
 		// 	return mUM.createUnit(u, [x, y]);
-		grid[y][x] = 1;
+		gridManager.occupy(x, y);
 		if (!checkPaths(x, y)){
 			return false
 		}

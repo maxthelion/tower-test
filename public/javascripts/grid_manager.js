@@ -30,6 +30,10 @@ var GridManager = function(canvasWidth, canvasHeight){
 		return AStar(grid, startPoint, endPoint, "Manhattan");
 	}
 	
+	this.pathExists = function(startPoint){
+	  return self.getPath(startPoint, self.endPoint).length  > 0
+	}
+	
 	this.radiusFromRange = function(range){
 		return ((range * 2 + 1 ) / 2) * self.cellWidth;
 	}
@@ -59,7 +63,7 @@ var GridManager = function(canvasWidth, canvasHeight){
 		};
 	}
 	
-	this.addBases = function(endPoint, startPoints){
+	this.addBases = function(startPoints, endPoint){
 	  self.endPoint = endPoint;
 	  self.startPoints = startPoints;
 		myBase = {

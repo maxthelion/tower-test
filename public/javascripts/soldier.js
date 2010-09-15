@@ -1,15 +1,16 @@
-function Soldier(startPoint, endPoint, gridManager, template, id) {
+function Soldier(startPoint, gridManager, template, id) {
 	var self = this;
 	var currentPosition = gridManager.pointCenterXY(startPoint[0], startPoint[1])
 	this.cX = currentPosition[0];
 	this.cY = currentPosition[1];
-	var endPosition = gridManager.pointCenterXY(endPoint[0], endPoint[1])
+	var endPoint = gridManager.endPoint;
+	var endPosition = gridManager.pointCenterXY(gridManager.endPoint[0], gridManager.endPoint[1])
 	var currentSpeed = template['speed'];
 	var initialHealth = template['health'];
 	this.health = initialHealth;
 	this.healthpercent = 1;
 	this.bounty = template['bounty'];
-	this.sprite = template['sprite']
+	this.spriteX = template['spriteX']
 	this.id = id;
 	
 	var myPath;

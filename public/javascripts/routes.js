@@ -22,8 +22,11 @@ function spriteCanvas(sprite, size){
 }
 var sprites_img;
 $().ready(function(){	
-  var app = $.sammy(function() {
+    $.sammy.raise_errors = true;
+    var app = $.sammy(function() {
 
+      this.raise_errors = true;
+    
     var hideMenus = function(){
       $('.tab').hide();
     }
@@ -212,15 +215,19 @@ var setLevel = function(levelID){
   canvasManager.public_draw();
 	$('#custom_code').val(JSON.stringify(thisLevel))
 	$('#availableGunSelect').empty();
-	for (var i=0; i < thisLevel.availableUnits.length; i++) {
-	 	$('#availableGunSelect').append('<li>'+thisLevel.availableUnits[i].name +'</li>');
+	for (var i=0; i < thisLevel.availableUnitIds.length; i++) {
+	 	$('#availableGunSelect').append('<li>'+unitTypes[thisLevel.availableUnitIds[i]].name +'</li>');
+	};
+	$('#allGunSelect').empty();
+	for (i in unitTypes) {
+	 	$('#allGunSelect').append('<li>'+unitTypes[i].name +'</li>');
 	};
 	$('#waveSelect').empty();
 	for (var i=0; i < thisLevel.waves.length; i++) {
 	  var wave = thisLevel.waves[i]
 	  var li = $('<li>')
 	  li.append('<span>'+wave[0][2]+'</span> x ')
-	  li.append( spriteCanvas( mSM.templateFromId(wave[0][0]), 20));
+	  li.append( spriteCanvas( soldierTypes[wave[0][0]], 20));
 	 	$('#waveSelect').append(li)
 	};
 	$('#customcanvas').click(function(evt){
@@ -234,7 +241,11 @@ var setLevel = function(levelID){
 		}
 		canvasManager.public_draw();
 	});
-	$('#terrainSelect').empty();
+  drawTerrainMenu();
+}
+
+var drawTerrainMenu =function(){
+  $('#terrainSelect').empty();
 	var terrainButton = $('<li>').text('terrain').click(function(){
 	  console.log('terrain')
 	})
@@ -243,4 +254,12 @@ var setLevel = function(levelID){
 	  console.log('bog')
 	})
 	$('#terrainSelect').append(bogButton)
+	var startPointsButton = $('<li>').text('start points').click(function(){
+	  console.log('bog')
+	})
+	$('#terrainSelect').append(startPointsButton)
+	var endPointsButton = $('<li>').text('end points').click(function(){
+	  console.log('bog')
+	})
+	$('#terrainSelect').append(endPointsButton)
 }

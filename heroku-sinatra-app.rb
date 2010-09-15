@@ -16,9 +16,20 @@ configure :production do
   #       from ENV['DATABASE_URI'] (see /env route below)
 end
 
-# Quick test
 get '/' do
   return File.open("public/index.html")
+end
+
+post '/levels' do
+  
+end
+
+post '/level/:id' do
+  puts YAML.load('levels/levels.yml')
+end
+
+get '/levels' do
+  
 end
 
 # Test at <appname>.heroku.com

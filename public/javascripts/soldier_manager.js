@@ -1,68 +1,67 @@
+var soldierTypes = [
+	{
+	 name: 'lightInfantry',
+	 speed: 2,
+	 health: 60,
+	 bounty: 1,
+	 type: Soldier,
+	 spriteX: 0
+	},
+	{
+	 name: 'Infantry',
+	 speed: 2,
+	 health: 100,
+	 bounty: 1,
+	 type: Soldier,
+	 spriteX: 20
+	},
+	{
+	 name: 'heavyInfantry',
+	 speed: 2,
+	 health: 500,
+	 bounty: 2,
+	 type: Soldier,
+	 spriteX: 40
+	},
+	{
+	 name: 'MediumInfantry',
+	 speed: 2,
+	 health: 300,
+	 bounty: 1,
+	 type: Soldier,
+		spriteX: 80
+	},
+	{
+	 name: 'bike',
+	 speed: 4,
+	 health: 150,
+	 bounty: 1,
+	 type: Soldier,
+	spriteX: 60
+	},
+	{
+	 name: 'megatron',
+	 speed: 2,
+	 health: 1000,
+	 bounty: 10,
+	 type: Soldier,
+	 spriteX: 100
+	},
+	{
+	 name: 'helicopter',
+	 speed: 2,
+	 health: 100,
+	 bounty: 1,
+	 type: Helicopter,
+	 spriteX: 120
+	}
+];
 var SoldierManager = function(){
 	var self = this;
 	var asa = {
 		s: [],
 		a: []
 	};
-	
-	var soldierTypes = [
-		{
-		 name: 'lightInfantry',
-		 speed: 2,
-		 health: 60,
-		 bounty: 1,
-		 type: Soldier,
-		 spriteX: 0
-		},
-		{
-		 name: 'Infantry',
-		 speed: 2,
-		 health: 100,
-		 bounty: 1,
-		 type: Soldier,
-		 spriteX: 20
-		},
-		{
-		 name: 'heavyInfantry',
-		 speed: 2,
-		 health: 500,
-		 bounty: 2,
- 		 type: Soldier,
-		 spriteX: 40
-		},
-		{
-		 name: 'MediumInfantry',
-		 speed: 2,
-		 health: 300,
-		 bounty: 1,
- 		 type: Soldier,
-			spriteX: 80
-		},
-		{
-		 name: 'bike',
-		 speed: 4,
-		 health: 150,
-		 bounty: 1,
- 		 type: Soldier,
-		spriteX: 60
-		},
-		{
-		 name: 'megatron',
-		 speed: 2,
-		 health: 1000,
-		 bounty: 10,
- 		 type: Soldier,
-		 spriteX: 100
-		},
-		{
-		 name: 'helicopter',
-		 speed: 2,
-		 health: 100,
-		 bounty: 1,
-		 type: Helicopter,
-		 spriteX: 120
-		}
-	];
 	
 	this.allSoldiers = function(){
 		return asa['s'];
@@ -84,20 +83,16 @@ var SoldierManager = function(){
 		redoArrays();
 	}
 	
-	this.createSoldier = function(typeIndex, startPoint, endPoint, grid){
-		var template = self.templateFromId(typeIndex)
+	this.createSoldier = function(typeIndex, startPoint, grid){
+		var template = soldierTypes[typeIndex]
 		object = template['type'] // soldier or heli
-		var a = new object(startPoint, endPoint, grid, template);
-		a.spriteX = template.spriteX
+		var a = new object(startPoint, grid, template);
 		a.key = keyFromSoldier(a)
 		addSprite(a.key, a);
 		redoArrays()
 		return a;
 	};
 	
-	this.templateFromId = function(id){
-	  return soldierTypes[id];
-	}
 	
 	var redoArrays = function(){
 		asa['s'] = []
@@ -128,3 +123,4 @@ var SoldierManager = function(){
 		return myArray;
 	}
 };
+

@@ -1,3 +1,13 @@
+	.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+  .clearfix {
+    zoom: 1;
+  }
 	* {
 		font-family: arial;
 		margin: 0;
@@ -47,13 +57,6 @@
 	  float:left; 
 	  width: 150px;
 	  margin-right: 10px
-	}
-	#side ul {
-	  list-style-type: none;
-	}
-	#custom_code {
-	  height: 100px;
-	  width: 100%;
 	}
 	#big_notice {
 	  position: absolute;
@@ -163,6 +166,16 @@
 	margin-top: 0.5em;
 	background: #fff;
 }
+.pane ul {
+  list-style-type: none;
+}
+.pane li {
+  padding: 5px;
+}
+#custom_code {
+  height: 100px;
+  width: 100%;
+}
 .hidden {
   display: none;
 }
@@ -176,6 +189,10 @@
 }
 .pane {
   background: #fff;
+}
+.pane .halfThing {
+  width: 50%;
+  float: left;
 }
 #header {
   background: gray;

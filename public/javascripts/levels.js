@@ -42,9 +42,9 @@ var easyPeasy = {
 	],
 	startPoints: [[2, 0]],
 	endPoint: [5, 14],
-	availableUnits: [
-	  unitTypes[0], // machine gun
-	  unitTypes[5] // wall
+	availableUnitIds: [
+	  0, // machine gun
+	  5 // wall
 	],
 	terrain: [
 	  [9, 2], [5, 13], [0, 14], [2, 13], [9, 2], [0, 2], [7, 12], [14, 13], [7, 8], [10, 9]
@@ -69,10 +69,10 @@ var level2 = {
 		[10, 0]
 	],
 	endPoint: [5, 14],
-	availableUnits: [
-	  unitTypes[0], // machine gun
-	  unitTypes[5], // wall
-	  unitTypes[6] // flamer
+	availableUnitIds: [
+	  0, // machine gun
+	  5, // wall
+	  6 // flamer
 	],
 	newUnits: [6],
 	terrain: [[1, 14], [9, 4], [14, 7], [2, 3], [8, 4], [7, 9], [6, 2], [12, 1], [12, 5]],
@@ -96,11 +96,11 @@ var level3 = {
 		[10, 0]
 	],
 	endPoint: [5, 14],
-	availableUnits: [
-	  unitTypes[0], // machine gun
-	  unitTypes[5], // wall
-	  unitTypes[6], // flamer
-	  unitTypes[4] // gluegun
+	availableUnitIds: [
+	  0, // machine gun
+	  5, // wall
+	  6, // flamer
+	  4 // gluegun
 	],
 	newUnits: [4],
 	terrain: [[6, 14], [14, 4], [4, 3], [1, 9], [8, 14], [9, 1], [4, 12], [1, 11], [4, 11], [0, 3]],
@@ -124,12 +124,12 @@ var level4 = {
 		[10, 0]
 	],
 	endPoint: [5, 14],
-	availableUnits: [
-	  unitTypes[0], // machine gun
-	  unitTypes[5], // wall
-	  unitTypes[6], // flamer
-	  unitTypes[4], // gluegun
-	  unitTypes[1]
+	availableUnitIds: [
+	  0, // machine gun
+	  5, // wall
+	  6, // flamer
+	  4, // gluegun
+	  1
 	],
 	newUnits: [1],
 	terrain: [],
@@ -139,9 +139,9 @@ var level4 = {
 
 levels = [
   easyPeasy,
-	level2,
-	level3,
-	level4
+  level2,
+  level3,
+  level4
 ]
 
 var addRandomTerrain = function(){
