@@ -54,7 +54,7 @@ var GridManager = function(canvasWidth, canvasHeight){
 		  var y = terrain[i][1];
 		  if(self.squareAvaliable(x, y)){
 		 	  self.occupy(x, y);
-		 	  addSprite('tn', {cX: self.pixelC(x), cY: self.pixelC(y), spriteX: 140});
+		 	  self.addSpriteFromPoints(x, y, 140);
 		  }
 		};
 	}
@@ -83,9 +83,13 @@ var GridManager = function(canvasWidth, canvasHeight){
 	      var x = unbuildables[i][0]
 	      var y = unbuildables[i][1]
 	      makeUnbuildable(x, y)   
-		 	  addSprite('tn', {cX: self.pixelC(x), cY: self.pixelC(y), spriteX: 320})
+		 	  self.addSpriteFromPoints(x, y, 320);
 	    };
 	  }
+	}
+	
+	this.addSpriteFromPoints = function(x, y, spriteX){
+	  addSprite('tn', {cX: self.pixelC(x), cY: self.pixelC(y), spriteX: 320})
 	}
 	
 	var units = function(x, y){ 

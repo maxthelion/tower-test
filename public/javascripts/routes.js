@@ -10,14 +10,14 @@ var createCompatibleCanvas = function(id, width, height){
   return canvas;
 }
 
-function spriteCanvas(sprite){
- 	canvas = createCompatibleCanvas('foof', 100, 100);
+function spriteCanvas(sprite, size){
+ 	canvas = createCompatibleCanvas('foof', size, size);
 	var ctx = canvas.getContext('2d');
 	cw = 20
 	ch = 20
 	x = 10
 	y = 10
-	ctx.drawImage(sprites_img, sprite.spriteX, 0, cw, ch, x - cw/2, y - cw/2, 100, 100)
+	ctx.drawImage(sprites_img, sprite.spriteX, 0, cw, ch, x - cw/2, y - cw/2, size, size)
 	return canvas;
 }
 var sprites_img;
@@ -123,7 +123,7 @@ $().ready(function(){
   					var unit = unitTypes[ level.newUnits[i] ];
   					var e = $('#newUnitTemplate').clone();
   					e.find('.unitName').text(unit.name);
-  					e.find('.unitIcon').html( spriteCanvas( unit ) );
+  					e.find('.unitIcon').html( spriteCanvas( unit, 100 ) );
   					e.find('.info').html( unit.name );
   					$('#newUnitsContainer').append(e);
   				};
@@ -133,19 +133,50 @@ $().ready(function(){
     
     this.get('#/customise', function(){
       hideMenus();
-      for (var i=0; i < levels.length; i++) {
-        levels[i]
-        $('#level_selector').append('<option name="'+i+'">'+i+'</option>')
-      };
-      $('#level_selector').change(function(){
-        setLevel( levels[$(this).val()] )
-      })
-      setLevel(levels[0]);
+      addLevelSelect()
+      $('#customise').show();
+      $('#levelPane').hide();
+    });
+    
+    this.get('#/levels/:id/customise', function(){
+      hideMenus();
+      addLevelSelect();
+      setLevel(this.params.id);
+      $('#levelPane').show();
+      $('#customise').show();
+    });
+    
+    this.get('#/levels/:id/customise/terrainPaneScreen', function(){
+      hideMenus();
+      addLevelSelect();
+      setLevel(this.params.id);
+      $('#levelPane').show();
+      $('.pane').hide();
+      $('#terrainPane').show();
+      $('#customise').show();
+    });
+    
+    this.get('#/levels/:id/customise/gunsPaneScreen', function(){
+      hideMenus();
+      addLevelSelect();
+      setLevel(this.params.id);
+      $('#levelPane').show();
+      $('.pane').hide();
+      $('#gunsPane').show();
+      $('#customise').show();
+    });
+    
+    this.get('#/levels/:id/customise/wavePaneScreen', function(){
+      hideMenus();
+      addLevelSelect();
+      setLevel(this.params.id);
+      $('#levelPane').show();
+      $('.pane').hide();
+      $('#wavePane').show();
       $('#customise').show();
     });
 
   });
-  
   
   sprites_img = new Image(); 
   sprites_img.src = 'soldier.png';
@@ -155,8 +186,23 @@ $().ready(function(){
 	}
 });
 
-var setLevel = function(thisLevel){
+var addLevelSelect = function(){
+  $('#level_selector').empty();
+  for (var i=0; i < levels.length; i++) {
+    levels[i]
+    $('#level_selector').append('<option name="'+i+'">'+i+'</option>')
+  };
+  $('#level_selector').change(function(){
+    window.location = '#/levels/'+$(this).val()+'/customise'
+  })
+}
+
+var setLevel = function(levelID){
+  thisLevel = levels[levelID]
   initSprites();
+  $('#levelPane h3').click(function(){
+    window.location = '#/levels/'+levelID+'/customise/'+$(this).attr('id')
+  })
   var canvas = document.getElementById('customcanvas')
   gridManager = new GridManager(400, 400);
 	gridManager.addBases(thisLevel.startPoints, thisLevel.endPoint);
@@ -165,4 +211,36 @@ var setLevel = function(thisLevel){
   canvasManager = new CanvasManager(canvas, gridManager);
   canvasManager.public_draw();
 	$('#custom_code').val(JSON.stringify(thisLevel))
+	$('#availableGunSelect').empty();
+	for (var i=0; i < thisLevel.availableUnits.length; i++) {
+	 	$('#availableGunSelect').append('<li>'+thisLevel.availableUnits[i].name +'</li>');
+	};
+	$('#waveSelect').empty();
+	for (var i=0; i < thisLevel.waves.length; i++) {
+	  var wave = thisLevel.waves[i]
+	  var li = $('<li>')
+	  li.append('<span>'+wave[0][2]+'</span> x ')
+	  li.append( spriteCanvas( mSM.templateFromId(wave[0][0]), 20));
+	 	$('#waveSelect').append(li)
+	};
+	$('#customcanvas').click(function(evt){
+		var xIndex = MF( evt.offsetX/gridManager.cellWidth )
+		var yIndex = MF( evt.offsetY/gridManager.cellHeight)
+		if (gridManager.squareAvaliable(xIndex, yIndex)){
+			thisLevel.terrain.push([xIndex, yIndex]);
+			gridManager.addSpriteFromPoints(xIndex, yIndex, 140);
+			gridManager.occupy(xIndex, yIndex);
+			$('#custom_code').val(JSON.stringify(thisLevel))
+		}
+		canvasManager.public_draw();
+	});
+	$('#terrainSelect').empty();
+	var terrainButton = $('<li>').text('terrain').click(function(){
+	  console.log('terrain')
+	})
+	$('#terrainSelect').append(terrainButton)
+	var bogButton = $('<li>').text('bog').click(function(){
+	  console.log('bog')
+	})
+	$('#terrainSelect').append(bogButton)
 }

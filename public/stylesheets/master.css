@@ -48,8 +48,10 @@
 	  width: 150px;
 	  margin-right: 10px
 	}
+	#side ul {
+	  list-style-type: none;
+	}
 	#custom_code {
-	  display: block;
 	  height: 100px;
 	  width: 100%;
 	}
@@ -160,4 +162,29 @@
 .newUnit .info {
 	margin-top: 0.5em;
 	background: #fff;
+}
+.hidden {
+  display: none;
+}
+#levelPane h3 {
+  background: silver;
+  padding: 5px;
+  border-bottom: 3px solid grey;
+}
+#levelPane h3:hover {
+  background: #999;
+}
+.pane {
+  background: #fff;
+}
+#header {
+  background: gray;
+  padding: 5px;
+  color: #fff;
+  position: relative;
+}
+#header #level_selector {
+  position: absolute;
+  right: 5px;
+  top: 10px;
 }

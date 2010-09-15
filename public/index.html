@@ -114,13 +114,39 @@
 </div>
 
 <div id="customise" class="tab">
-	<canvas id="customcanvas" height="400" width="400"></canvas>
-	<form action="#/level/creeate_from_custom" method="post">
-	<select id="level_selector"></select>
-	<textarea name="code" id="custom_code">
-	</textarea>
-	<input type="submit" />
-	</form>
+	<div id="header">
+		<h2>Create and customise levels</h2>
+		<select id="level_selector"></select>
+	</div>
+	
+	<div id="levelPane" class="hidden">
+		<form>
+			Name: <input name="name" />
+		</form>
+
+		<h3 id="gunsPaneScreen">Available guns</h3>
+	
+		<div id="gunsPane" class="hidden pane">
+			<ul id="availableGunSelect"></ul>
+		</div>
+	
+		<h3 id="wavePaneScreen">Waves</h3>
+	
+		<div id="wavePane" class="hidden pane">
+			<ul id="waveSelect"></ul>
+		</div>
+	
+		<h3 id="terrainPaneScreen">Terrain</h3>
+	
+		<div id="terrainPane" class="pane">
+			<div id="side">
+				<ul id="terrainSelect"></ul>
+			</div>
+			<canvas id="customcanvas" height="400" width="400"></canvas>
+		</div>
+		<textarea name="code" id="custom_code" class="hidden"></textarea>
+	
+	</div>
 </div>
 
 <div id="templates" style="display:none">
