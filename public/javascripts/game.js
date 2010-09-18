@@ -1,16 +1,3 @@
-function GridGenerator(width, height){
-	var	result = new Array(height);
-	for(var	j, i = 0; i < height; i++) {
-		result[i] = new Array(width);
-		for(j = 0; j < width; j++)
-			result[i][j] = 0
-	};
-	return result;
-};
-MF = Math.floor
-MR = Math.random
-
-
 var frameNum = 0;
 var mSM;
 var positionHash;

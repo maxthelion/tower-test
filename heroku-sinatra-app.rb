@@ -28,7 +28,7 @@ post '/level/:id' do
   f = File.new("levels/level_"+ params[:id], 'w')
   f.puts(params[:code])
   f.close
-  redirect '/#/customise'
+  redirect '/customise.html'
 end
 
 get '/javascripts/levels2.js' do  

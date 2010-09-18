@@ -1,0 +1,52 @@
+.pane ul {
+  list-style-type: none;
+}
+.pane li {
+  padding: 5px;
+}
+#custom_code {
+  height: 100px;
+  width: 100%;
+}
+.hidden {
+  display: none;
+}
+.pane {
+  background: #fff;
+	width: 200px;
+	float: left;
+}
+#terrainPane {
+	width: 500px;
+	background: silver;
+}
+#waveSelect {
+	width: 70px;
+	float: left;
+}
+#waveEdit {
+	float: left;
+	width: 100px;
+}
+.pane .halfThing {
+  width: 100px;
+  float: left;
+}
+#header {
+  background: gray;
+  padding: 5px;
+  color: #fff;
+  position: relative;
+}
+#header #level_selector {
+  position: absolute;
+  right: 5px;
+  top: 10px;
+}
+#customise {
+	width: 1000px;
+	margin: 0 auto;
+}
+#side {
+	width: 40px;
+}

@@ -1,3 +1,15 @@
+function GridGenerator(width, height){
+	var	result = new Array(height);
+	for(var	j, i = 0; i < height; i++) {
+		result[i] = new Array(width);
+		for(j = 0; j < width; j++)
+			result[i][j] = 0
+	};
+	return result;
+};
+MF = Math.floor
+MR = Math.random
+
 var GridManager = function(canvasWidth, canvasHeight){
 	var self = this;
 	var grid = GridGenerator(15, 15);
@@ -66,17 +78,21 @@ var GridManager = function(canvasWidth, canvasHeight){
 	this.addBases = function(startPoints, endPoint){
 	  self.endPoint = endPoint;
 	  self.startPoints = startPoints;
-		myBase = {
-			cX: self.pixelC(endPoint[0]), 
-			cY: self.pixelC(endPoint[1]), 
-			spriteX: 160,
-			healthpercent: 1,
-			base: true
+		if (endPoint){
+			myBase = {
+				cX: self.pixelC(endPoint[0]), 
+				cY: self.pixelC(endPoint[1]), 
+				spriteX: 160,
+				healthpercent: 1,
+				base: true
+			};
+			addSprite('b', myBase);
 		}
-		addSprite('b', myBase)
-		for (var i=0; i < startPoints.length; i++) {
-			var startPoint = startPoints[i];
-			addSprite('b', {cX: self.pixelC(startPoint[0]), cY: self.pixelC(startPoint[1]), spriteX: 180})
+		if (startPoints.length > 0){
+			for (var i=0; i < startPoints.length; i++) {
+				var startPoint = startPoints[i];
+				addSprite('b', {cX: self.pixelC(startPoint[0]), cY: self.pixelC(startPoint[1]), spriteX: 180})
+			};
 		};
 	}
 	
