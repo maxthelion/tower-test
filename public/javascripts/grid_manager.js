@@ -93,7 +93,7 @@ var GridManager = function(canvasWidth, canvasHeight){
 	}
 	
 	this.addSpriteFromPoints = function(x, y, spriteX){
-	  addSprite('tn', {cX: self.pixelC(x), cY: self.pixelC(y), spriteX: 320})
+	  addSprite('tn', {cX: self.pixelC(x), cY: self.pixelC(y), spriteX: spriteX})
 	}
 	
 	var units = function(x, y){ 

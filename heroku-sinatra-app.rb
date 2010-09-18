@@ -25,11 +25,21 @@ post '/levels' do
 end
 
 post '/level/:id' do
-  puts YAML.load('levels/levels.yml')
+  f = File.new("levels/level_"+ params[:id], 'w')
+  f.puts(params[:code])
+  f.close
+  redirect '/#/customise'
 end
 
-get '/levels' do
-  
+get '/javascripts/levels2.js' do  
+  levels = []
+  d = Dir.new('levels')
+  d.each do |f|
+    unless ['.', '..'].include?(f)
+      levels << File.open('levels/'+ f).read
+    end
+  end
+  return 'var levels = ['+levels.join(",\n")+']'
 end
 
 # Test at <appname>.heroku.com

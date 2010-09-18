@@ -202,6 +202,7 @@ var addLevelSelect = function(){
 
 var setLevel = function(levelID){
   thisLevel = levels[levelID]
+	$("#levelSubmit").attr('action', '/level/'+ levelID);
   initSprites();
   $('#levelPane h3').click(function(){
     window.location = '#/levels/'+levelID+'/customise/'+$(this).attr('id')
@@ -219,32 +220,39 @@ var setLevel = function(levelID){
   drawTerrainMenu();
 }
 
-var drawTerrainMenu =function(){
+var drawTerrainMenu = function(){
   $('#terrainSelect').empty();
-	var terrainButton = $('<li>').text('terrain').click(function(){
-	  console.log('terrain')
-	})
-	$('#terrainSelect').append(terrainButton)
-	var bogButton = $('<li>').text('bog').click(function(){
-	  console.log('bog')
-	})
-	$('#terrainSelect').append(bogButton)
-	var startPointsButton = $('<li>').text('start points').click(function(){
-	  console.log('bog')
-	})
-	$('#terrainSelect').append(startPointsButton)
-	var endPointsButton = $('<li>').text('end points').click(function(){
-	  console.log('bog')
-	})
-	$('#terrainSelect').append(endPointsButton);
+	var currentTerrainSelector = {
+		array: thisLevel.terrain,
+		spriteX: 140
+	}
+	var button = function(text, array, spriteX){
+		var li = $('<li>')
+		var terrainButton = $('<a>', {href: '#',text: text}).click(function(){
+			$('#terrainSelect .selected').removeClass('selected')
+			$(this).addClass('selected')
+		  currentTerrainSelector.array = array;
+			currentTerrainSelector.spriteX = spriteX;
+			return false;
+		})
+		terrainButton.append(spriteCanvas( {spriteX: spriteX}, 20));
+		li.html(terrainButton);
+		$('#terrainSelect').append( li );
+	}
+	button('terrain', thisLevel.terrain, 140);
+	button('unbuildables', thisLevel.unbuildables, 320);
+	button('start points', thisLevel.startPoints, 180);
+	button('end point', thisLevel.startPoints, 160);
 	$('#customcanvas').click(function(evt){
 		var xIndex = MF( evt.offsetX/gridManager.cellWidth )
 		var yIndex = MF( evt.offsetY/gridManager.cellHeight)
 		if (gridManager.squareAvaliable(xIndex, yIndex)){
-			thisLevel.terrain.push([xIndex, yIndex]);
-			gridManager.addSpriteFromPoints(xIndex, yIndex, 140);
+			currentTerrainSelector.array.push([xIndex, yIndex]);
+			gridManager.addSpriteFromPoints(xIndex, yIndex, currentTerrainSelector.spriteX);
 			gridManager.occupy(xIndex, yIndex);
 			$('#custom_code').val(JSON.stringify(thisLevel))
+		} else {
+			console.log('occupied')
 		}
 		canvasManager.public_draw();
 		return false;
@@ -263,27 +271,31 @@ var drawWaveMenu = function(){
 }
 
 var drawGunMenu = function(){
+	var gunButton = function(gun, i, callback){
+		var btn = $('<a>').text(gun.name).data('id', i).click(callback)
+		btn.append( spriteCanvas( gun, 20) )
+		return btn; 
+	}
+	
 	$('#availableGunSelect').empty();
 	for (var i=0; i < thisLevel.availableUnitIds.length; i++) {
-		var btn = $('<a>').text(unitTypes[thisLevel.availableUnitIds[i]].name).data('id', i).click(function(){
+		var li = $('<li>').append(gunButton(unitTypes[thisLevel.availableUnitIds[i]], i, function(){
 			thisLevel.availableUnitIds.splice(thisLevel.availableUnitIds.indexOf($(this).data('id')), 1)
 			drawGunMenu();
 			$('#custom_code').val(JSON.stringify(thisLevel))
 			return false;
-		})
-		var li = $('<li>').append(btn);
+		}));
 	 	$('#availableGunSelect').append(li);
 	};
 	$('#allGunSelect').empty();
 	for (i in unitTypes) {
 		if (thisLevel.availableUnitIds.indexOf(i) == -1){
-			var btn = $('<a>').text(unitTypes[i].name).data('id', i).click(function(){
+			var li = $('<li>').append(gunButton(unitTypes[i], i, function(){
 				thisLevel.availableUnitIds.push(1*$(this).data('id'));
 				drawGunMenu();
 				$('#custom_code').val(JSON.stringify(thisLevel))
 				return false;
-			})
-			var li = $('<li>').append(btn);
+			}));
 			$('#allGunSelect').append(li);
 		}
 	};
