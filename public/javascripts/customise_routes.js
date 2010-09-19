@@ -59,8 +59,8 @@ $().ready(function(){
       var level = levels[this.params.id];
 			var newWave = [[
 				this.params.unitId,
-				this.params.number,
-				this.params.frequency
+				this.params.frequency,
+				this.params.number
 				], 0
 			]
 			level.waves.push(newWave)
