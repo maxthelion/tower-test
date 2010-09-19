@@ -83,7 +83,8 @@ var unitTypes = {
 		cost: 10,
 		type: Turret,
 		attacks_air: true,
-		spriteX: 300
+		spriteX: 300,
+		upgrade: true
 	},
 	8: {
 		name: 'heavy glue gun',
@@ -95,7 +96,8 @@ var unitTypes = {
 			soldier.slow(myFrameNum + 50);
 		},
 		type: Turret,
-		spriteX: 220
+		spriteX: 220,
+		upgrade: true
 	},
 }
 

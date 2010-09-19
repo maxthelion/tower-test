@@ -27,7 +27,7 @@
 		font-size: 2em;
 		text-align: center;
 		width: 400px;
-		margin-left: 150px;
+		margin-left: 80px;
 	}
 	#turret_choices a {
 		display: block;
@@ -55,7 +55,7 @@
 	}
 	#side {
 	  float:left; 
-	  width: 150px;
+	  width: 70px;
 	  margin-right: 10px
 	}
 	#big_notice {
@@ -89,7 +89,7 @@
 		list-style-type: none;
 	}
 	#wrapper {
-	  width: 560px;
+	  width: 480px;
 	  position: relative;
 	  margin-top: 30px;
 	  background: #91B6CF;
@@ -98,8 +98,7 @@
 	  padding: 20px;
 	}
 	#cW {
-	  background: yellow;
-	  margin-left: 160px;
+	  margin-left: 80px;
 	  position: relative;
 	}
 	#fC {

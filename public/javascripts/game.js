@@ -81,8 +81,7 @@ var Game = function(){
 		checkDeath();
 		spritesProgress();
 		attemptToWinGame();
-		$('#kills').text(kills)
-		$('#money').text(money)
+		setMoneyText();
 		renderTurretControl();
 		if(playing){
 			if(soldierCountDown == 0) {
@@ -102,6 +101,10 @@ var Game = function(){
 		canvasManager.public_draw();
 	}
 
+	var setMoneyText = function(){
+		$('#money').text('$' + money)
+	}
+	
 	var isDead = function(){
 		return lives == 0;
 	}
@@ -171,8 +174,7 @@ var Game = function(){
 		canvasManager.highLight = null;
 		drawTurretButtons();
 		$('#speed_button').text('Speed up');
-		$('#kills').text(kills)
-		$('#money').text(money)
+		setMoneyText();
 	}
 	
 	var addEvents = function(){		
@@ -247,25 +249,29 @@ var Game = function(){
 	}
 	
 	var drawTurretButtons = function(){
-		$('#turret_choices').text('')
+		$('#turret_choices').empty();
 		for (var i=0; i < availableUnits.length; i++) {
 			var t = availableUnits[i];
-			var tbutton = $('<a href="#">').text(t.name + ' ($'+ t.cost+')' )
-			tbutton.attr('id', 'button_'+t.name);
-			if (t == currentUnit)
-				tbutton.addClass('selected');
-			if (money >= t['cost']){
-				tbutton.addClass('allowed');
-			} else {
-				tbutton.addClass('not_allowed')
+			if (!t.upgrade){
+				var tbutton = $('<a href="#">')
+				tbutton.append(spriteCanvas(t, 20));
+				tbutton.append('$'+ t.cost )
+				tbutton.attr('id', 'button_'+t.name);
+				if (t == currentUnit)
+					tbutton.addClass('selected');
+				if (money >= t['cost']){
+					tbutton.addClass('allowed');
+				} else {
+					tbutton.addClass('not_allowed')
+				}
+				(function(t){
+					tbutton.click(function(){
+						setCurrentUnit(t);
+						return false;
+		 			});
+				})(t);
+				$('#turret_choices').append(tbutton);
 			}
-			(function(t){
-				tbutton.click(function(){
-					setCurrentUnit(t);
-					return false;
-	 			});
-			})(t);
-			$('#turret_choices').append(tbutton);
 		};
 	}
 
