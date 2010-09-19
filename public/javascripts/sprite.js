@@ -24,6 +24,10 @@ var redoSprites = function(){
 	}
 }
 
+var getSprite = function(key, id){
+	return sprites[key][id];
+}
+
 var removeSprite = function(key, id){
 	delete sprites[key][id];
 	redoSprites();
@@ -32,6 +36,10 @@ var removeSprite = function(key, id){
 var addSprite = function(k, sprite) {
 	id++;
 	sprites[k][id] = sprite;
+	sprite.remove = function(){
+		removeSprite(k, this.id)
+	}
 	redoSprites();
 	sprite.id = id;
+	return sprite;
 }

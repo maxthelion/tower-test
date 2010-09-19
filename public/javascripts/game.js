@@ -1,6 +1,8 @@
 var frameNum = 0;
 var mSM;
 var positionHash;
+var myBase;
+
 
 var Game = function(){
 	var level = localStorage.getItem('level') || 0;
@@ -23,7 +25,6 @@ var Game = function(){
 	var money;
 	var playing;
 	var gridManager;
-	var myBase;
 	var selectedUnit;
 	var currentUnit;
 	var canvasManager;
@@ -201,13 +202,11 @@ var Game = function(){
 				return false;
 			var xIndex = MF( evt.offsetX/gridManager.cellWidth )
 			var yIndex = MF( evt.offsetY/gridManager.cellHeight)
-			if (gridManager.squareAvaliable(xIndex, yIndex)){
+			var u = gridManager.spriteAt(xIndex, yIndex);
+			if (!u){
 				addUnit(xIndex, yIndex);
-				selectedUnit = undefined;
-			} else if (mUM.unitAt([xIndex, yIndex])){
-        var t = mUM.unitAt([xIndex, yIndex])
-        highLight = null;
-        selectedUnit = t;
+			} else if (u instanceof Turret){
+        selectedUnit = u;
 			}
 			canvasManager.public_draw();
 		});
@@ -216,24 +215,24 @@ var Game = function(){
 			if (!selectedUnit && playing) {
 				var xIndex = MF( evt.offsetX/gridManager.cellWidth )
 				var yIndex = MF( evt.offsetY/gridManager.cellWidth )
-				var u = mUM.unitAt([xIndex, yIndex]);
-				if (gridManager.squareAvaliable( xIndex, yIndex ) || u){
-					canvasManager.highLight = {
-						x: xIndex,
-						y: yIndex,
-						cX: gridManager.pointCenterXY(xIndex, yIndex)[0],
-						cY: gridManager.pointCenterXY(xIndex, yIndex)[1]
-					}
-					if (u){
-						canvasManager.highLight.haloColor = '255, 255, 0'
-						canvasManager.highLight.range = gridManager.cellWidth / 2
-					} else {
-						canvasManager.highLight.unit = currentUnit,
-						canvasManager.highLight.haloColor = (money < currentUnit['cost']) ? '255, 0, 0' : '0, 255, 0';
-						canvasManager.highLight.range = gridManager.radiusFromRange(currentUnit.range)
-					}
+				var u = gridManager.spriteAt(xIndex, yIndex);
+				canvasManager.highLight = {
+					x: xIndex,
+					y: yIndex,
+					cX: gridManager.pointCenterXY(xIndex, yIndex)[0],
+					cY: gridManager.pointCenterXY(xIndex, yIndex)[1]
+				}
+				if (gridManager.squareAvaliable( xIndex, yIndex ) ){
+					canvasManager.highLight.unit = currentUnit;
+					canvasManager.highLight.haloColor = (money < currentUnit['cost']) ? '255, 0, 0' : '0, 255, 0';
+					canvasManager.highLight.range = gridManager.radiusFromRange(currentUnit.range)
+				} else if (u && u instanceof Turret){
+					canvasManager.highLight.haloColor = '255, 255, 0'
+					canvasManager.highLight.range = gridManager.cellWidth / 2
 				} else {
-					canvasManager.highLight = null
+					canvasManager.highLight.unit = currentUnit;
+					canvasManager.highLight.haloColor = '255, 0, 0'
+					canvasManager.highLight.range = gridManager.radiusFromRange(currentUnit.range)
 				}
 
 			}
@@ -329,7 +328,6 @@ var Game = function(){
 		click(function(){
 			mUM.sell(t);
 			changeMoney( t.sellCost() );
-			gridManager.clearCell( t.p[0], t.p[1] )
 			elem.remove();
 			selectedUnit = undefined;
 			return false;

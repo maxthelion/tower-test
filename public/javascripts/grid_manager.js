@@ -18,6 +18,7 @@ var GridManager = function(canvasWidth, canvasHeight){
 	var unbuildableGrid = GridGenerator(15, 15);
 	this.cellWidth = canvasWidth / width;
 	this.cellHeight = canvasHeight / height;
+	var endSprite;
 
 	this.pointCenterXY = function(x, y){
 		return [ self.pixelC(x), self.pixelC(y) ]
@@ -35,7 +36,11 @@ var GridManager = function(canvasWidth, canvasHeight){
 	};
 	
 	this.squareAvaliable = function(x, y){
-		return grid[y][x] != 1 && unbuildableGrid[y][x] != 1;
+		return grid[y][x] != 1 && !unbuildableGrid[y][x];
+	}
+	
+	this.spriteAt = function(x, y){
+		return unbuildableGrid[y][x];
 	}
 	
 	this.getPath = function(startPoint, endPoint){
@@ -51,6 +56,10 @@ var GridManager = function(canvasWidth, canvasHeight){
 	}
 	
 	this.clearCell = function(x, y){
+		if(self.spriteAt(x, y)){
+			self.spriteAt(x, y).remove();
+			unbuildableGrid[y][x] = null
+		}
 		// back to front x and y again
 		grid[y][x] = 0
 	}
@@ -59,8 +68,8 @@ var GridManager = function(canvasWidth, canvasHeight){
 	  grid[y][x] = 1;
 	}
 	
-	var makeUnbuildable = function(x, y){
-	  unbuildableGrid[y][x] = 1;
+	this.addToSpriteGrid = function(x, y, sprite){
+		unbuildableGrid[y][x] = sprite;
 	}
 	
 	this.generateTerrain = function(terrain){
@@ -75,23 +84,34 @@ var GridManager = function(canvasWidth, canvasHeight){
 		};
 	}
 	
+	this.setEndPoint = function(endPoint){
+		if(self.endPoint){
+			self.clearCell(self.endPoint[0], self.endPoint[1])
+		}
+		self.endPoint = endPoint;
+		if(endSprite && getSprite('b', endSprite.id)){
+			removeSprite('b', endSprite.id)
+		}
+	  endSprite = myBase = {
+			cX: self.pixelC(endPoint[0]), 
+			cY: self.pixelC(endPoint[1]), 
+			spriteX: 160,
+			healthpercent: 1,
+			base: true
+		};
+		var sprite = addSprite('b', myBase);
+		self.addToSpriteGrid(endPoint[0], endPoint[1], sprite);
+	}
+	
 	this.addBases = function(startPoints, endPoint){
-	  self.endPoint = endPoint;
 	  self.startPoints = startPoints;
 		if (endPoint){
-			myBase = {
-				cX: self.pixelC(endPoint[0]), 
-				cY: self.pixelC(endPoint[1]), 
-				spriteX: 160,
-				healthpercent: 1,
-				base: true
-			};
-			addSprite('b', myBase);
+			self.setEndPoint(endPoint)
 		}
 		if (startPoints.length > 0){
 			for (var i=0; i < startPoints.length; i++) {
 				var startPoint = startPoints[i];
-				addSprite('b', {cX: self.pixelC(startPoint[0]), cY: self.pixelC(startPoint[1]), spriteX: 180})
+				self.addSpriteFromPoints(startPoint[0], startPoint[1], 180)
 			};
 		};
 	}
@@ -102,14 +122,14 @@ var GridManager = function(canvasWidth, canvasHeight){
 	    for (var i=0; i < unbuildables.length; i++) {
 	      var x = unbuildables[i][0]
 	      var y = unbuildables[i][1]
-	      makeUnbuildable(x, y)   
 		 	  self.addSpriteFromPoints(x, y, 320);
 	    };
 	  }
 	}
 	
 	this.addSpriteFromPoints = function(x, y, spriteX){
-	  addSprite('tn', {cX: self.pixelC(x), cY: self.pixelC(y), spriteX: spriteX})
+	  var sprite = addSprite('tn', {cX: self.pixelC(x), cY: self.pixelC(y), spriteX: spriteX})
+		self.addToSpriteGrid(x, y, sprite);
 	}
 	
 	var units = function(x, y){ 

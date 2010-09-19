@@ -102,19 +102,6 @@ var unitTypes = {
 var UnitManager = function(){
 	var self = this;
 	
-	var addUnitAtPosition = function(p, u){
-		if (!positionHash[ p[0] ]){
-			positionHash[ p[0] ] = {}
-		}
-		positionHash[ p[0] ][ p[1] ] = u
-	};
-	
-	this.unitAt = function(p){
-		if (!positionHash[p[0]])
-			return null
-		return positionHash[p[0]][p[1]]
-	};
-	
 	this.createUnit = function(template, position, gridManager){
 		// if(template['type'] == Explosion){
 		// 	explosions.push( new Explosion( 3, 4, template['range'], frameNum, template['damage']) );
@@ -122,12 +109,11 @@ var UnitManager = function(){
 		// 	return false;
 		// };
 		var unit = new template['type'](position, template, gridManager);
-		addSprite('t', unit)
-		addUnitAtPosition(position, unit);
+		var sprite = addSprite('t', unit)
+		gridManager.addToSpriteGrid(position[0], position[1], sprite);
 	};
 	
 	this.sell = function(u){
-		positionHash[u.p[0]][u.p[1]] = null
-		removeSprite('t', u.id);
+		gridManager.clearCell( t.p[0], t.p[1] );
 	}
 }

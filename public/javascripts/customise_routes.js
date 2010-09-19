@@ -28,7 +28,7 @@ $().ready(function(){
     this.get('#/', function(){
       addLevelSelect()
       $('#customise').show();
-      // $('#levelPane').hide();
+      
     });
     
     this.get('#/levels/:id/customise', function(){

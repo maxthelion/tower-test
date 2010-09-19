@@ -16,7 +16,7 @@
 	<script src="javascripts/corpse.js"></script>
 	<script src="javascripts/levels2.js"></script>
 	<script src="javascripts/game.js"></script>
-	<script src="javascripts/customise_routes.js"></script>
+	<script src="javascripts/routes.js"></script>
 	
 	
 	<link rel="stylesheet" href="stylesheets/master.css" >
@@ -112,39 +112,6 @@
 	<div id="newUnitsContainer"></div>
 	
 	<p><a class="levelStart button" href="#/play">Start level</a></p>
-</div>
-
-<div id="customise" class="tab">
-	<div id="header">
-		<h2>Create and customise levels</h2>
-		<select id="level_selector"></select>
-	</div>
-	
-	<div id="levelPane" class="hidden">
-		<form class="hidden">
-			Name: <input name="name" />
-		</form>
-			
-		<div id="gunsPane" class="pane clearfix">
-			<ul class="halfThing" id="availableGunSelect"></ul>
-			<ul class="halfThing" id="allGunSelect"></ul>
-		</div>
-		
-		<div id="wavePane" class="pane">
-			<ul id="waveSelect"></ul>
-		</div>
-		
-		<div id="terrainPane" class="pane">
-			<div id="side">
-				<ul id="terrainSelect"></ul>
-			</div>
-			<canvas id="customcanvas" height="400" width="400"></canvas>
-		</div>
-		<form id="levelSubmit" action="/level/1" method="post">
-			<textarea name="code" id="custom_code"></textarea>
-			<input type="submit">
-		</form>
-	</div>
 </div>
 
 <div id="templates" style="display:none">

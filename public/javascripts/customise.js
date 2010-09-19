@@ -48,34 +48,53 @@ var drawTerrainMenu = function(){
 	button('terrain', thisLevel.terrain, 140);
 	button('unbuildables', thisLevel.unbuildables, 320);
 	button('start points', thisLevel.startPoints, 180);
-	button('end point', thisLevel.startPoints, 160);
+	button('end point', thisLevel.endPoint, 160);
 	$('#customcanvas').click(function(evt){
 		var xIndex = MF( evt.offsetX/gridManager.cellWidth )
 		var yIndex = MF( evt.offsetY/gridManager.cellHeight)
+		
 		if (gridManager.squareAvaliable(xIndex, yIndex)){
-			currentTerrainSelector.array.push([xIndex, yIndex]);
-			gridManager.addSpriteFromPoints(xIndex, yIndex, currentTerrainSelector.spriteX);
+			if (currentTerrainSelector.array == thisLevel.endPoint){
+				currentTerrainSelector.array = thisLevel.endPoint = [xIndex, yIndex];
+				gridManager.setEndPoint(thisLevel.endPoint);
+			} else {
+				currentTerrainSelector.array.push([xIndex, yIndex]);
+				gridManager.addSpriteFromPoints(xIndex, yIndex, currentTerrainSelector.spriteX);
+			}
 			gridManager.occupy(xIndex, yIndex);
 			$('#custom_code').val(JSON.stringify(thisLevel))
 		} else {
-			console.log('occupied')
+			removeDataAt(xIndex, yIndex, thisLevel)
+			gridManager.clearCell(xIndex, yIndex);
 		}
 		canvasManager.public_draw();
 		return false;
 	});
 }
 
+var removeDataAt = function(x, y, thisLevel){
+	for(i in thisLevel.terrain){
+		if (thisLevel.terrain[i][0] == x && thisLevel.terrain[i][1] == y){
+			thisLevel.terrain.splice(i, 1);
+		}
+	}
+	for(i in thisLevel.unbuildables){
+		if (thisLevel.unbuildables[i][0] == x && thisLevel.unbuildables[i][1] == y){
+			thisLevel.unbuildables.splice(i, 1);
+		}
+	}
+	for(i in thisLevel.startPoints){
+		if (thisLevel.startPoints[i][0] == x && thisLevel.startPoints[i][1] == y){
+			thisLevel.startPoints.splice(i, 1);
+		}
+	}
+	if (thisLevel.endPoint && thisLevel.endPoint[0] == x && thisLevel.endPoint[1] == y){
+		thisLevel.endPoint = null;
+	}
+	$('#custom_code').val(JSON.stringify(thisLevel))
+}
 var drawWaveMenu = function(levelID){
-	$('#waveSelect').empty();
-	if(thisLevel.waves.length > 0 ){
-		for (var i=0; i < thisLevel.waves.length; i++) {
-		  var wave = thisLevel.waves[i]
-		  var li = $('<li>')
-		  li.append('<span>'+wave[0][2]+'</span> x ')
-		  li.append( spriteCanvas( soldierTypes[wave[0][0]], 20));
-		 	$('#waveSelect').append(li)
-		};
-	};
+	drawWaves(thisLevel)
 	$('#waveEdit').attr('action',  '#/levels/'+levelID+'/waves')
 	$('#waveEdit').attr('method',  'post')
 	$('#unitNumber').val(9)
@@ -85,19 +104,43 @@ var drawWaveMenu = function(levelID){
 		$('#unitSelect').append($('<option>', {value: i, text: soldierTypes[i].name} ));
 	}
 }
+var drawWaves = function(thisLevel){
+	$('#waveSelect').empty();
+	if(thisLevel.waves.length > 0 ){
+		for (var i=0; i < thisLevel.waves.length; i++) {
+		  var wave = thisLevel.waves[i]
+		  var li = $('<li>')
+		  li.append('<span>'+wave[0][2]+'</span> x ')
+			li.data("id", i);
+		  li.append( spriteCanvas( soldierTypes[wave[0][0]], 20));
+			li.click(function(){
+				thisLevel.waves.splice($(this).data('id'), 1);
+				drawWaves(thisLevel);
+				generateCode(thisLevel);
+				return false;
+			})
+		 	$('#waveSelect').append(li)
+		};
+	};
+}
 
+var generateCode = function(thisLevel){
+	$('#custom_code').val(JSON.stringify(thisLevel));
+}
 var drawGunMenu = function(thisLevel){
 	var gunButton = function(gun, i, callback){
-		var btn = $('<a>').text(gun.name).data('id', i).click(callback)
+		var btn = $('<a>', {href: "#", title: gun.name}).data('id', i).click(callback)
 		btn.append( spriteCanvas( gun, 20) )
 		return btn; 
 	}
 	
 	$('#availableGunSelect').empty();
-	for (var i=0; i < thisLevel.availableUnitIds.length; i++) {
-		var li = $('<li>').append(gunButton(unitTypes[thisLevel.availableUnitIds[i]], i, function(){
-			thisLevel.availableUnitIds.splice(thisLevel.availableUnitIds.indexOf($(this).data('id')), 1)
-			drawGunMenu();
+	var au = thisLevel.availableUnitIds;
+	for (var i=0; i < au.length; i++) {
+		var id = au[i];
+		var li = $('<li>').append(gunButton(unitTypes[au[i]], id, function(){
+			au.splice(au.indexOf($(this).data('id')), 1)
+			drawGunMenu(thisLevel);
 			$('#custom_code').val(JSON.stringify(thisLevel))
 			return false;
 		}));
@@ -105,10 +148,10 @@ var drawGunMenu = function(thisLevel){
 	};
 	$('#allGunSelect').empty();
 	for (i in unitTypes) {
-		if (thisLevel.availableUnitIds.indexOf(i) == -1){
+		if (au.indexOf(i*1) == -1){
 			var li = $('<li>').append(gunButton(unitTypes[i], i, function(){
-				thisLevel.availableUnitIds.push(1*$(this).data('id'));
-				drawGunMenu();
+				au.push(1*$(this).data('id'));
+				drawGunMenu(thisLevel);
 				$('#custom_code').val(JSON.stringify(thisLevel))
 				return false;
 			}));

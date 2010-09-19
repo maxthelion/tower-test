@@ -133,21 +133,6 @@ $().ready(function(){
   			};
 			}
     });
-    
-    this.get('#/customise', function(){
-      hideMenus();
-      addLevelSelect()
-      $('#customise').show();
-      $('#levelPane').hide();
-    });
-    
-    this.get('#/levels/:id/customise', function(){
-      hideMenus();
-      addLevelSelect();
-      setLevel(this.params.id);
-      $('#levelPane').show();
-      $('#customise').show();
-    });
 
   });
   
