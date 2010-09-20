@@ -34,9 +34,10 @@ var unitTypes = {
 	   damage: 30,
 	   cost: 20,
 	   hC: function(soldier, myFrameNum){
-	     explosions.push(new Explosion( soldier.cX, soldier.cY,1, myFrameNum,5) );
+			 addExplosion(soldier.cX, soldier.cY, 30, myFrameNum, 5);
 	   },
-	   type: Turret
+		spriteX: 240,
+	  type: Turret
 	},
 	4: {
 		name: 'glue gun',

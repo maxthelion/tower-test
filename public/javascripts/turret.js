@@ -12,16 +12,17 @@ var Turret = function(position, template, gridManager){
 	this.firing = false;
 	this.cX = gridManager.pointCenterXY( this.p[0], this.p[1] )[0]
 	this.cY = gridManager.pointCenterXY( this.p[0], this.p[1] )[1]
-	this.hC = template['hC']; // hit callback
+	this.hC = template.hC; // hit callback
 	this.spriteX = template.spriteX;
 	
 	this.enterFrame = function(){
 		self.tSoldier = soldiersInRange()[0];
 		if (self.tSoldier && (frameNum % fireRate == 0)){
+			console.log(self.id, frameNum);
 			self.firing = true;
 			self.tSoldier.takeBullet(damage);
-			if (self.hC)
-				template['hC'](self.tSoldier, frameNum)
+			// if (self.hC)
+			// 	template.hC(self.tSoldier, frameNum)
 		} else {
 			self.firing = false;
 		}
