@@ -18,7 +18,6 @@ var Turret = function(position, template, gridManager){
 	this.enterFrame = function(){
 		self.tSoldier = soldiersInRange()[0];
 		if (self.tSoldier && (frameNum % fireRate == 0)){
-			console.log(self.id, frameNum);
 			self.firing = true;
 			self.tSoldier.takeBullet(damage);
 			// if (self.hC)
