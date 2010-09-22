@@ -51,13 +51,6 @@ var unitTypes = {
 		type: Turret,
 		spriteX: 220
 	},
-  // {
-  //  name: 'nuke',
-  //  damage: 100,
-  //  cost: 30,
-  //  range: 3,
-  //  type: Explosion
-  // },
 	5: {
 		name: 'wall',
 		cost: 2,
@@ -111,21 +104,45 @@ var unitTypes = {
 		}, 
 		type: Turret,
 		spriteX: 280
-	}
+	},
+	10: {
+   name: 'nuke',
+   damage: 100,
+   cost: 20,
+   range: 3,
+   type: 'Explosion'
+  },
+	11: {
+   name: 'mine',
+	 fireRate: 1,
+   damage: 1000,
+   cost: 5,
+   range: 0,
+	 fireFunction: function(turret, soldier){
+		 addExplosion(turret.cX, turret.cY, 30, frameNum, 5);
+		 turret.clearGrid();
+		 turret.remove();
+	 },
+   type: Turret,
+	 spriteX: 0,
+	 offGrid: true
+  }
 }
 
 var UnitManager = function(){
 	var self = this;
 	
 	this.createUnit = function(template, position, gridManager){
-		// if(template['type'] == Explosion){
-		// 	explosions.push( new Explosion( 3, 4, template['range'], frameNum, template['damage']) );
-		// 	changeMoney( template['cost'] * -1 );
-		// 	return false;
-		// };
+		if(template['type'] == 'Explosion'){
+			addExplosion(gridManager.pixelC(position[0]), gridManager.pixelC(position[1]), gridManager.radiusFromRange(template.range), frameNum, template['damage']);
+			return false;
+		};
 		var unit = new template['type'](position, template, gridManager);
 		var sprite = addSprite('t', unit)
 		gridManager.addToSpriteGrid(position[0], position[1], sprite);
+		sprite.clearGrid = function(){
+			gridManager.clearCell( position[0], position[1] );
+		}
 	};
 	
 	this.sell = function(u){

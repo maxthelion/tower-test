@@ -24,7 +24,7 @@ var Game = function(){
 	var round;
 	var money;
 	var playing;
-	var gridManager;
+	// var gridManager;
 	var selectedUnit;
 	var currentUnit;
 	var canvasManager;
@@ -370,17 +370,17 @@ var Game = function(){
 		// check there is money
 		if(money < currentUnit['cost'])
 			return false
-		// if (u['type'] == Explosion)
-		// 	return mUM.createUnit(u, [x, y]);
-		gridManager.occupy(x, y);
-		if (!checkPaths(x, y)){
-			return false
-		}
-		//check for all the soldiers
-		for (var i=0; i < mSM.allSoldiers().length; i++) {
-			if (!mSM.allSoldiers()[i].regeneratePath()) {
-				return revertGridPoint(x, y);
+		if(!currentUnit.offGrid){
+			gridManager.occupy(x, y);
+			if (!checkPaths(x, y)){
+				return false
 			}
+			//check for all the soldiers
+			for (var i=0; i < mSM.allSoldiers().length; i++) {
+				if (!mSM.allSoldiers()[i].regeneratePath()) {
+					return revertGridPoint(x, y);
+				}
+			};
 		};
 		mUM.createUnit(currentUnit, [x, y], gridManager);
 		changeMoney( currentUnit['cost'] * -1 );

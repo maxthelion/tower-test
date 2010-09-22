@@ -5,13 +5,14 @@ function addProjectile(turret, soldier){
 		target: soldier,
 		projectileSize: 2,
 		speed: 5,
+		damage: 10,
 		enterFrame: function(){
 			var newCoords = this.getNewCoords(this.cX, this.cY, this.target.cX, this.target.cY, this.speed);
 			this.cX = newCoords[0]
 			this.cY = newCoords[1]
 			if (this.withinRange()){
 				this.remove();
-				addExplosion(this.target.cX, this.target.cY, 10, frameNum, 5);
+				addExplosion(this.target.cX, this.target.cY, 10, frameNum, this.damage);
 				this.target.takeBullet(10);
 			}
 		},

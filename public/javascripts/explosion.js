@@ -1,29 +1,8 @@
-// var Explosion = function(x, y, radius, start, damage){
-// 	var self = this;
-// 	var range;
-// 	var damage;
-// 	var startFrame = start;
-// 	this.
-// 	var iradius = self.radius
-// 	this.cX = x;
-// 	this.cY = y;
-// 	this.scale = 1
-// 	var decay = 10
-// 
-// 	this.finished = function(){
-// 		return 
-// 	}
-// }
-// 
-// var initialise = function() {
-// 	unfortunates = mSM.withinRange(self.cX, self.cY, radius, true, true)
-// 	for (var i=0; i < unfortunates.length; i++) {
-// 		unfortunates[i].takeBullet(damage);
-// 	};
-// }
-
-
 addExplosion = function(x, y,radius,start,damage){
+	unfortunates = mSM.withinRange(x, y, radius, true, true)
+	for (var i=0; i < unfortunates.length; i++) {
+		unfortunates[i].takeBullet(damage);
+	};
 	addSprite('ex', {
 		type: 'Explosion',
 		cX: x,
