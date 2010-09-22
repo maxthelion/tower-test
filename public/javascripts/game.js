@@ -3,7 +3,6 @@ var mSM;
 var positionHash;
 var myBase;
 
-
 var Game = function(){
 	var level = localStorage.getItem('level') || 0;
 	level = level * 1;

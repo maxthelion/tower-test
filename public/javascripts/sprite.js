@@ -12,7 +12,8 @@ var initSprites = function(){
 	sprites.ex = {} // explosions
 	sprites.t = {} // turrets
 	sprites.s = {} // ground units
-	sprites.a = {} // air units
+	sprites.a = {}  // air units
+	sprites.pr = {}  // projectiles
 }
 
 var redoSprites = function(){

@@ -14,6 +14,7 @@ var Turret = function(position, template, gridManager){
 	this.cY = gridManager.pointCenterXY( this.p[0], this.p[1] )[1]
 	this.hC = template.hC; // hit callback
 	this.spriteX = template.spriteX;
+	this.fireFunction = template.fireFunction;
 	
 	this.enterFrame = function(){
 		self.tSoldier = soldiersInRange()[0];
@@ -22,6 +23,9 @@ var Turret = function(position, template, gridManager){
 			self.tSoldier.takeBullet(damage);
 			if (self.hC){
 				self.hC(self.tSoldier, frameNum)
+			}
+			if (self.fireFunction){
+				self.fireFunction(self, self.tSoldier);
 			}
 		} else {
 			self.firing = false;

@@ -100,6 +100,18 @@ var unitTypes = {
 		spriteX: 220,
 		upgrade: true
 	},
+	9: {
+		name: 'missile launcher',
+		fireRate: 20,
+		range: 6,
+		damage: 0,
+		cost: 7,
+		fireFunction: function(turret, soldier){
+			addProjectile(turret, soldier)
+		}, 
+		type: Turret,
+		spriteX: 280
+	}
 }
 
 var UnitManager = function(){

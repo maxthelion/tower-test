@@ -26,7 +26,8 @@ var CanvasManager = function(canvas, gridManager) {
 				w = gridManager.cellWidth;
 				dCircle(u.cX, u.cY,'orange',w/(1 + Math.random()))
 			}
-			drawSprite(u.spriteX, u.cX, u.cY)
+			if (u.spriteX != undefined)
+				drawSprite(u.spriteX, u.cX, u.cY)
 			// see if they are a turret
 			if (u.tSoldier)
 				drawBarrel(u);
@@ -34,6 +35,9 @@ var CanvasManager = function(canvas, gridManager) {
 				drawHealth(u.cX,u.cY-20,20,5,u.healthpercent);
 			// if(u.base)
 			// 	drawHealth(u.cX, u.cY-30,50,10,u.healthpercent);
+			if(u.projectileSize){
+				dCircle( u.cX, u.cY, 'black', u.projectileSize);
+			}
 		}
 		// draw highlight
 		if(self.selectedUnit){
