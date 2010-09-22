@@ -160,8 +160,14 @@
 	text-align: center;
 	background: silver;
 	padding: 5px;
+	margin: 0 auto;
 }
 .newUnit .info {
 	margin-top: 0.5em;
 	background: #fff;
+}
+#newUnitsContainer h3 {
+	background:white;
+	padding: 0.5em;
+	margin-bottom: 0.5em;
 }

@@ -20,8 +20,9 @@ var Turret = function(position, template, gridManager){
 		if (self.tSoldier && (frameNum % fireRate == 0)){
 			self.firing = true;
 			self.tSoldier.takeBullet(damage);
-			// if (self.hC)
-			// 	template.hC(self.tSoldier, frameNum)
+			if (self.hC){
+				self.hC(self.tSoldier, frameNum)
+			}
 		} else {
 			self.firing = false;
 		}

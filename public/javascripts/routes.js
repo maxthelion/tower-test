@@ -20,7 +20,35 @@ function spriteCanvas(sprite, size){
 	ctx.drawImage(sprites_img, sprite.spriteX, 0, cw, ch, x - cw/2, y - cw/2, size, size)
 	return canvas;
 }
+function drawNewUnits(){
+	$('#newUnitsContainer').empty();
+	if (levels[myGame.getCurrentLevel()].newUnits.length > 0){
+		var level = levels[myGame.getCurrentLevel()];
+		$('#newUnitsContainer').append('<h3>New units available!</h3>')
+		for (var i=0; i < level.newUnits.length; i++) {
+			var unit = unitTypes[ level.newUnits[i] ];
+			var e = $('#newUnitTemplate').clone();
+			e.find('.unitName').text(unit.name);
+			e.find('.unitIcon').html( spriteCanvas( unit, 100 ) );
+			e.find('.info').html( unit.name );
+			$('#newUnitsContainer').append(e);
+		};
+	};
+}
 var sprites_img;
+function showBigNotice(id){
+	$('#big_notice').show();
+  $('.mMenu').hide();
+	$(id).show();
+}
+function checkStarted(s){
+	if(!myGame.started){
+		s.redirect('#/')
+		return false
+	} else {
+		return true;
+	}
+}
 $().ready(function(){	
     $.sammy.raise_errors = true;
     var app = $.sammy(function() {
@@ -32,7 +60,6 @@ $().ready(function(){
     }
     
     this.get('#/', function() {
-      myGame.pause();
       hideMenus();
       $('#menu').show();
 		  if (myGame.started){
@@ -43,53 +70,53 @@ $().ready(function(){
     });
 
     this.get('#/start', function() {
-      hideMenus();
-      $('#game').show();
-      $('#big_notice').show();
-      $('#pause_menu').hide();
-      $('#death_menu').hide();
-      $('#start_menu').show();
+			showBigNotice('#start_menu');
+			this.redirect('#/game_menu');
     });
     
     this.get('#/instructions', function() {
       hideMenus();
-      myGame.pause();
       $('#instructions').show();
     });
     
     this.get('#/play', function() {
-      hideMenus();
-      $('.tab').hide();
-      $('#game').show();
-      $('#big_notice').hide();
-      myGame.play();
+			if (!myGame.started) {
+				this.redirect('#/')
+			}else {
+      	hideMenus();
+      	$('#game').show();
+      	$('#big_notice').hide();
+      	myGame.play();
+			}
     });
     
     this.get('#/restart', function() {
-      hideMenus();
-      $('.tab').hide();
-      $('#game').show();
-      $('#big_notice').hide();
-      myGame.restart();
+			myGame.startGame();
+      this.redirect('#/play');
     });
     
     this.get('#/pause', function() {
-      hideMenus();
-      $('#game').show();
-      myGame.pause();
-      $('#big_notice').show();
-      $('#pause_menu').show();
-      $('#death_menu').hide();
-      $('#start_menu').hide();
+		  if (!myGame.started) {
+				this.redirect('#/')
+			} else {
+      	myGame.pause();
+      	showBigNotice('#pause_menu');
+				this.redirect('#/game_menu');
+			}
     });
 
-    this.get('#/death', function() {
-      hideMenus();
+		this.get('#/game_menu', function(){
+			if(!myGame.started){
+				this.redirect('#/')
+				return false
+			}
+			hideMenus();
       $('#game').show();
-      $('#big_notice').show();
-      $('#pause_menu').hide();
-      $('#death_menu').show();
-      $('#start_menu').hide();
+		})
+
+    this.get('#/death', function() {
+			showBigNotice('#death_menu');
+			this.redirect('#/game_menu');
     });
     
     this.get('#/levels', function() {
@@ -103,34 +130,19 @@ $().ready(function(){
 
     this.get('#/start/:level', function() {
 	  	myGame.setLevel(this.params.level)
-      hideMenus();
-      $('#game').show();
-      $('#big_notice').show();
-      $('#pause_menu').hide();
-      $('#start_menu').show();
-      $('#death_menu').hide();
+			showBigNotice('#start_menu');
+			this.redirect('#/game_menu');
     });
 
     this.get('#/level/:level/complete', function() {
       hideMenus();
 			$('#winMenu').show();
-			$('#levelNum').text(myGame.getCurrentLevel());
-			if (myGame.getCurrentLevel() == levels.length - 1){
+			$('#levelNum').text(myGame.getCurrentLevel() + 1);
+			$('.levelStart').attr('href', '#/start/'+myGame.getCurrentLevel());
+			if (myGame.getCurrentLevel() == levels.length){
 			  this.redirect('#/')
 			} else {
-	  		$('#newUnitsContainer').empty();
-  			if (levels[myGame.getCurrentLevel()].newUnits.length > 0){
-  				var level = levels[myGame.getCurrentLevel()];
-  				$('#newUnitsContainer').append('<h3>New units available!</h3>')
-  				for (var i=0; i < level.newUnits.length; i++) {
-  					var unit = unitTypes[ level.newUnits[i] ];
-  					var e = $('#newUnitTemplate').clone();
-  					e.find('.unitName').text(unit.name);
-  					e.find('.unitIcon').html( spriteCanvas( unit, 100 ) );
-  					e.find('.info').html( unit.name );
-  					$('#newUnitsContainer').append(e);
-  				};
-  			};
+	  		drawNewUnits();
 			}
     });
 

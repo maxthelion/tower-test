@@ -7,6 +7,7 @@ var myBase;
 var Game = function(){
 	var level = localStorage.getItem('level') || 0;
 	level = level * 1;
+	var self = this;
 	var elem;
 	var waves;
 	var startPoints;
@@ -119,17 +120,6 @@ var Game = function(){
 
 	var anySoldiers = function(){
 		return mSM.allUnits(true, true).length > 0
-	}
-
-	var start = function(){
-		progressRound();
-		playing = true;
-		globalInterval = setInterval(frameFunction, frameSpeed);
-	}
-	
-	var restart = function(){
-		initialise();
-		start();
 	}
 
 	var progressRound = function(){
@@ -283,9 +273,10 @@ var Game = function(){
 
 	var spritesProgress = function(){
 		// aim the turrets and fire if possible
-		for(var i =0; i < spritesArray.length; i++){
-			if (spritesArray[i].enterFrame){ 
-				spritesArray[i].enterFrame();
+		var array = spritesArray;
+		for(var i =0; i < array.length; i++){
+			if (array[i].enterFrame){ 
+				array[i].enterFrame();
 			}
 		}
 	}
@@ -396,6 +387,13 @@ var Game = function(){
 		changeMoney( currentUnit['cost'] * -1 );
 	}
 	
+	this.startGame = function(){
+		initialise();
+		progressRound();
+		self.started = true;
+		canvasManager.public_draw();
+	}
+	
 	this.pause = function(){
 	  if (playing){
 	    clearInterval(globalInterval);
@@ -404,18 +402,13 @@ var Game = function(){
 	}
 	
 	this.play = function(){
-		if (!self.started) {
-			initialise();
-			start();
-			self.started = true;
-		} else {
-			globalInterval = setInterval(frameFunction, frameSpeed);
-			playing = true;
-		};		
+		globalInterval = setInterval(frameFunction, frameSpeed);
+		playing = true;	
 	}
 	
 	this.restart = function(){
-	  restart();
+	  initialise();
+		self.started = false;
 	}
 	
 	this.getCurrentLevel = function(){
@@ -424,9 +417,7 @@ var Game = function(){
 	
 	this.setLevel = function(newLevel){
 		level = newLevel;
-		initialise();
-		progressRound();
-		canvasManager.public_draw();
+		self.startGame()
 	}
 }
 

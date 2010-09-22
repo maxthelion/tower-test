@@ -60,13 +60,13 @@
 	<div id="cW">
 	  <div id="big_notice">
 			
-			<div id="start_menu">
+			<div id="start_menu" class="mMenu">
 	    	<h2>Stop the suicide bombers from pwning your base</h2>
 	    	<p><a href="#/play">Release the hordes!!!</a></p>
 	    	<p><a href="#/instructions">How to play</a></p>
 			</div>
 			
-			<div id="pause_menu">
+			<div id="pause_menu" class="mMenu">
 			<h3>Game paused</h3>
 	    	<p class="resume"><a href="#/play">Resume</a></p>
 	    	<p><a href="#/">Back to menu</a></p>
@@ -74,7 +74,7 @@
 	    	<p><a href="#/restart">Restart level</a></p>
 			</div>
 			
-			<div id="death_menu">
+			<div id="death_menu" class="mMenu">
 			<h3>death to you sucker</h3>
 	    	<p><a href="#/">Back to menu</a></p>
 	    	<p><a href="#/instructions">How to play</a></p>
@@ -104,11 +104,9 @@
 <div id="winMenu" class="tab">
 	<h2>You win!!!</h2>
 	
-	<p>Prepare for level <span id="levelNum"></span></p>
-	
 	<div id="newUnitsContainer"></div>
 	
-	<p><a class="levelStart button" href="#/play">Start level</a></p>
+	<p><a class="levelStart button" href="#/play">Start level <span id="levelNum"></span></a></p>
 </div>
 
 <div id="templates" style="display:none">
