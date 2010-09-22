@@ -1,21 +1,21 @@
-function Helicopter(startPoint, endPoint, grid, template, id) {
+function Helicopter(startPoint, gridManager, template) {
 	var self = this;
 	var currentPosition = gridManager.pointCenterXY(startPoint[0], startPoint[1])
 	this.cX = currentPosition[0];
 	this.cY = currentPosition[1];
-	var nextPosition = gridManager.pointCenterXY(endPoint[0], endPoint[1])
+	var nextPosition = gridManager.pointCenterXY(gridManager.endPoint[0], gridManager.endPoint[1])
 	var currentSpeed = template['speed'];
 	var initialHealth = template['health'];
 	this.health = initialHealth;
 	this.healthpercent = 1;
-	this.bounty = template['bounty'];
-	this.sprite = template['sprite']
+	this.bounty = template.bounty;
+	this.spriteX = template.spriteX
 	this.id = id;
 	
 	this.enterFrame = function(){
     getNewPos()
 		var cell = gridManager.cellFromPosition( [self.cX, self.cY] );
-		if ( cell[0] == endPoint[0] && cell[1] == endPoint[1]) {
+		if ( cell[0] == gridManager.endPoint[0] && cell[1] == gridManager.endPoint[1]) {
 			self.destC()
 		}
 	}

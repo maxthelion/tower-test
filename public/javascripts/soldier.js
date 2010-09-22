@@ -1,4 +1,4 @@
-function Soldier(startPoint, gridManager, template, id) {
+function Soldier(startPoint, gridManager, template) {
 	var self = this;
 	var currentPosition = gridManager.pointCenterXY(startPoint[0], startPoint[1])
 	this.cX = currentPosition[0];
@@ -11,7 +11,6 @@ function Soldier(startPoint, gridManager, template, id) {
 	this.healthpercent = 1;
 	this.bounty = template['bounty'];
 	this.spriteX = template['spriteX']
-	this.id = id;
 	
 	var myPath;
 	var pathIndex = 0;
