@@ -20,7 +20,7 @@
 	<script src="javascripts/routes.js"></script>
 	
 	
-	<link rel="stylesheet" href="stylesheets/master.css" >
+<link rel="stylesheet" href="stylesheets/master.css" >
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -64,7 +64,7 @@
 			<div id="start_menu" class="mMenu">
 	    	<h2>Stop the suicide bombers from pwning your base</h2>
 	    	<p><a href="#/play">Release the hordes!!!</a></p>
-	    	<p><a href="#/instructions">How to play</a></p>
+	    	<p><a href="#/instructions?back=game_menu">How to play</a></p>
 			</div>
 			
 			<div id="pause_menu" class="mMenu">
@@ -99,7 +99,12 @@
 	<p>You earn a bounty by killing the soldiers.</p> 
 	<p>By extending the distance the soldiers have to travel, you can increase your opportunities for firing at them.</p>
 	<p>Clicking on a deployed unit gives you options to sell it or upgrade it.</p>
-	<a class="button" href="#/start">Start</a>
+	<a class="button" id="backBtn" href="#">Back</a>
+</div>
+
+<div id="weapons" class="tab">
+	<h2>Weapons</h2>
+	<ul id="weaponList"></ul>
 </div>
 
 <div id="winMenu" class="tab">

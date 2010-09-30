@@ -4,20 +4,23 @@ var unitTypes = {
 		fireRate: 2,
 		range: 1,
 		damage: 2,
-		cost: 5,
+		cost: 4,
 		type: Turret,
 		attacks_air: true,
 		spriteX: 200,
-		upgrade_id: 7
+		upgrade_id: 7,
+		description: "Short range, all-purpose gun. Cheap and cheerful. Attacks land and air."
 	},
 	1: {
 		name: 'mortar',
 		fireRate: 18,
 		range: 3,
-		damage: 15,
-		cost: 15,
+		damage: 20,
+		cost: 12,
 		type: Turret,
-		spriteX: 240
+		spriteX: 240,
+		upgrade_id: 3,
+		description: "Longer range weapon. High damage, low fire rate. Attacks ground units."
 	},
 	2: {
 	   name: 'sniper',
@@ -25,7 +28,8 @@ var unitTypes = {
 	   range: 5,
 	   damage: 100,
 	   cost: 20,
-	   type: Turret
+	   type: Turret,
+		 description: "One man and his gun. Slow fire rate, but high damage. Attacks ground units."
 	},
 	3: {
 	   name: 'heavy cannon',
@@ -37,7 +41,9 @@ var unitTypes = {
 			 addExplosion(soldier.cX, soldier.cY, 30, myFrameNum, 5);
 	   },
 		spriteX: 240,
-	  type: Turret
+	  type: Turret,
+		upgrade: true,
+		description: "Upgrade from mortar. Increases damage and range. Causes collateral damage to other soldiers. Attacks ground units."
 	},
 	4: {
 		name: 'glue gun',
@@ -49,25 +55,29 @@ var unitTypes = {
 			soldier.slow(myFrameNum + 30);
 		},
 		type: Turret,
-		spriteX: 220
+		spriteX: 220,
+		upgrade_id: 8,
+		description: "Slows enemy soldiers for a short period of time. Attacks ground units."
 	},
 	5: {
 		name: 'wall',
 		cost: 2,
 		type: Obstacle,
-		spriteX: 260
+		spriteX: 260,
+		description: "Stops units from moving, but does no damage to them. Affects ground units."
 	},
 	6: {
 		name: 'flamer',
 		fireRate: 4,
 		range: 1,
 		damage: 8,
-		cost: 7,
+		cost: 9,
 		hC: function(soldier, myFrameNum){
 			soldier.setAlight(frameNum + 30);
 		},
 		type: Turret,
-		spriteX: 280
+		spriteX: 280,
+		description: "Causes high damage at close range. Continues affecting units for a short period after they have been hit. Attacks ground units."
 	},
 	7: {
 		name: 'heavy machine gun',
@@ -78,7 +88,8 @@ var unitTypes = {
 		type: Turret,
 		attacks_air: true,
 		spriteX: 300,
-		upgrade: true
+		upgrade: true,
+		description: "Upgrade from machine gun. Increases damage. Attacks land and air units."
 	},
 	8: {
 		name: 'heavy glue gun',
@@ -91,7 +102,8 @@ var unitTypes = {
 		},
 		type: Turret,
 		spriteX: 220,
-		upgrade: true
+		upgrade: true,
+		description: "Upgrade from glue gun. Extends time that units are sticky. Attacks ground units."
 	},
 	9: {
 		name: 'missile launcher',
@@ -103,14 +115,17 @@ var unitTypes = {
 			addProjectile(turret, soldier)
 		}, 
 		type: Turret,
-		spriteX: 280
+		spriteX: 280,
+		attacks_air: true,
+		description: "Long range weapon that fires slow projectiles. Attacks land and air units."
 	},
 	10: {
    name: 'nuke',
    damage: 100,
    cost: 20,
    range: 3,
-   type: 'Explosion'
+   type: 'Explosion',
+		description: "One-shot weapon that affects all units in the blast range. Useful for geting out of a bind. Attacks ground units."
   },
 	11: {
    name: 'mine',
@@ -125,7 +140,8 @@ var unitTypes = {
 	 },
    type: Turret,
 	 spriteX: 0,
-	 offGrid: true
+	 offGrid: true,
+	 description: "Explodes when units walk on it. Attacks ground units."
   }
 }
 

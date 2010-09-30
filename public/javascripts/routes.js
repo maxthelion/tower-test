@@ -1,6 +1,5 @@
 var myGame;
 
-
 var createCompatibleCanvas = function(id, width, height){
   var canvas = document.createElement('canvas');
   canvas.setAttribute('id', id);
@@ -20,10 +19,10 @@ function spriteCanvas(sprite, size){
 	ctx.drawImage(sprites_img, sprite.spriteX, 0, cw, ch, x - cw/2, y - cw/2, size, size)
 	return canvas;
 }
-function drawNewUnits(){
+
+function drawNewUnits(level){
 	$('#newUnitsContainer').empty();
-	if (levels[myGame.getCurrentLevel()].newUnits.length > 0){
-		var level = levels[myGame.getCurrentLevel()];
+	if (level.newUnits.length > 0){
 		$('#newUnitsContainer').append('<h3>New units available!</h3>')
 		for (var i=0; i < level.newUnits.length; i++) {
 			var unit = unitTypes[ level.newUnits[i] ];
@@ -34,13 +33,19 @@ function drawNewUnits(){
 			$('#newUnitsContainer').append(e);
 		};
 	};
-}
+};
+
+function renderWeaponList(){
+	$('#weaponList').html('yur weapons');
+};
+
 var sprites_img;
 function showBigNotice(id){
 	$('#big_notice').show();
   $('.mMenu').hide();
 	$(id).show();
-}
+};
+
 function checkStarted(s){
 	if(!myGame.started){
 		s.redirect('#/')
@@ -48,12 +53,12 @@ function checkStarted(s){
 	} else {
 		return true;
 	}
-}
+};
 $().ready(function(){	
     $.sammy.raise_errors = true;
     var app = $.sammy(function() {
 
-      this.raise_errors = true;
+    this.raise_errors = true;
     
     var hideMenus = function(){
       $('.tab').hide();
@@ -62,21 +67,17 @@ $().ready(function(){
     this.get('#/', function() {
       hideMenus();
       $('#menu').show();
-		  if (myGame.started){
+		  if ( myGame && myGame.started){
 				$('#menu .resume').show();
 		  } else {
 				$('#menu .resume').hide();
 		  }
     });
-
-    this.get('#/start', function() {
-			showBigNotice('#start_menu');
-			this.redirect('#/game_menu');
-    });
     
     this.get('#/instructions', function() {
       hideMenus();
       $('#instructions').show();
+			$('#instructions #backBtn').attr('href','#/' +(this.params.back || ''))
     });
     
     this.get('#/play', function() {
@@ -95,6 +96,12 @@ $().ready(function(){
       this.redirect('#/play');
     });
     
+    this.get('#/weapons', function() {
+			hideMenus();
+    	$('#weapons').show();
+			renderWeaponList();
+    });
+
     this.get('#/pause', function() {
 		  if (!myGame.started) {
 				this.redirect('#/')
@@ -124,26 +131,36 @@ $().ready(function(){
       $('#levels').show();
 			$('#levelList').empty();
 			for (var i=0; i < levels.length; i++) {
-			 	$('#levelList').append('<li><a class="button" href="#/start/'+i+'">Level '+(i+1)+'</a></li>');
+				if (i <= userGame.maxLevel){
+			 		$('#levelList').append('<li><a class="button" href="#/start/'+i+'">Level '+(i+1)+'</a></li>');
+				} else {
+					$('#levelList').append('<li><a class="button">?</a></li>');
+				}
 			};
     });
 
     this.get('#/start/:level', function() {
-	  	myGame.setLevel(this.params.level)
+			var level = levels[this.params.level];
+	  	myGame = new Game(level);
+			myGame.startGame();
 			showBigNotice('#start_menu');
 			this.redirect('#/game_menu');
     });
 
-    this.get('#/level/:level/complete', function() {
+    this.get('#/level/complete', function() {
+			var nextLevel = levelManager.progressLevel( myGame.getCurrentLevel() );
+			// extract the level out of it and establish where to go from here
       hideMenus();
 			$('#winMenu').show();
-			$('#levelNum').text(myGame.getCurrentLevel() + 1);
-			$('.levelStart').attr('href', '#/start/'+myGame.getCurrentLevel());
-			if (myGame.getCurrentLevel() == levels.length){
-			  this.redirect('#/')
-			} else {
-	  		drawNewUnits();
+			// todo - check the level id
+			if (levelManager.maxLevelID == levels.length){
+				alert('you\'ve finished')
+			} else if(nextLevel) {				
+				$('#levelNum').text(nextLevel.name);
+				$('.levelStart').attr('href', '#/start/'+nextLevel.id);
+	  		drawNewUnits(nextLevel);
 			}
+			this.redirect('#/');
     });
 
   });
@@ -151,7 +168,6 @@ $().ready(function(){
   sprites_img = new Image(); 
   sprites_img.src = 'soldier.png';
 	sprites_img.onload = function(){
-		myGame = new Game(0);
     app.run('#/');
 	}
 });

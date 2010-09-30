@@ -22,14 +22,12 @@ function Soldier(startPoint, gridManager, template) {
 	var speed = currentSpeed
 	
 	this.enterFrame = function(){
+		currentSpeed = speed;
 		if(self.isOnFire()){
 			self.health -= 0.5;
-			currentSpeed = speed * 2
 		} else if(isSlowed()){
 			currentSpeed = speed / 2;
-		} else {
-			currentSpeed = speed;
-		}
+		} 
 		var cell = gridManager.cellFromPosition( [self.cX, self.cY] );
 		getNewPos()
 		if (nextPoint == undefined){

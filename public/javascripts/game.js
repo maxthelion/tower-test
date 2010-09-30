@@ -2,10 +2,29 @@ var frameNum = 0;
 var mSM;
 var positionHash;
 var myBase;
+var VERSION = "0.0.1";
 
-var Game = function(){
-	var level = localStorage.getItem('level') || 0;
-	level = level * 1;
+var userGame = {
+	maxLevel: localStorage.getItem(VERSION +':level') || 0,
+	availableUnits: [],
+	
+}
+
+var levelManager = {
+	maxLevelID: userGame.maxLevel,
+	progressLevel: function(levelID){
+		if (levelID < (levels.length - 2) && this.levelID == this.maxLevelID){
+			maxLevelID++;
+			this.setMaxLevel(maxLevelID);
+			return levels[maxLevelID];
+		}
+	},
+	setMaxLevel: function(levelID){
+		localStorage.setItem(VERSION +':level')
+	}
+}
+
+var Game = function(thisLevel){
 	var self = this;
 	var elem;
 	var waves;
@@ -53,20 +72,10 @@ var Game = function(){
 
 	var attemptToWinGame = function(){
 		if ( gameWon() ){
-			progressLevel();
 			clearInterval(globalInterval);
 			playing = false;
-			window.location = '#/level/'+level+'/complete';
+			window.location = '#/level/complete';
 		}
-	}
-	
-	var progressLevel = function(){
-	  if ((levels.length -1)  > level) {
-			level++;
-		  localStorage.setItem('level', level);
-			initialise();
-			progressRound();
-	  }
 	}
 
 	this.loseLife = function(){
@@ -123,7 +132,7 @@ var Game = function(){
 
 	var progressRound = function(){
 		round++;
-		$('#notice').text('Round ' + round + ' of ' + waves.length + ' (level ' + (level + 1) +')' );
+		// $('#notice').text('Round ' + round + ' of ' + waves.length + ' (level ' + (level + 1) +')' );
 		// mark the round number
 		$('#round').text(round);
 		wave = waves[round - 1];
@@ -137,7 +146,6 @@ var Game = function(){
 	var initialise = function(){
 	  elem = undefined;
 		positionHash = {};
-		var thisLevel = levels[level];
 		waves = thisLevel.waves;
 		availableUnits = []
     for (var i=0; i < thisLevel.availableUnitIds.length; i++) {
@@ -411,12 +419,7 @@ var Game = function(){
 	}
 	
 	this.getCurrentLevel = function(){
-		return level;
-	}
-	
-	this.setLevel = function(newLevel){
-		level = newLevel;
-		self.startGame()
+		return thisLevel;
 	}
 }
 

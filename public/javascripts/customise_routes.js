@@ -43,16 +43,18 @@ $().ready(function(){
     });
 
     this.get('#/levels/new', function(){
+			var id = levels.length;
 			var newLevel = {
 				startPoints: [],
 				endPoint: null,
 				waves: [],
 				terrain: [],
 				unbuildables: [],
-				availableUnitIds: []
+				availableUnitIds: [],
+				id: id
 			}
 			levels.push(newLevel);
-      this.redirect('#/levels/'+(levels.length - 1)+'/customise')
+      this.redirect('#/levels/'+(id)+'/customise')
     });
 
     this.post('#/levels/:id/waves', function(){
