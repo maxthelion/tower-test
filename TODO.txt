@@ -1,0 +1,35 @@
+Todo:
+
+* z-index on sprites
+* Level names
+* Change available units
+* Sprite images:
+	* Heavy mortar
+	* Nuke
+	* Heavy Flamer
+	* Rocket launcher
+	* Mines
+	* Sniper
+* New units
+	* Adrenaline - increase fire rate
+	* Armoury - increase damage
+	* Radar - increase range
+	* Aerial mines - for helicopters
+* Separate max level index, and current level
+* Improve win screens
+* Allow people to crete their own levels
+* Random arcade mode
+* Show weapon list
+* Improve Wave selection menu
+	* edit existing wave
+	* re-order
+	* set start points of wave
+* Different terrain 
+	* Jungle 
+	* Snow
+	* City
+	* Night
+* Save progress on server
+* User accounts
+* New Level selector in the admin
+
